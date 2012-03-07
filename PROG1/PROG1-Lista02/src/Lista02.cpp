@@ -21,8 +21,6 @@ void EX07(void);
 void EX08(void);
 void EX09(void);
 void EX10(void);
-void EX11(void);
-void EX12(void);
 bool validParam(double param1);
 bool validParam(double param1, double param2);
 bool validParam(double param1, double param2, double param3);
@@ -34,24 +32,20 @@ int main(void)
 	do{
 		switch(menu){
 		case 0:  return 0;
-		case  1: EX01(); menu=-1; break;
-		case  2: EX02(); menu=-1; break;
-		case  3: EX03(); menu=-1; break;
-		case  4: EX04(); menu=-1; break;
-		case  5: EX05(); menu=-1; break;
-		case  6: EX06(); menu=-1; break;
-		case  7: EX07(); menu=-1; break;
-		case  8: EX08(); menu=-1; break;
-		case  9: EX09(); menu=-1; break;
-		case 10: EX10(); menu=-1; break;
-		case 11: EX11(); menu=-1; break;
-		case 12: EX12(); menu=-1; break;
-		default:
-			cout << endl << "Digite o número do exercício [1-12 ou 0-sair]: ";
-			cin >> menu;
-			cout << endl;
-			break;
+		case  1: EX01(); break;
+		case  2: EX02(); break;
+		case  3: EX03(); break;
+		case  4: EX04(); break;
+		case  5: EX05(); break;
+		case  6: EX06(); break;
+		case  7: EX07(); break;
+		case  8: EX08(); break;
+		case  9: EX09(); break;
+		case 10: EX10(); break;
 		}
+		cout << endl << "Digite o número do exercício [1-10 ou 0-sair]: ";
+		cin >> menu;
+		cout << endl;
 	}while(menu!=0);
 
 	return 0;
@@ -218,47 +212,6 @@ void EX10(void)
 
 	cout << "[EX10 out] O número codificado é "<< setfill('0') << setw(4) << codificado << endl;
 
-}
-/*********************************************************************************/
-void EX11(void)
-{
-	int n=0, decodificado=0;
-	int digito[4] ={0,0,0,0};
-
-	cout << "[EX11 in] Digite um número codificado: ";
-	cin >> n;
-	for(int i=3;i>=0;i--){
-		digito[i] = (((n%10)+10)-7)%10;
-		n = n/10;
-	}
-	decodificado=1000*digito[2]+100*digito[3]+10*digito[0]+digito[1];
-
-	cout << "[EX11 out] O número decodificado é "<< setfill('0') << setw(4) << decodificado << endl;
-}
-/*********************************************************************************/
-void EX12(void)
-{
-	double emprestimo=0,parcela=0,txjuro=0,pmt=0, juros=0;
-
-	do{
-		cout << "[EX12 in] Valor do empréstimo (R$): ";
-		cin >> emprestimo;
-		cout << "[EX12 in] Número de parcelas: ";
-		cin >> parcela;
-		cout << "[EX12 in] Taxa de juros: ";
-		cin >> txjuro;
-		txjuro = txjuro/100.0;
-	}while(!validParam(emprestimo,parcela,txjuro));
-
-	cout << "[EX12 out]\t#Parcela\tSaldo Devedor\tAmortização\tJuros" <<endl;
-	pmt = (emprestimo*txjuro)/(1-1/pow((1+txjuro),parcela));
-
-	for(int i=1; i<=parcela;i++){
-		juros = emprestimo*txjuro;
-		double amortizacao = pmt - juros;
-		emprestimo-=amortizacao;
-		cout << "[EX12 out]\t" <<i<<"\t\t"<<emprestimo<<"\t\t"<<amortizacao<<"\t\t"<<juros<<endl;
-	}
 }
 /*********************************************************************************/
 bool validParam(double param1, double param2, double param3){
