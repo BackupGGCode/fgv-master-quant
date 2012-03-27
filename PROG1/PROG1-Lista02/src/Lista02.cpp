@@ -9,21 +9,10 @@
 #include <iostream>
 #include <iomanip>
 #include <math.h>
+#include "Lista02.h"
 using namespace std;
 
-void EX01(void);
-void EX02(void);
-void EX03(void);
-void EX04(void);
-void EX05(void);
-void EX06(void);
-void EX07(void);
-void EX08(void);
-void EX09(void);
-void EX10(void);
-bool validParam(double param1);
-bool validParam(double param1, double param2);
-bool validParam(double param1, double param2, double param3);
+
 
 int main(void)
 {
@@ -53,32 +42,40 @@ int main(void)
 /**************************** EX01 ****************************/
 void EX01(void)
 {
-	double n = 0;
-	double soma = 0;
-	do{
-		cout << "[EX01 in] Digite o número N: ";
-		cin >> n;
-	}while(!validParam(n));
+	double arg01 = 0, arg02 = 0, arg03 = 0;
 
-	n = 2*n+1;
-	for(int i=0;i<n;i++){
-		soma+=(i%2>0?i:0);
-	}
-	cout << "[EX01 out] O quadrado de N é "<< soma << endl;
+	cout << "[EX01 in] Digite um número N: ";
+	cin >> arg01;
+	EX01_func(arg01,arg02,arg03);
+
+	cout << "[EX01 out] A parte inteira de N:  "<< arg02 << endl;
+	cout << "[EX01 out] A parte decimal de N:  "<< arg03 << endl;
 }
+void EX01_func(double _arg01,double& _arg02,double& _arg03)
+{
+	_arg02 = (int)_arg01;
+	_arg03 = _arg01 - _arg02;
+}
+
 /**************************** EX02 ****************************/
 void EX02(void)
 {
-	int ano = 0;
+	int i = 0, j = 0;
 	do{
-		cout << "[EX02 in] Digite um ano: ";
-		cin >> ano;
-	}while(!validParam(ano));
+		cout << "[EX02 in] Digite o número i: ";
+		cin >> i;
+		cout << "[EX02 in] Digite o número j: ";
+		cin >> j;
+	}while(!validParam(i,j));
 
-	if(((ano%4==0) && (ano%100!=0)) || (ano%400==0))
-		cout << "[EX02 out] Ano Bissexto" << endl;
+	cout << "[EX02 out] i^j=" << potencia(i,j) << endl;
+}
+int potencia(int i, int j)
+{
+	if (j>0)
+		return i*potencia(i, --j);
 	else
-		cout << "[EX02 out] Ano não é bissexto" << endl;
+		return 1;
 }
 /**************************** EX03 ****************************/
 void EX03(void)
