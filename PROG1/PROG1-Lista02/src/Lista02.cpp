@@ -2,17 +2,11 @@
 // Author      : Milton Yukio Godoy Saito
 // Name        : Lista02.cpp
 // Discipline  : FGV - MPE -Programação e Métodos Numéricos em Finanças I
-// Date		   : 06/03/2012
+// Date		   : 27/03/2012
 // Description : Lista de exercícios 2
 //=======================================================================
 
-#include <iostream>
-#include <iomanip>
-#include <math.h>
 #include "Lista02.h"
-using namespace std;
-
-
 
 int main(void)
 {
@@ -155,81 +149,32 @@ void strinv(char s[])
 /**************************** EX06 ****************************/
 void EX06(void)
 {
-	int n=0, tmp=0, inv=0;
 
-	cout << "[EX06 in] Digite um número inteiro: ";
-	cin >> n;
-	tmp=n;
-
-	 while(tmp != 0){
-		int digit = tmp%10;
-		inv = inv*10 + digit;
-		tmp = tmp/10;
-	 }
-	 cout << "[EX06 out] Seu número invertido é: " << inv << endl;
-	 cout << "[EX06 out] O número " << n << (inv!=n?" não ":" ")<< "é palíndromo"<< endl;
 }
 /**************************** EX07 ****************************/
 void EX07(void)
 {
-	double n=0,fat=1;
-	do{
-		cout << "[EX07 in] Digite um número inteiro: ";
-		cin >> n;
-	}while(!validParam(n));
-
-	while(n>0)
-		fat*=n--;
-
-	cout << "[EX07 out] O fatorial do número é: " << fat << endl;
+	char string[EX7_TAM]="";
+	cout << "[EX07 in] Digite uma string: ";
+	cin.getline(string,EX7_TAM,'\t');
+	cout << "[EX07 out] Input: " << string << endl;
+	for(int i=0; i<EX7_TAM || string[i]!='\0';i++)
+		if(isdigit(string[i]))string[i]='x';
+	cout << "[EX07 out] Output: " << string << endl;
 }
 /**************************** EX08 ****************************/
 void EX08(void)
 {
-	double x=1,e=1;
-	double i=1;
-	//cout << "[EX08 in] Digite o valor x : ";
-	//cin >> x;
 
-	while(x>0.000001){
-		e+=x;
-		x*=1/(i++);
-	}
-	cout << "[EX08 out] A constante e vale: " << e << endl;
 }
 /**************************** EX09 ****************************/
 void EX09(void)
 {
-	double pi=0.0;
-	double termo=4.0;
-	double denominador=3.0;
-	bool sinal = true;
 
-	do{
-		pi+=termo;
-		termo=4.0/(denominador);
-		termo=(sinal?-termo:termo);
-		sinal = !sinal;
-		denominador+=2;
-	}while(termo>0.000001 ||termo<-0.000001);
-
-	cout << "[EX09 out] A constante PI vale: " << pi << endl;
 }
 /**************************** EX10 ****************************/
 void EX10(void)
 {
-	int n=0, codificado=0;
-	int digito[4] ={0,0,0,0};
-
-	cout << "[EX10 in] Digite um número inteiro: ";
-	cin >> n;
-	for(int i=3;i>=0;i--){
-		digito[i] = ((n%10)+7)%10;
-		n = n/10;
-	}
-	codificado=1000*digito[2]+100*digito[3]+10*digito[0]+digito[1];
-
-	cout << "[EX10 out] O número codificado é "<< setfill('0') << setw(4) << codificado << endl;
 
 }
 /**************************** validação ****************************/
