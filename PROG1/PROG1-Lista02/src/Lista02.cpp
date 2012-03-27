@@ -80,22 +80,34 @@ int potencia(int i, int j)
 /**************************** EX03 ****************************/
 void EX03(void)
 {
-	double cabeca=0, pe=0, pato=0,coelho=0;
+	int N = 0;
+	const int N_MAX = 1000;
+	char resp = 'n';
 	do{
-		cout << "[EX03 in] Número de cabeças: ";
-		cin >> cabeca;
+		cout << "[EX03 in] Digite um número: ";
+		cin >> N;
+	}while(!validParam(N));
 
-		cout << "[EX03 in] Número de pés: ";
-		cin >> pe;
-	}while(!validParam(cabeca,pe));
+	cout << "[EX03 out] O número "<< N << (EX03_func(N)==false?" NÃO":"")<< " é perfeito."<< endl;
 
-	coelho = pe/2 - cabeca;
-	pato = 2*cabeca - pe/2;
 
-	if(coelho<0 || pato <0)
-		cout << "[EX03 out] Números de pés e cabeças Inválidos" << endl;
+	cout << "[EX03 out] Deseja imprimir os números perfeitos entre 1 e 1000?(y/n):";
+	cin >> resp;
+	if (resp == 'y')
+		for (int i=1; i <=N_MAX; i++)
+			if(EX03_func(i)==true)
+				cout << i << ", ";
+}
+bool EX03_func(int n){
+	int soma = 0;
+	for (int i=1; i <=n/2; i++)
+		if(n%i==0)
+			soma +=i;
+
+	if (soma == n)
+		return true;
 	else
-		cout << "[EX03 out] São "<<pato<<" patos e "<<coelho<< " coelhos."<< endl;
+		return false;
 }
 /**************************** EX04 ****************************/
 void EX04(void)

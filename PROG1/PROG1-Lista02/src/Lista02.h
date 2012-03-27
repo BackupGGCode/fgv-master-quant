@@ -13,6 +13,7 @@ void EX01_func(double _arg01,double& _arg02,double& _arg03);
 void EX02(void);
 int potencia(int i, int j);
 void EX03(void);
+bool EX03_func(int n);
 void EX04(void);
 void EX05(void);
 void EX06(void);
