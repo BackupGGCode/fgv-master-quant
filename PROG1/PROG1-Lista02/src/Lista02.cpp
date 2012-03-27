@@ -135,23 +135,22 @@ int EX04_func(int n1, int n2){
 /**************************** EX05 ****************************/
 void EX05(void)
 {
-	double n=0, n1=1, n2=0, fib=0;
-	do{
-		cout << "[EX05 in] Digite o termo da série de Fibonacci: ";
-		cin >> n;
-	}while(!validParam(n));
+	char string[EX5_TAM]="ABCDEFGH";
+//	cout << "[EX05 in] Digite uma string: ";
+//	cin.getline(string,EX5_TAM,'\t');
+//	cout << "[EX05 out] A string digitada: " << string << endl;
+	cout << "[EX05 in] string: "<< string << endl;
 
-	if (n <= 1){
-		fib = n;
-	}
-	else
-		for(double i=2;i<=n;i++){
-			fib = n1 + n2;
-			n2=n1;
-			n1=fib;
-		}
+	strinv(string);
+}
 
-	cout << "[EX05 out] O n-ésimo número da série Fibonacci é " << fib << endl;
+void strinv(char s[])
+{
+	int i = 0;
+	while (s[i++]!='\0'){} // acha o índice do último caracter
+	cout << "[EX05 out] A string invertida: ";
+	for(int j=i-2; j>=0;j--)
+		cout <<s[j];
 }
 /**************************** EX06 ****************************/
 void EX06(void)

@@ -17,6 +17,8 @@ bool EX03_func(int n);
 void EX04(void);
 int EX04_func(int n1, int n2);
 void EX05(void);
+void strinv(char s[]);
+#define EX5_TAM 32
 void EX06(void);
 void EX07(void);
 void EX08(void);
