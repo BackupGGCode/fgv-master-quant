@@ -15,6 +15,7 @@ int potencia(int i, int j);
 void EX03(void);
 bool EX03_func(int n);
 void EX04(void);
+int EX04_func(int n1, int n2);
 void EX05(void);
 void EX06(void);
 void EX07(void);

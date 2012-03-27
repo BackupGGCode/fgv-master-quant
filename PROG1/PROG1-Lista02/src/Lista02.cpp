@@ -112,14 +112,25 @@ bool EX03_func(int n){
 /**************************** EX04 ****************************/
 void EX04(void)
 {
-	char c;
+	int n1 = 0, n2 = 0;
 
-	cout << "[EX04 in] Digite um caractere: ";
-	cin >> c;
+	do{
+		cout << "[EX04 in] Digite o número n1: ";
+		cin >> n1;
+		cout << "[EX04 in] Digite o número n2: ";
+		cin >> n2;
+	}while(!validParam(n1,n2));
 
-	if((c>='a')&&(c<='z'))c-=32;
-
-	cout << "[EX04 out] " << c << endl;
+	cout << "[EX04 out] o mdc(n1,n2)=" << EX04_func(n1,n2) << endl;
+}
+int EX04_func(int n1, int n2){
+	int resto;
+	while(n2 != 0){
+		resto = n1 % n2;
+		n1 = n2;
+		n2 = resto;
+	}
+	return n1;
 }
 /**************************** EX05 ****************************/
 void EX05(void)
