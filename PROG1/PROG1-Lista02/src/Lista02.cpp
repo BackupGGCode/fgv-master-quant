@@ -129,11 +129,12 @@ int EX04_func(int n1, int n2){
 /**************************** EX05 ****************************/
 void EX05(void)
 {
-	char string[EX5_TAM]="ABCDEFGH";
-//	cout << "[EX05 in] Digite uma string: ";
-//	cin.getline(string,EX5_TAM,'\t');
-//	cout << "[EX05 out] A string digitada: " << string << endl;
-	cout << "[EX05 in] string: "<< string << endl;
+	cin.ignore(1);
+	char string[EX5_TAM]="";
+	cout << "[EX05 in] Digite uma string: ";
+
+	cin.getline(string,EX5_TAM,'\n');
+	cout << "[EX05 out] A string digitada: " << string << endl;
 
 	strinv(string);
 }
@@ -149,6 +150,44 @@ void strinv(char s[])
 /**************************** EX06 ****************************/
 void EX06(void)
 {
+	/*
+	 * criar-se-á uma array 2D, sendo uma das dimensões números de 2 até n
+	 * a outra dimensão assumirá valores 1 (primo) e -1 (não é primo)
+	 */
+	int array[EX6_TAM][2];
+	int p, index=0,i=0;
+
+	//a. Crie uma lista de inteiros consecutivos de 2 até n
+	//b. Marque todos os elementos da lista inicialmente como primos
+	for(i=0; i<EX6_TAM;i++){
+		array[i][0] = i+ 2; // preenche com número de 2 até EX6_TAM+2
+		array[i][1] = 1; // é primo
+	}
+	//c. Inicialmente, faça p=2, o primeiro número primo
+	p=2;
+	index=1;
+
+	do{
+		//d. Marque como não primo(-1) todos os números superiores a p que são múltiplos de p
+		for(i=index; i<EX6_TAM;i++){
+			if(array[i][0]%p==0)array[i][1] =-1;
+		}
+		//e. Encontre o próximo número primo(1) da lista e faça p igual a esse número
+		i=index;
+		while(i < EX6_TAM){
+			if(array[i][1] == 1)break;
+			else
+				i++;
+		}
+		p=array[i][1];
+		index=i;
+		//f. Repita os passos d e e até que p^2 seja maior que n
+	}while(pow(p,2) < EX6_TAM+2);
+
+	for(i=0; i<EX6_TAM;i++){
+		if(array[i][1]==1)
+			cout <<array[i][0] <<",";
+	}
 
 }
 /**************************** EX07 ****************************/

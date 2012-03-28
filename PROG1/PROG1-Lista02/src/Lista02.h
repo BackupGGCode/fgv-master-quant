@@ -28,6 +28,7 @@ void EX05(void);
 void strinv(char s[]);
 #define EX5_TAM 32
 void EX06(void);
+#define EX6_TAM 10
 void EX07(void);
 #define EX7_TAM 32
 void EX08(void);
