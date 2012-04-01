@@ -43,9 +43,14 @@ void imprime(int* array, int tam);
 int* adiciona_entrada(int* v, int& tamanho, int novo);
 int* apaga_entrada(int* v, int& tamanho, int apagar);
 void EX10(void);
+#define EX10_ERROR 0.00001
+#define ANOS 11
+#define ITER_MAX 1000
+int bisseccao(double fluxo[2][ANOS], double x1, double x2, double& res, int& iter);
+double valor_presente(double fluxo[2][ANOS], double taxa);
+double derivada_valor_presente(double fluxo[2][ANOS], double taxa);
+int newton_raphson(double fluxo[2][ANOS], double inicial, double& res, int& iter);
 bool validParam(double param1);
 bool validParam(double param1, double param2);
-bool validParam(double param1, double param2, double param3);
-
 
 #endif /* LISTA02_H_ */

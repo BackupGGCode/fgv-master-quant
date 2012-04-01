@@ -227,16 +227,19 @@ void EX09(void)
 {
 
 	int tamanho = EX9_TAM;
+	int tmp = 2;
 	int* array1 = new int[tamanho];
 
-
+	cout << "[EX09 in]:"<< endl;
 	for(int i=0;i<tamanho;i++)array1[i] = i+1; // inicializando
 	imprime(array1,tamanho);
 
-	int* array2 = adiciona_entrada(array1, tamanho, 2);
+	cout << "[EX09 out] adiciona o inteiro "<< tmp << endl;
+	int* array2 = adiciona_entrada(array1, tamanho, tmp);
 	imprime(array2,tamanho);
 
-	int* array3 = apaga_entrada(array2, tamanho, 2);
+	cout << "[EX09 out] remove o inteiro "<< tmp << endl;
+	int* array3 = apaga_entrada(array2, tamanho, tmp);
 	imprime(array3,tamanho);
 
 }
@@ -277,7 +280,7 @@ int* apaga_entrada(int* v, int& tamanho, int apagar){
 	return novo_array;
 }
 void imprime(int* array, int tam){
-	cout << "[EX09 out] array: ";
+	cout << "array: ";
 	for(int i=0;i<tam;i++)
 		cout << array[i] <<(i<tam-1?",":"");
 	cout << endl;
@@ -285,17 +288,123 @@ void imprime(int* array, int tam){
 /**************************** EX10 ****************************/
 void EX10(void)
 {
+	double fluxo[2][ANOS] = {{0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0},
+						{-1000.0, 100.0, 200.0, 100.0, 200.0, 100.0, 200.0, 100.0, 200.0, 100.0, 200.0}};
+
+
+	double r = 0.0;
+	int iter = 0;
+
+	if (bisseccao(fluxo, 0.0, 1.0, r, iter)==0){
+		cout << "[EX10 out] Bissecção: TIR = " << r * 100.0 << "%" << endl;
+		cout << "[EX10 out] Bissecção: Número de iterações = " << iter << endl;
+	}
+
+	if (newton_raphson(fluxo, 0.0, r, iter)==0){
+		cout << "[EX10 out] Newton-Raphson: TIR = " << r * 100.0 << "%" << endl;
+		cout << "[EX10 out] Newton-Raphson: Número de iterações = " << iter << endl;
+	}
 
 }
-/**************************** validação ****************************/
-bool validParam(double param1, double param2, double param3){
-	if (param1 >= 0 && param2 >= 0 && param3 >= 0)
-		return true;
-	else{
-		cout << "Você digitou parâmetro(s) inválido(s)! .. tente novamente." <<endl;
-		return false;
+
+int bisseccao(double fluxo[2][ANOS], double x1, double x2, double& res, int& iter){
+
+	// obtenho o minimo e o maximo do intervalo inicial
+	double min = (x2<x1?x2:x1);
+	double max = (x2>x1?x2:x1);
+
+	// calculo a função objetivo em min e max
+	double f_min = valor_presente(fluxo, min);
+	double f_max = valor_presente(fluxo, max);
+
+	// verifico se a função nos pontos possui sinais opostos
+	if ((f_min > 0 && f_max > 0) || (f_min < 0 && f_max < 0)){
+		cout << "[EX10 out] Bissecção: Os pontos iniciais devem ser tais que a função neles tenha sinais opostos" << endl;
+		return 1;
 	}
+
+	double xmid = 0.5 * (min + max);// ponto intermediário
+
+	// loop principal
+	for (iter=1;iter<=ITER_MAX;iter++){
+
+		// valor da função objetivo no ponto intermediário
+		double fmid = valor_presente(fluxo, xmid);
+
+		if(fmid == 0.0){// a raiz foi encontrada: improvavel
+			res = xmid;
+			return 0;
+		}
+
+		// obtenho o novo subintervalo (min, max) que contem a raiz
+		if((fmid > 0 && f_min > 0) || (fmid < 0 && f_min < 0))
+			min = xmid;
+		else
+			max = xmid;
+
+		xmid = 0.5 * (min+max);// novo ponto intermediário
+
+
+		if (max-min < EX10_ERROR){ // verifico convergência
+			res = (min + max) / 2.0;
+			return 0;
+		}
+	}
+
+	cout << "[EX10 out] Bissecção: Número de iterações máximo (" << ITER_MAX << ") atingido.";
+	return 2;
 }
+double valor_presente(double fluxo[2][ANOS], double taxa){
+	double soma = 0.0;
+	for(int i=0; i<ANOS; i++)
+		soma += fluxo[1][i] / pow((1+taxa), fluxo[0][i]);
+	return soma;
+}
+
+int newton_raphson(double fluxo[2][ANOS], double inicial, double& res, int& iter){
+
+	// chute inicial.
+	double raiz = inicial;
+
+	// loop principal
+	for (iter=1;iter<=ITER_MAX;iter++){
+		// calcula preco
+		double f = valor_presente(fluxo, raiz);
+
+		// calcula derivada com relacao a vol
+		double df = derivada_valor_presente(fluxo, raiz);
+
+		if(df == 0.0){
+			cout << "[EX10 out] Newton-Raphson: A derivada da funcao em "  << raiz << " é zero" << endl;
+			return 2;
+		}
+
+		// tamanho do passo
+		double dx = f/df;
+
+		// atualizo a raiz
+		raiz -= dx;
+
+		// verifico convergência
+		if(fabs(dx) < EX10_ERROR){
+			res = raiz;
+			return 0;
+		}
+	}
+
+	cout << "[EX10 out] Newton-Raphson: Número de iterações máximo (" << ITER_MAX << ") atingido.";
+	return 1;
+}
+
+double derivada_valor_presente(double fluxo[2][ANOS], double taxa){
+	double derivada = 0.0;
+	for(int i=1;i<ANOS; i++){
+		derivada -= fluxo[1][i]*fluxo[0][i]*pow(1+taxa,-fluxo[0][i]-1);
+	}
+	return derivada;
+}
+
+/**************************** validação ****************************/
 bool validParam(double param1, double param2){
 	if (param1 >= 0 && param2 >= 0)
 		return true;
