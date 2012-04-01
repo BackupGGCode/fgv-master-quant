@@ -10,12 +10,15 @@
 #define LISTA02_H_
 
 #include <iostream>
+#include <locale.h>
 using namespace std;
 #include <iomanip>
 #include <math.h>
 #include <cctype>
+#include <cstring>
+#include <cstdlib>
 
-
+#define IGNORE_TAM 32
 void EX01(void);
 void EX01_func(double _arg01,double& _arg02,double& _arg03);
 void EX02(void);
@@ -32,7 +35,13 @@ void EX06(void);
 void EX07(void);
 #define EX7_TAM 32
 void EX08(void);
+#define EX8_TAM 32
+void inverte_string(char* pstring);
 void EX09(void);
+#define EX9_TAM 5
+void imprime(int* array, int tam);
+int* adiciona_entrada(int* v, int& tamanho, int novo);
+int* apaga_entrada(int* v, int& tamanho, int apagar);
 void EX10(void);
 bool validParam(double param1);
 bool validParam(double param1, double param2);

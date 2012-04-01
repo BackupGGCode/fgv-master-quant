@@ -129,7 +129,7 @@ int EX04_func(int n1, int n2){
 /**************************** EX05 ****************************/
 void EX05(void)
 {
-	cin.ignore(1);
+	cin.ignore(IGNORE_TAM,'\n');
 	char string[EX5_TAM]="";
 	cout << "[EX05 in] Digite uma string: ";
 
@@ -204,12 +204,83 @@ void EX07(void)
 /**************************** EX08 ****************************/
 void EX08(void)
 {
+	cin.ignore(IGNORE_TAM,'\n');
+	char string[EX8_TAM]="";
+	cout << "[EX08 in] Digite uma string: ";
 
+	cin.getline(string,EX8_TAM,'\n');
+	cout << "[EX08 out] A string digitada: " << string << endl;
+	inverte_string(string);
+	cout << "[EX08 out] A string invertida: " << string << endl;
 }
+void inverte_string(char* pstring){
+	int tam = strlen(pstring);
+	int iter = tam/2;
+
+	for(int i=0; i < iter;i++){
+		swap(pstring[i],pstring[tam-1-i]);
+	}
+}
+
 /**************************** EX09 ****************************/
 void EX09(void)
 {
 
+	int tamanho = EX9_TAM;
+	int* array1 = new int[tamanho];
+
+
+	for(int i=0;i<tamanho;i++)array1[i] = i+1; // inicializando
+	imprime(array1,tamanho);
+
+	int* array2 = adiciona_entrada(array1, tamanho, 2);
+	imprime(array2,tamanho);
+
+	int* array3 = apaga_entrada(array2, tamanho, 2);
+	imprime(array3,tamanho);
+
+}
+
+int* adiciona_entrada(int* v, int& tamanho, int novo){
+	int novo_tam = tamanho+1;
+	int* novo_array = new int[novo_tam];
+
+	for(int i=0;i<tamanho;i++)novo_array[i] =v[i];
+
+	novo_array[tamanho] = novo; // adicionando novo elemento no array
+	tamanho++;
+
+	delete[] v;
+
+	return novo_array;
+}
+int* apaga_entrada(int* v, int& tamanho, int apagar){
+	int cont = 0;
+	for(int i=0;i<tamanho;i++)
+		if(v[i]==apagar)
+			cont++;
+
+	if(cont == 0) return v; //ignorar caso não encontrar nada.
+
+	int novo_tam = tamanho-cont;
+	int* novo_array = new int[novo_tam];
+
+	cont = 0;
+	for(int i=0;i<tamanho;i++)
+		if(v[i]!=apagar)
+			novo_array[cont++] =v[i];
+
+	tamanho=novo_tam;
+
+	delete[] v;
+
+	return novo_array;
+}
+void imprime(int* array, int tam){
+	cout << "[EX09 out] array: ";
+	for(int i=0;i<tam;i++)
+		cout << array[i] <<(i<tam-1?",":"");
+	cout << endl;
 }
 /**************************** EX10 ****************************/
 void EX10(void)
