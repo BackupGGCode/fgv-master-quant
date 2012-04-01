@@ -399,7 +399,7 @@ int newton_raphson(double fluxo[2][ANOS], double inicial, double& res, int& iter
 double derivada_valor_presente(double fluxo[2][ANOS], double taxa){
 	double derivada = 0.0;
 	for(int i=1;i<ANOS; i++){
-		derivada -= fluxo[1][i]*fluxo[0][i]*pow(1+taxa,-fluxo[0][i]-1);
+		derivada -= fluxo[1][i]*fluxo[0][i]/pow(1+taxa,fluxo[0][i]-1);
 	}
 	return derivada;
 }
