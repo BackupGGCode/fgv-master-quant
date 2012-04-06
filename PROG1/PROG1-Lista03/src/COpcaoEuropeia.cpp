@@ -1,9 +1,10 @@
-/*
- * COpcaoEuropeia.cpp
- *
- *  Created on: Apr 6, 2012
- *      Author: msaito
- */
+//=======================================================================
+// Author      : Milton Yukio Godoy Saito
+// Name        : COpcaoEuropeia.cpp
+// Discipline  : FGV - MPE -Programação e Métodos Numéricos em Finanças I
+// Date		   : 05/04/2012
+// Description : Lista de exercícios 3
+//=======================================================================
 
 #include "COpcaoEuropeia.h"
 

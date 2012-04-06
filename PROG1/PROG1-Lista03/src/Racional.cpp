@@ -1,20 +1,19 @@
 //=======================================================================
 // Author      : Milton Yukio Godoy Saito
-// Name        : COpcaoEuropeia.h
+// Name        : Racional.cpp
 // Discipline  : FGV - MPE -Programação e Métodos Numéricos em Finanças I
 // Date		   : 05/04/2012
 // Description : Lista de exercícios 3
 //=======================================================================
 
-#ifndef COPCAOEUROPEIA_H_
-#define COPCAOEUROPEIA_H_
+#include "Racional.h"
 
-#include "COpcao.h"
+Racional::Racional() {
+	// TODO Auto-generated constructor stub
 
-class COpcaoEuropeia: public COpcao {
-public:
-	COpcaoEuropeia();
-	virtual ~COpcaoEuropeia();
-};
+}
 
-#endif /* COPCAOEUROPEIA_H_ */
+Racional::~Racional() {
+	// TODO Auto-generated destructor stub
+}
+
