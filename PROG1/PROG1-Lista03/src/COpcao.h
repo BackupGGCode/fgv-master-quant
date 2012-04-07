@@ -59,7 +59,7 @@ public:
 	static int GetNumeroObjetos();
 
 	// calcula o preco da opcao
-	double CalculaPreco()=0;
+	virtual double CalculaPreco()=0;
 
 private:
 	double norm_cdf(double X);

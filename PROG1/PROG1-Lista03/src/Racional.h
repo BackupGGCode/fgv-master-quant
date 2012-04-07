@@ -8,7 +8,7 @@
 
 #ifndef RACIONAL_H_
 #define RACIONAL_H_
-
+int mdc(int x, int y);
 class Racional {
 private:
 	int numerador;
@@ -27,8 +27,10 @@ public:
 	Racional Mult(Racional n1, Racional n2);
 	Racional Div(Racional n1, Racional n2);
 	bool Less(Racional n);
-	void imprime(Racional n);
-	void imprimePtoFlutuante(Racional n);
+	void Imprime(Racional n);
+	void Imprime();
+	void ImprimePtoFlutuante(Racional n);
+	void ImprimePtoFlutuante();
 
 
 	~Racional();

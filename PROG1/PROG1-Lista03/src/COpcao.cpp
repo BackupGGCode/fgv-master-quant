@@ -92,7 +92,7 @@ bool COpcao::SetTipoOpcao(TipoOpcao tipoOpcao){
 }
 
 int COpcao::GetNumeroObjetos(){
-	return this->m_numero_obj;
+	return m_numero_obj;
 }
 
 double COpcao::CalculaPreco(){
