@@ -27,30 +27,28 @@ Racional::Racional(Racional& racional){
 	this->denominador = racional.denominador;
 }
 
-Racional Racional::Add(Racional n1, Racional n2){
-	return n1;
+Racional Racional::Add(Racional n){
+	return n;
 }
-Racional Racional::Sub(Racional n1, Racional n2){
-	return n1;
+Racional Racional::Sub(Racional n){
+	return n;
 }
-Racional Racional::Mult(Racional n1, Racional n2){
-	this->numerador = n1.numerador*n2.numerador;
-	this->denominador = n1.denominador*n2.denominador;
-	return n1;
+Racional Racional::Mult(Racional n){
+	this->numerador *= n.numerador;
+	this->denominador *= n.denominador;
+	Racional res(this->numerador,this->denominador);
+	return res;
 }
-Racional Racional::Div(Racional n1, Racional n2){
-	return n1;
+Racional Racional::Div(Racional n){
+	return n;
 }
 bool Racional::Less(Racional n){
 	return false;
 }
-void Racional::Imprime(Racional n){
-	cout << "racional= " << n.numerador <<"//" <<n.denominador << endl;
-}
 void Racional::Imprime(){
 	cout << "racional= " << this->numerador <<"/" <<this->denominador << endl;
 }
-void Racional::ImprimePtoFlutuante(Racional n){
+void Racional::ImprimePtoFlutuante(){
 
 }
 

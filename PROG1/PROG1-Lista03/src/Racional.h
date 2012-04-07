@@ -22,14 +22,12 @@ public:
 	Racional(Racional& racional);
 
 	// Métodos
-	Racional Add(Racional n1, Racional n2);
-	Racional Sub(Racional n1, Racional n2);
-	Racional Mult(Racional n1, Racional n2);
-	Racional Div(Racional n1, Racional n2);
+	Racional Add(Racional n);
+	Racional Sub(Racional n);
+	Racional Mult(Racional n);
+	Racional Div(Racional n);
 	bool Less(Racional n);
-	void Imprime(Racional n);
 	void Imprime();
-	void ImprimePtoFlutuante(Racional n);
 	void ImprimePtoFlutuante();
 
 
