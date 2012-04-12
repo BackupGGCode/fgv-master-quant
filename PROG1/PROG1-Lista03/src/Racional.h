@@ -9,6 +9,7 @@
 #ifndef RACIONAL_H_
 #define RACIONAL_H_
 int mdc(int x, int y);
+int mmc(int x, int y);
 class Racional {
 private:
 	int numerador;

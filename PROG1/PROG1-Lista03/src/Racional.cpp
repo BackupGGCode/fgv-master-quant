@@ -28,7 +28,13 @@ Racional::Racional(Racional& racional){
 }
 
 Racional Racional::Add(Racional n){
-	return n;
+	int denominador = mmc(this->denominador, n.denominador);
+	int numerador = this->numerador*(denominador/this->denominador)+
+						n.numerador*(denominador/n.denominador);
+	Racional res(numerador,denominador);
+	this->denominador = res.denominador;
+	this->numerador = res.numerador;
+	return res;
 }
 Racional Racional::Sub(Racional n){
 	return n;
@@ -65,6 +71,14 @@ int mdc(int x, int y){
                 divisor = resto;
         }
         return divisor;
+}
+
+int mmc(int x,int y){
+    int div;
+    if(y == 0) return x;
+    else
+     div = (x*y)/(mdc(x,y));
+    return (div);
 }
 
 Racional::~Racional() {

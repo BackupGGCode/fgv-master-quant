@@ -31,15 +31,19 @@ int main(void)
 /**************************** EX01 ****************************/
 void EX01(void){
 	// crio objeto Racional
-	Racional racional1(12,8);
-	racional1.Imprime();
+//	Racional racional1(12,8);
+//	racional1.Imprime();
+//	Racional racional2(racional1);
+//	racional2.Imprime();
+//	racional1.Mult(racional2);
+//	racional1.Imprime();
 
-	Racional racional2(racional1);
-	racional2.Imprime();
+		Racional racional1(2,7);
+		racional1.Imprime();
+		Racional racional2(1,7);
 
-
-	racional1.Mult(racional2);
-	racional1.Imprime();
+		racional1.Add(racional2);
+		racional1.Imprime();
 
 }
 
