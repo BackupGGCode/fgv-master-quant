@@ -12,9 +12,16 @@ double norm_cdf(double X);
 
 COpcaoEuropeia::COpcaoEuropeia() {
 }
+COpcaoEuropeia::COpcaoEuropeia(double Spot, double Strike, double Vol, double TxLivreRisco, double Prazo, TipoOpcao TipoOpcao) {
+	this->m_Spot=Spot;
+	this->m_Strike=Strike;
+	this->m_Vol=Vol;
+	this->m_TxLivreRisco=TxLivreRisco;
+	this->m_Prazo=Prazo;
+	this->m_TipoOpcao=TipoOpcao;
+}
 
 COpcaoEuropeia::~COpcaoEuropeia() {
-	// TODO Auto-generated destructor stub
 }
 
 double COpcaoEuropeia::CalculaPreco(){
@@ -32,7 +39,6 @@ double COpcaoEuropeia::CalculaPreco(){
 		return m_Spot * norm_cdf(d1) - m_Strike * exp(-m_TxLivreRisco*m_Prazo) * norm_cdf(d2);
 	else
 		return m_Strike * exp(-m_TxLivreRisco * m_Prazo) * norm_cdf(-d2) - m_Spot * norm_cdf(-d1);
-
 }
 
 /*

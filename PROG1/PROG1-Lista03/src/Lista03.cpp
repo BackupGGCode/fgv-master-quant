@@ -89,8 +89,37 @@ void EX03(void){
 }
 /**************************** EX04 ****************************/
 void EX04(void){
-	COpcaoEuropeia opcao;
-	cout << opcao.CalculaPreco();
+
+	double spot;			// preco spot
+	double strike;		// preco strike
+	double vol;			// volatilidade do ativo objeto
+	double txLivreRisco;	// taxa de juros livre de risco
+	double prazo;			// prazo (em anos) para o vencimento
+	char tipo;
+	TipoOpcao tipoOpcao;
+
+	cout << "[EX04] Calculo da Opção Européia." << endl;
+
+	cout << "[EX04 in] Spot: ";
+	cin >> spot;
+	cout << "[EX04 in] Strike: ";
+	cin >> strike;
+	cout << "[EX04 in] Volatilidade: ";
+	cin >> vol;
+	cout << "[EX04 in] Taxa Livre de Risco (%): ";
+	cin >> txLivreRisco;
+	cout << "[EX04 in] Prazo (anos): ";
+	cin >> prazo;
+
+	cout << "[EX04 in] (c)all ou (p)ut: ";
+	cin >> tipo;
+	if(tipo =='c')
+		tipoOpcao=CALL;
+	else
+		tipoOpcao=PUT;
+
+	COpcaoEuropeia opcao(spot,strike,vol,txLivreRisco,prazo, tipoOpcao);
+	cout << "[EX04 out] preço da opção européia:"<< opcao.CalculaPreco() << endl;
 
 }
 /**************************** EX05 ****************************/
