@@ -32,29 +32,50 @@ Racional Racional::Add(Racional n){
 	int numerador = this->numerador*(denominador/this->denominador)+
 						n.numerador*(denominador/n.denominador);
 	Racional res(numerador,denominador);
+	//armazenando o resultado em forma reduzida
 	this->denominador = res.denominador;
 	this->numerador = res.numerador;
 	return res;
 }
 Racional Racional::Sub(Racional n){
-	return n;
+	int denominador = mmc(this->denominador, n.denominador);
+	int numerador = this->numerador*(denominador/this->denominador)-
+						n.numerador*(denominador/n.denominador);
+	Racional res(numerador,denominador);
+	//armazenando o resultado em forma reduzida
+	this->denominador = res.denominador;
+	this->numerador = res.numerador;
+	return res;
 }
 Racional Racional::Mult(Racional n){
 	this->numerador *= n.numerador;
 	this->denominador *= n.denominador;
 	Racional res(this->numerador,this->denominador);
+	//armazenando o resultado em forma reduzida
+	this->denominador = res.denominador;
+	this->numerador = res.numerador;
 	return res;
 }
 Racional Racional::Div(Racional n){
-	return n;
+	this->numerador *=n.denominador;
+	this->denominador *= n.numerador;
+	Racional res(this->numerador,this->denominador);
+	//armazenando o resultado em forma reduzida
+	this->denominador = res.denominador;
+	this->numerador = res.numerador;
+	return res;
 }
 bool Racional::Less(Racional n){
-	return false;
+
+	int denominador = mmc(this->denominador, n.denominador);
+	int numerador = n.numerador*(denominador/n.denominador) - this->numerador*(denominador/this->denominador);
+	return (numerador>0?false:true);
 }
 void Racional::Imprime(){
-	cout << "racional= " << this->numerador <<"/" <<this->denominador << endl;
+	cout<< this->numerador <<"/" <<this->denominador << endl;
 }
 void Racional::ImprimePtoFlutuante(){
+	cout<< (float)this->numerador/this->denominador<< endl;
 
 }
 
