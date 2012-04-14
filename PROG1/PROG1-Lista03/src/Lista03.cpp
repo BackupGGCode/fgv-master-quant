@@ -30,40 +30,71 @@ int main(void)
 }
 /**************************** EX01 ****************************/
 void EX01(void){
-	// crio objeto Racional
-//	Racional racional1(12,8);
-//	racional1.Imprime();
-//	Racional racional2(racional1);
-//	racional2.Imprime();
-//	racional1.Mult(racional2);
-//	racional1.Imprime();
 
-		Racional racional1(2,7);
-		racional1.Imprime();
-		Racional racional2(1,7);
+	Racional racional1(5,12);
+	cout << "r1 = "; racional1.Imprime();
+	Racional racional2(2,12);
+	cout << "r2 = "; racional2.Imprime();
 
-		racional1.Add(racional2);
-		racional1.Imprime();
+	racional1.Add(racional2);
+	cout << "r1 = Add(r1,r2) = "; racional1.Imprime();
+
+	Racional racional3(1,12);
+	cout << "r3 = "; racional3.Imprime();
+
+	racional1.Sub(racional3);
+	cout << "r1 = Sub(r1,r3) = "; racional1.Imprime();
+
+	Racional racional4(3,7);
+	cout << "r4 = "; racional4.Imprime();
+
+	racional1.Mult(racional4);
+	cout << "r1 = Mult(r1,r4) = "; racional1.Imprime();
+
+	Racional racional5(3,21);
+	cout << "r5 = "; racional5.Imprime();
+
+	racional1.Div(racional5);
+	cout << "r1 = Div(r1,r5) = "; racional1.Imprime();
+
+	Racional racional6(4,2);
+	cout << "r6 = "; racional6.Imprime();
+	cout << "r6 "<<(racional1.Less(racional6)?"<":">")<<" r1"<<endl;
+
+
+	Racional racional7(1,2);
+	cout << "r7 = "; racional7.Imprime();
+	cout << "r7 "<<(racional1.Less(racional7)?"<":">")<<" r1"<<endl;
+
+	cout << "[pto flutuante] r1 = "; racional1.ImprimePtoFlutuante();
 
 }
 
 /**************************** EX02 ****************************/
 void EX02(void){
+	Relogio relogio;
+	relogio.SolicitaHoraUsuario();
+	relogio.Imprime();
+	//avancando 15 segundos
+	for(int i=0; i < 15; i++)
+		relogio.AvancaProxSegundo();
+	relogio.Imprime();
 }
 
 /**************************** EX03 ****************************/
 void EX03(void){
 
+
+
 }
 /**************************** EX04 ****************************/
 void EX04(void){
-	cout << "[EX04 in] Digite o número n1: ";
+	COpcaoEuropeia opcao;
+	cout << opcao.CalculaPreco();
 
-	cout << "[EX04 out] o mdc(n1,n2)=" << endl;
 }
 /**************************** EX05 ****************************/
 void EX05(void){
-	cout << "[EX05 in] Digite uma string: ";
-	cout << "[EX05 out] A string digitada: " << endl;
+
 }
 

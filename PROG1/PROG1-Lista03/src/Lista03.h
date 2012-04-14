@@ -9,6 +9,8 @@
 #ifndef LISTA03_H_
 #define LISTA03_H_
 #include "Racional.h"
+#include "Relogio.h"
+#include "COpcaoEuropeia.h"
 #include <iostream>
 #include <locale.h>
 using namespace std;

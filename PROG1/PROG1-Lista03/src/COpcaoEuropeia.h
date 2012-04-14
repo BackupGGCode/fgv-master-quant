@@ -14,6 +14,12 @@
 class COpcaoEuropeia: public COpcao {
 public:
 	COpcaoEuropeia();
+	COpcaoEuropeia(COpcaoEuropeia& opcao);
+	COpcaoEuropeia(double Spot, double Strike, double Vol, double TxLivreRisco, double Prazo, TipoOpcao TipoOpcao);
+
+	// calcula o preco da opcao
+	double CalculaPreco();
+
 	virtual ~COpcaoEuropeia();
 };
 

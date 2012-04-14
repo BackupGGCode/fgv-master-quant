@@ -61,11 +61,6 @@ public:
 	// calcula o preco da opcao
 	virtual double CalculaPreco()=0;
 
-private:
-	double norm_cdf(double X);
-
-
-
 };
 
 #endif /* COPCAO_H_ */
