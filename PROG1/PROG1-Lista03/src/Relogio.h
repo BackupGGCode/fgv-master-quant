@@ -23,11 +23,11 @@ public:
 
 	void SolicitaHoraUsuario(void);
 	void SetHora(int hr, int min, int seg);
-	void GetHora(int *hr, int *min, int *seg);
+	void GetHora(int *hr, int *min, int *seg) const;
 	void AvancaProxSegundo(void);
 
 	//Imprimir no formato hh:mm:ss
-	void Imprime();
+	void Imprime() const;
 
 
 	virtual ~Relogio();

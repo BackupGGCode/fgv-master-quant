@@ -12,6 +12,14 @@ double norm_cdf(double X);
 
 COpcaoEuropeia::COpcaoEuropeia() {
 }
+COpcaoEuropeia::COpcaoEuropeia(COpcaoEuropeia& opcao){
+	this->m_Spot=opcao.m_Spot;
+	this->m_Strike=opcao.m_Strike;
+	this->m_Vol=opcao.m_Vol;
+	this->m_TxLivreRisco=opcao.m_TxLivreRisco;
+	this->m_Prazo=opcao.m_Prazo;
+	this->m_TipoOpcao=opcao.m_TipoOpcao;
+}
 COpcaoEuropeia::COpcaoEuropeia(double Spot, double Strike, double Vol, double TxLivreRisco, double Prazo, TipoOpcao TipoOpcao) {
 	this->m_Spot=Spot;
 	this->m_Strike=Strike;

@@ -13,10 +13,27 @@
 
 class COpcaoAmericana: public COpcao {
 protected:
-	int numero_passos;
+	int N; //número de passos
+	double** pp_arvore_ativo;
+	double** pp_arvore_derivativo;
+
+
+protected:
+	void InicializaArvores();
+	void FinalizaArvores();
 
 public:
 	COpcaoAmericana();
+	COpcaoAmericana(COpcaoAmericana& opcao);
+	COpcaoAmericana(double Spot, double Strike, double Vol,
+			double TxLivreRisco, double Prazo, TipoOpcao TipoOpcao, int n);
+
+	int GetN() const;
+	void SetN(int n);
+
+	// calcula o preco da opcao
+	double CalculaPreco();
+
 	virtual ~COpcaoAmericana();
 };
 

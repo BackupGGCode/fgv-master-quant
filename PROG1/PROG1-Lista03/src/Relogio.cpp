@@ -46,7 +46,7 @@ void Relogio::SetHora(int hr, int min, int seg) {
 	this->segundo = seg;
 }
 
-void Relogio::GetHora(int *hr, int *min, int *seg){
+void Relogio::GetHora(int *hr, int *min, int *seg) const{
 	 *hr = this->hora;
 	 *min = this->minuto;
 	 *seg = this->segundo;
@@ -63,7 +63,7 @@ void Relogio::AvancaProxSegundo(void){
 	}
 }
 
-void Relogio::Imprime(){
+void Relogio::Imprime() const{
 	cout << setfill('0')<< setw(2) << this->hora <<":"
 			 << setfill('0')<< setw(2)<<this->minuto <<":"
 			 << setfill('0')<< setw(2)<< this->segundo << endl;

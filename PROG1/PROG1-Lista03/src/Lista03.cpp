@@ -20,6 +20,7 @@ int main(void)
 		case  3: EX03(); break;
 		case  4: EX04(); break;
 		case  5: EX05(); break;
+		case  6: COMPARACAO(); break;
 		}
 		cout << endl << "Digite o número do exercício [1-5 ou 0-sair]: ";
 		cin >> menu;
@@ -32,41 +33,41 @@ int main(void)
 void EX01(void){
 
 	Racional racional1(5,12);
-	cout << "r1 = "; racional1.Imprime();
+	cout << "[EX01 in] r1 = "; racional1.Imprime();
 	Racional racional2(2,12);
-	cout << "r2 = "; racional2.Imprime();
+	cout << "[EX01 in] r2 = "; racional2.Imprime();
 
 	racional1.Add(racional2);
-	cout << "r1 = Add(r1,r2) = "; racional1.Imprime();
+	cout << "[EX01 out] r1 = Add(r1,r2) = "; racional1.Imprime();
 
 	Racional racional3(1,12);
-	cout << "r3 = "; racional3.Imprime();
+	cout << "[EX01 in] r3 = "; racional3.Imprime();
 
 	racional1.Sub(racional3);
-	cout << "r1 = Sub(r1,r3) = "; racional1.Imprime();
+	cout << "[EX01 out] r1 = Sub(r1,r3) = "; racional1.Imprime();
 
 	Racional racional4(3,7);
-	cout << "r4 = "; racional4.Imprime();
+	cout << "[EX01 in] r4 = "; racional4.Imprime();
 
 	racional1.Mult(racional4);
-	cout << "r1 = Mult(r1,r4) = "; racional1.Imprime();
+	cout << "[EX01 out] r1 = Mult(r1,r4) = "; racional1.Imprime();
 
 	Racional racional5(3,21);
 	cout << "r5 = "; racional5.Imprime();
 
 	racional1.Div(racional5);
-	cout << "r1 = Div(r1,r5) = "; racional1.Imprime();
+	cout << "[EX01 in] r1 = Div(r1,r5) = "; racional1.Imprime();
 
 	Racional racional6(4,2);
-	cout << "r6 = "; racional6.Imprime();
-	cout << "r6 "<<(racional1.Less(racional6)?"<":">")<<" r1"<<endl;
+	cout << "[EX01 in] r6 = "; racional6.Imprime();
+	cout << "[EX01 out] r6 "<<(racional1.Less(racional6)?"<":">")<<" r1"<<endl;
 
 
 	Racional racional7(1,2);
-	cout << "r7 = "; racional7.Imprime();
-	cout << "r7 "<<(racional1.Less(racional7)?"<":">")<<" r1"<<endl;
+	cout << "[EX01 in] r7 = "; racional7.Imprime();
+	cout << "[EX01 out] r7 "<<(racional1.Less(racional7)?"<":">")<<" r1"<<endl;
 
-	cout << "[pto flutuante] r1 = "; racional1.ImprimePtoFlutuante();
+	cout << "[EX01 out] r1 em ponto flutuante = "; racional1.ImprimePtoFlutuante();
 
 }
 
@@ -74,10 +75,12 @@ void EX01(void){
 void EX02(void){
 	Relogio relogio;
 	relogio.SolicitaHoraUsuario();
+	cout << "[EX02 out]";
 	relogio.Imprime();
 	//avancando 15 segundos
 	for(int i=0; i < 15; i++)
 		relogio.AvancaProxSegundo();
+	cout << "[EX02 out] ";
 	relogio.Imprime();
 }
 
@@ -90,40 +93,69 @@ void EX03(void){
 /**************************** EX04 ****************************/
 void EX04(void){
 
-	double spot;			// preco spot
-	double strike;		// preco strike
-	double vol;			// volatilidade do ativo objeto
-	double txLivreRisco;	// taxa de juros livre de risco
-	double prazo;			// prazo (em anos) para o vencimento
-	char tipo;
-	TipoOpcao tipoOpcao;
+	double T = 2.0;			// prazo (em anos) para o vencimento
+	double vol = 0.20;		// volatilidade do ativo base
+	double K = 100.0;		// preco strike
+	double S = 100.0;		// preco spot
+	double r = 0.12;		// taxa de juros livre de risco
+	TipoOpcao tipo = PUT;	// tipo da opcao
 
-	cout << "[EX04] Calculo da Opção Européia." << endl;
+	cout << "[EX04 in] Spot: "<< S << endl;
+	cout << "[EX04 in] Strike: "<< K << endl;
+	cout << "[EX04 in] Volatilidade: "<< vol << endl;
+	cout << "[EX04 in] Taxa Risk Free: "<< r << endl;
+	cout << "[EX04 in] Prazo: "<< T << endl;
+	cout << "[EX04 in] Tipo: "<< (tipo==CALL?"CALL":"PUT")<< endl<< endl;
 
-	cout << "[EX04 in] Spot: ";
-	cin >> spot;
-	cout << "[EX04 in] Strike: ";
-	cin >> strike;
-	cout << "[EX04 in] Volatilidade: ";
-	cin >> vol;
-	cout << "[EX04 in] Taxa Livre de Risco (%): ";
-	cin >> txLivreRisco;
-	cout << "[EX04 in] Prazo (anos): ";
-	cin >> prazo;
-
-	cout << "[EX04 in] (c)all ou (p)ut: ";
-	cin >> tipo;
-	if(tipo =='c')
-		tipoOpcao=CALL;
-	else
-		tipoOpcao=PUT;
-
-	COpcaoEuropeia opcao(spot,strike,vol,txLivreRisco,prazo, tipoOpcao);
+	COpcaoEuropeia opcao(S,K,vol,r,T, tipo);
 	cout << "[EX04 out] preço da opção européia:"<< opcao.CalculaPreco() << endl;
 
 }
 /**************************** EX05 ****************************/
 void EX05(void){
 
+	double T = 2.0;			// prazo (em anos) para o vencimento
+	double vol = 0.20;		// volatilidade do ativo base
+	double K = 100.0;		// preco strike
+	double S = 100.0;		// preco spot
+	double r = 0.12;		// taxa de juros livre de risco
+	int N = 100;			// numero de passos da arvore
+	TipoOpcao tipo = PUT;	// tipo da opcao
+
+	cout << "[EX05 in] Spot: "<< S << endl;
+	cout << "[EX05 in] Strike: "<< K << endl;
+	cout << "[EX05 in] Volatilidade: "<< vol << endl;
+	cout << "[EX05 in] Taxa Risk Free: "<< r << endl;
+	cout << "[EX05 in] Prazo: "<< T << endl;
+	cout << "[EX05 in] N: "<< N << endl;
+	cout << "[EX05 in] Tipo: "<< (tipo==CALL?"CALL":"PUT")<< endl<< endl;
+
+	COpcaoAmericana opcao(S,K,vol,r,T,tipo,N);
+	cout << "[EX05 out] preço da opção americana:"<< opcao.CalculaPreco() << endl;
+}
+
+void COMPARACAO(void){
+
+	double T = 7;			// prazo (em anos) para o vencimento
+	double vol = 0.20;		// volatilidade do ativo base
+	double K = 35;		// preco strike
+	double S = 30;		// preco spot
+	double r = 0.308;		// taxa de juros livre de risco
+	int N = 7;			// numero de passos da arvore
+	TipoOpcao tipo = PUT;	// tipo da opcao
+
+	cout << "Spot: "<< S << endl;
+	cout << "Strike: "<< K << endl;
+	cout << "Volatilidade: "<< vol << endl;
+	cout << "Taxa Risk Free: "<< r << endl;
+	cout << "Prazo: "<< T << endl;
+	cout << "N: "<< N << endl;
+	cout << "Tipo: "<< (tipo==CALL?"CALL":"PUT")<< endl<< endl;
+
+	COpcaoEuropeia opcaoEUR(S,K,vol,r,T, tipo);
+	cout << "preço da opção européia:"<< opcaoEUR.CalculaPreco() << endl;
+
+	COpcaoAmericana opcaoAME(S,K,vol,r,T,tipo,N);
+	cout << "preço da opção americana:"<< opcaoAME.CalculaPreco() << endl;
 }
 

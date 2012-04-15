@@ -65,16 +65,16 @@ Racional Racional::Div(Racional n){
 	this->numerador = res.numerador;
 	return res;
 }
-bool Racional::Less(Racional n){
+bool Racional::Less(Racional n) const{
 
 	int denominador = mmc(this->denominador, n.denominador);
 	int numerador = n.numerador*(denominador/n.denominador) - this->numerador*(denominador/this->denominador);
 	return (numerador>0?false:true);
 }
-void Racional::Imprime(){
+void Racional::Imprime() const{
 	cout<< this->numerador <<"/" <<this->denominador << endl;
 }
-void Racional::ImprimePtoFlutuante(){
+void Racional::ImprimePtoFlutuante() const{
 	cout<< (float)this->numerador/this->denominador<< endl;
 
 }

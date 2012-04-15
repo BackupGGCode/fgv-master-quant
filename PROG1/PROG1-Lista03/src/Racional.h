@@ -27,9 +27,9 @@ public:
 	Racional Sub(Racional n);
 	Racional Mult(Racional n);
 	Racional Div(Racional n);
-	bool Less(Racional n);
-	void Imprime();
-	void ImprimePtoFlutuante();
+	bool Less(Racional n) const;
+	void Imprime() const;
+	void ImprimePtoFlutuante() const;
 
 
 	~Racional();

@@ -11,6 +11,7 @@
 #include "Racional.h"
 #include "Relogio.h"
 #include "COpcaoEuropeia.h"
+#include "COpcaoAmericana.h"
 #include <iostream>
 #include <locale.h>
 using namespace std;
@@ -20,5 +21,6 @@ void EX02(void);
 void EX03(void);
 void EX04(void);
 void EX05(void);
+void COMPARACAO(void);
 
 #endif /* LISTA03_H_ */
