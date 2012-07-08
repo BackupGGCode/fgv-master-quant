@@ -9,6 +9,7 @@
 #include <iostream>
 #include <clocale>		// setlocale
 #include "BlackDermanToy.h"
+#include "IO.h"
 
 
 using namespace std;
@@ -27,14 +28,11 @@ int main() {
 	BlackDermanToy BDT;
 
 	double** tree;		// short rate tree
-
 	tree=BDT.buildBDT(yield_curve,volatility_curve,N,T);
 
-	for (int i=0;i<N+1;i++){
-		for (int j=0;j<N+1;j++){
-			cout << tree[i][j] <<"\t\t";
-		}
-		cout << endl;
-	}
+	IO io;
+	io.exportShortRate2RStudio(tree,N);
+
+
 	return 0;
 }

@@ -48,6 +48,8 @@ double** BlackDermanToy::buildBDT(double* yield_curve,double* volatility_curve, 
 		d[i] = new double[TAM];
 		Qu[i] = new double[TAM];
 		Qd[i] = new double[TAM];
+		for(int j=0;j<N;j++)
+			r[i][j] = 0;
 	}
 
 	// precompute constants – assume one year time step
