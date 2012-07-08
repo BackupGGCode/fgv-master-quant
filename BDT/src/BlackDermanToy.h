@@ -34,9 +34,18 @@ public:
 
 
 	BlackDermanToy();
+
+	// volatility term structure
 	void buildBDT(double* yield_curve,double* volatility_curve, int N, double T, double inityield);
+	// constant volatility
 	void buildBDT(double* yield_curve,double volatility, int N, double T, double inityield);
+	// Swaption price
 	double payerSwaptionBDT(/*double* yield_curve,double volatility, double inityield,*/ int Ns, int NT,double swapRate,  double principal, double frequency);
+	// Callabe bond price
+	double callableEuropeanBondBDT(int N/*steps*/, int T/*maturity*/,double strike,double principal);
+
+
+
 	virtual ~BlackDermanToy();
 
 private:

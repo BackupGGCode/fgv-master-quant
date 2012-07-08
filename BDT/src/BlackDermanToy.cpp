@@ -185,7 +185,6 @@ double BlackDermanToy::payerSwaptionBDT(/*double* yield_curve,double volatility,
 		}
 	}
 
-
 	// initialize coupon bond maturity condition for fixed side of swap
 	for (j = -Ns; j <= Ns; j += 2){
 		B[Ns][j] = principal + swapRate/frequency;
@@ -218,6 +217,39 @@ double BlackDermanToy::payerSwaptionBDT(/*double* yield_curve,double volatility,
 
 	IO io;
 	io.exportBondPrice2RStudio(B,Ns);
+	return C[0][0];
+}
+
+
+double BlackDermanToy::callableEuropeanBondBDT(int N/*steps*/, int T/*maturity*/,double strike,double principal){
+	double B[TAM_MAX][TAM_MAX];			// bond prices
+	double C[TAM_MAX][TAM_MAX];			// European Bond Option prices:CALL
+
+	// initialize B and C
+	for (i = 0; i < TAM_MAX; i++)
+		for (j = 0; j < TAM_MAX; j++){
+			B[i][j]=0.0;
+			C[i][j]=0.0;
+		}
+
+	// initialize bond maturity condition
+	for (j = -N; j <= N; j += 2)
+		B[N][j] = principal;
+
+	//derive the bond price in the tree via the discounted expectations
+	for (i = N - 1; i >= T; i--)
+		for (j = -i; j <= i; j += 2)
+			B[i][j] = this->d[i][j]*0.5*(B[i+1][j+1] + B[i+1][j-1]);
+
+	// initialize maturity condition for option
+	for (j = -T; j <= T; j += 2)
+		C[T][j] = max(0,(B[T][j]-strike));
+
+	//derive the bond price in the tree via
+	for (i = T - 1; i >= 0; i--)
+		for (j = -i; j <= i; j += 2)
+			C[i][j] = this->d[i][j]*0.5*(C[i+1][j+1] + C[i+1][j-1]);
+
 	return C[0][0];
 }
 
