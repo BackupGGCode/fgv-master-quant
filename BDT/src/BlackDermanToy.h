@@ -1,5 +1,6 @@
 #include <cmath>
 #define	TAM_MAX 100					//tree max dimension
+#define	ITER_MAX 10000				//max iteration
 #define EPSILON 0.001				// error tolerance level
 
 class BlackDermanToy {

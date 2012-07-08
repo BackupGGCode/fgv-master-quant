@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
 
 BinomialTreePlot = 
-  function(BinomialTreeValues, dx = -0.025, dy = 0.4, cex = 1, digits = 2, ...){         
+  function(BinomialTreeValues, dx = -0.025, dy = 0.4, cex = 1, digits = 4, ...){         
     
     # Tree:
     Tree = round(BinomialTreeValues, digits = digits)
@@ -24,6 +24,6 @@ BinomialTreePlot =
 
 # ------------------------------------------------------------------------------
 input <- read.delim("/storage/data/R/bdt_short_rate.in", header=F)
-BinomialTreePlot(input,dy = 0.8,cex = 0.8,ylim = c(-5, 5),xlab = "n",ylab = "rate")
+BinomialTreePlot(input,dy = 0.4,cex = 0.9,ylim = c(-4, 4),xlab = "n",ylab = "rate")
 title(main = "Short Rate Tree")
 # ------------------------------------------------------------------------------

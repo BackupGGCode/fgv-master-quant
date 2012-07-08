@@ -1,5 +1,5 @@
 #include "BlackDermanToy.h"
-#include <iostream>		// cin, cout
+#include <iostream>
 #include "IO.h"
 
 
@@ -46,7 +46,10 @@ void BlackDermanToy::buildBDT(double* yield_curve,double volatility, int N, doub
 		// use numerical search to solve for U[i]
 		// Newton-Raphson method
 		alpha1 = inityield;
+
+		int k=0; // iteration counter
 		do{
+			k++;
 			sum1 = 0;
 			sum2 = 0;
 			for (j = -i; j <= i; j += 2)
@@ -57,7 +60,7 @@ void BlackDermanToy::buildBDT(double* yield_curve,double volatility, int N, doub
 			alpha2 = alpha1 - (sum1 - P[i+1])/(-sum2);
 			error = alpha2 - alpha1;
 			alpha1 = alpha2;
-		}while (error > EPSILON);
+		}while ((error > EPSILON) || k > ITER_MAX);
 
 		U[i] = alpha1;
 		// set r[.] and d[.]
@@ -95,13 +98,15 @@ void BlackDermanToy::buildBDT(double* yield_curve,double* volatility_curve, int 
 		sum2 = 0;
 		error = 0;
 		alpha1 = 0.92;
+		int k=0; // iteration counter
 		do{
+			k++;
 			sum1 = (alpha1 + pow(alpha1,exp(-2*volR[i]*sqrt(dt))))/(2*(1 + r[0][0]*dt));
 			sum2 = (1/(2*(1 + r[0][0]*dt)))*(1 + exp(-2*volR[i]*sqrt(dt))*(pow(alpha1,exp(-2*volR[i]*sqrt(dt)) - 1)));
 			alpha2 = alpha1 - (sum1 - P[i])/(sum2);
 			error = fabs(alpha2 - alpha1);
 			alpha1 = alpha2;
-		}while (error > EPSILON);
+		}while ((error > EPSILON) || k > ITER_MAX);
 		Pu[i] = alpha1;
 		Pd[i] = pow(Pu[i],exp(-2*volR[i]*sqrt(dt)));
 	}
@@ -123,7 +128,7 @@ void BlackDermanToy::buildBDT(double* yield_curve,double* volatility_curve, int 
 		alpha1 = inityield;
 		sigVal1 = 0.092;
 
-		int k=0;
+		int k=0; // iteration counter
 		do{
 			k++;
 			sum1 = 0;
@@ -151,7 +156,7 @@ void BlackDermanToy::buildBDT(double* yield_curve,double* volatility_curve, int 
 			sigVal3 = sigVal1 - (sum3 - Pd[i+1])/(-volSum2);
 			error4 = fabs(sigVal3 - sigVal1);
 			sigVal1 = sigVal3;
-		}while (((error > EPSILON) || (error1 > EPSILON) || (error3 > EPSILON) ||(error4 > EPSILON)) && k > 500);
+		}while (((error > EPSILON) || (error1 > EPSILON) || (error3 > EPSILON) ||(error4 > EPSILON)) || k > ITER_MAX);
 
 		U[i] = alpha1;
 		vol[i] = sigVal1;
