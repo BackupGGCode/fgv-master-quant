@@ -1,56 +1,74 @@
 #include "BlackDermanToy.h"
 #include <iostream>		// cin, cout
+#include "IO.h"
+
 
 BlackDermanToy::BlackDermanToy() {
+	alpha1 = 0.05;
+	alpha2 = 0.0;
+	alpha3 = 0.10;
+	dt = 0;
+	error=error1=error2=error3=error4=error5=0;
+	sum1=sum2=sum3=sum4=0;
+	volSum1=volSum2=0;
+	sigVal1=sigVal2=sigVal3=0;
 }
 
-double** BlackDermanToy::buildBDT(double* yield_curve,double* volatility_curve, int N, double T){
-
-	int TAM = N+1;
-
-	double** r = new double*[TAM];		// short rate at node i, j
-	double** d = new double*[TAM];		// discount rate at node i, j
-
-	double* U = new double[TAM];		// median of the (lognormal)
-										// distribution for r at time t
-	double dt = 0.0;					// time step
-	double* volR = new double[TAM];		// short rate volatiliy
-	double* vol = new double[TAM];		// stores calibrated volatility
-										// parameter
-	double* P = new double[TAM];		// discount bond prices
-	double* Pu = new double[TAM];		// price of bond in up movement
-	double* Pd = new double[TAM];		// price of bond in down movement
+double BlackDermanToy::max(double a, double b){
+	return a > b ? a : b;
+}
 
 
-	double** Qu = new double*[TAM];		// state securities (Arrow-Debreu)
-										// prices for an up movement
-	double** Qd = new double*[TAM];		// state securities (Arrow-Debreu)
-										// prices for a down movement
-	double* R = new double[TAM];		// discount curve rates
-	const double epsilon = 0.001;		// error tolerance level
-	double error, error1, error2 = 0.0;	// errors computed in numerical search
-	double error3, error4 = 0.0;		// errors computed in numerical search
-	double sum1, sum2 = 0.0;			// sums of first derivatives
-	double sum3, sum4 = 0.0;			// sums of second derivatives
-	double volSum1, volSum2 = 0.0;		// sum of volatilities
-	double sigVal1 = 0.0;				// calibrated volatility parameter
-	double sigVal2, sigVal3 = 0.0;		// computed volatilities in numerical
-										// search
-	double alpha1 = 0.05;				// calibrated U(i) parameter
-	double alpha2 = 0.0;				// updated alpha1 (U(i)) parameter
-	double alpha3 = 0.10;				// computed U(i) parameter in numerical
-										// search
-	int i,j;
+void BlackDermanToy::buildBDT(double* yield_curve,double volatility, int N, double T, double inityield){
+	// precompute constants – assume one year time step
+	dt = 1;
 
-	// memory allocation
-	for(i=0;i<TAM;i++){
-		r[i] = new double[TAM];
-		d[i] = new double[TAM];
-		Qu[i] = new double[TAM];
-		Qd[i] = new double[TAM];
-		for(int j=0;j<N;j++)
-			r[i][j] = 0;
+	// initialize yield and volatility curves
+	for (i = 1; i <= N; i++){
+		R[i] = yield_curve[i-1];
+		P[i] = 1/(pow((1 + R[i]*dt),i*dt));
 	}
+
+	// initialize first node
+	Q[0][0] = 1.0;
+	P[0] = 1;
+	U[0] = yield_curve[0];
+	r[0][0] = yield_curve[0];
+	d[0][0] = 1/(1 + r[0][0]*dt);
+	// evolve the tree for the short rate
+	for (i = 1; i <= N; i++){
+		// update pure security prices at time i
+		Q[i][-i] = 0.5*Q[i-1][-i+1]*d[i-1][-i+1];
+		Q[i][i] = 0.5*Q[i-1][i-1]*d[i-1][i-1];
+		for (j = -i+2; j <= i-2; j += 2){
+			Q[i][j] = 0.5*Q[i-1][j-1]*d[i-1][j-1] + 0.5*Q[i-1][j+1]*d[i-1][j+1];
+		}
+		// use numerical search to solve for U[i]
+		// Newton-Raphson method
+		alpha1 = inityield;
+		do{
+			sum1 = 0;
+			sum2 = 0;
+			for (j = -i; j <= i; j += 2)
+			{
+			sum1 += Q[i][j]*(1/(1 + alpha1*exp(volatility*j*sqrt(dt))*dt));
+			sum2 += Q[i][j]*(pow((1+ alpha1*exp(volatility*j*sqrt(dt))*dt),-2)*exp(volatility*j*sqrt(dt))*dt);
+			}
+			alpha2 = alpha1 - (sum1 - P[i+1])/(-sum2);
+			error = alpha2 - alpha1;
+			alpha1 = alpha2;
+		}while (error > EPSILON);
+
+		U[i] = alpha1;
+		// set r[.] and d[.]
+		for (j = -i; j <= i; j+= 2)	{
+			r[i][j] = U[i]*exp(volatility*j*sqrt(dt));
+			d[i][j] = 1.0/(1.0 + r[i][j]*dt);
+		}
+	}
+}
+
+void BlackDermanToy::buildBDT(double* yield_curve,double* volatility_curve, int N, double T, double inityield){
 
 	// precompute constants – assume one year time step
 	dt = 1;
@@ -83,7 +101,7 @@ double** BlackDermanToy::buildBDT(double* yield_curve,double* volatility_curve, 
 			alpha2 = alpha1 - (sum1 - P[i])/(sum2);
 			error = fabs(alpha2 - alpha1);
 			alpha1 = alpha2;
-		}while (error > epsilon);
+		}while (error > EPSILON);
 		Pu[i] = alpha1;
 		Pd[i] = pow(Pu[i],exp(-2*volR[i]*sqrt(dt)));
 	}
@@ -99,12 +117,15 @@ double** BlackDermanToy::buildBDT(double* yield_curve,double* volatility_curve, 
 				Qd[i][j] =0.5*Qd[i-1][j-1]*d[i-1][j-1] + 0.5*Qd[i-1][j+1]*d[i-1][j+1];
 			}
 		}
-		// solve simultaneously for U[i] and sig[i]
-		// using 2 dimensional Newton-Raphson
+		// solve simultaneously for U[i] and sig[i] using 2 dimensional Newton-Raphson
+
 		// initial guess
-		alpha1 = 0.05;
+		alpha1 = inityield;
 		sigVal1 = 0.092;
+
+		int k=0;
 		do{
+			k++;
 			sum1 = 0;
 			sum2 = 0;
 			sum3 = 0;
@@ -130,7 +151,7 @@ double** BlackDermanToy::buildBDT(double* yield_curve,double* volatility_curve, 
 			sigVal3 = sigVal1 - (sum3 - Pd[i+1])/(-volSum2);
 			error4 = fabs(sigVal3 - sigVal1);
 			sigVal1 = sigVal3;
-		}while ((error > epsilon) || (error1 > epsilon) || (error3 > epsilon) ||(error4 > epsilon));
+		}while (((error > EPSILON) || (error1 > EPSILON) || (error3 > EPSILON) ||(error4 > EPSILON)) && k > 500);
 
 		U[i] = alpha1;
 		vol[i] = sigVal1;
@@ -140,9 +161,59 @@ double** BlackDermanToy::buildBDT(double* yield_curve,double* volatility_curve, 
 			d[i][j] = 1/(1 + r[i][j]*dt);
 		}
 	}
-	// Export
-	return r;
+}
 
+
+
+double BlackDermanToy::payerSwaptionBDT(/*double* yield_curve,double volatility, double inityield,*/
+						int Ns, int NT,double swapRate,  double principal, double frequency){
+
+
+	double B[TAM_MAX][TAM_MAX];			// discount bond prices
+	double C[TAM_MAX][TAM_MAX];			// swaption prices
+
+	// initialize B and C
+	for (i = 0; i < TAM_MAX; i++){
+		for (j = 0; j < TAM_MAX; j++){
+			B[i][j]=0.0;
+			C[i][j]=0.0;
+		}
+	}
+
+
+	// initialize coupon bond maturity condition for fixed side of swap
+	for (j = -Ns; j <= Ns; j += 2){
+		B[Ns][j] = principal + swapRate/frequency;
+	}
+
+	//derive the coupon bond price in the tree via the discounted expectations
+	for (i = Ns - 1; i >= NT; i--){
+		for (j = -i; j <= i; j += 2){
+		if (i % (int)frequency == 0)
+			B[i][j] = this->d[i][j]*0.5*(B[i+1][j+1] + B[i+1][j-1] + swapRate/frequency);
+		else
+			B[i][j] = this->d[i][j]*0.5*(B[i+1][j+1] + B[i+1][j-1]);
+		}
+	}
+
+	// initialize maturity condition for option
+	for (j = -NT; j <= NT; j += 2){
+		C[NT][j] = max(0,(principal-B[NT][j]));
+	}
+	// for European swaption value utilize the pure security prices
+	C[0][0] = 0;
+	for (j = -NT; j <= NT; j+=2){
+		C[0][0] = C[0][0] + max(0,Q[NT][j]*(principal-B[NT][j]));
+	}
+	for (i = NT-1; i >= 0; i--){
+		for (j = -i; j <= i; j += 2){
+			C[i][j] = this->d[i][j]*(0.5*(C[i+1][j+1] + C[i+1][j-1]));
+		}
+	}
+
+	IO io;
+	io.exportBondPrice2RStudio(B,Ns);
+	return C[0][0];
 }
 
 BlackDermanToy::~BlackDermanToy() {
