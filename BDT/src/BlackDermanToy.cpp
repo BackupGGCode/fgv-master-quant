@@ -221,7 +221,7 @@ double BlackDermanToy::payerSwaptionBDT(/*double* yield_curve,double volatility,
 }
 
 
-double BlackDermanToy::callableEuropeanBondBDT(int N/*steps*/, int T/*maturity*/,double strike,double principal){
+double BlackDermanToy::europeanBondBDT(OptionType type, int N/*steps*/, int T/*maturity*/,double strike,double principal){
 	double B[TAM_MAX][TAM_MAX];			// bond prices
 	double C[TAM_MAX][TAM_MAX];			// European Bond Option prices:CALL
 
@@ -243,7 +243,7 @@ double BlackDermanToy::callableEuropeanBondBDT(int N/*steps*/, int T/*maturity*/
 
 	// initialize maturity condition for option
 	for (j = -T; j <= T; j += 2)
-		C[T][j] = max(0,(B[T][j]-strike));
+		C[T][j] = (type == CALL?max(0,(B[T][j]-strike)):max(0,(strike-B[T][j])));
 
 	//derive the bond price in the tree via
 	for (i = T - 1; i >= 0; i--)

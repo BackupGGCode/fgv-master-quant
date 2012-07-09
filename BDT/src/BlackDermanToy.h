@@ -3,8 +3,16 @@
 #define	ITER_MAX 10000				//max iteration
 #define EPSILON 0.001				// error tolerance level
 
+enum OptionType
+{
+	CALL,
+	PUT
+};
+
+
 class BlackDermanToy {
 public:
+	OptionType type;
 	double r[TAM_MAX][TAM_MAX];		// short rate
 	double d[TAM_MAX][TAM_MAX];		// discount rate
 	double Q[TAM_MAX][TAM_MAX];		// state securities (Arrow-Debreu) **** constant volatility ****
@@ -42,7 +50,7 @@ public:
 	// Swaption price
 	double payerSwaptionBDT(/*double* yield_curve,double volatility, double inityield,*/ int Ns, int NT,double swapRate,  double principal, double frequency);
 	// Callabe bond price
-	double callableEuropeanBondBDT(int N/*steps*/, int T/*maturity*/,double strike,double principal);
+	double europeanBondBDT(OptionType type, int N/*steps*/, int T/*maturity*/,double strike,double principal);
 
 
 

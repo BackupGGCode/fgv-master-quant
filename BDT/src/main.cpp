@@ -60,7 +60,8 @@ int main() {
 	IO io;
 	io.exportShortRate2RStudio(bdt3.r,N3-1);
 
-	cout <<"European Bond Option price: " << bdt3.callableEuropeanBondBDT(N3,T3,strike,principal)<< endl;
+//	cout <<"Call European Bond Option price: " << bdt3.europeanBondBDT(CALL,N3,T3,strike,principal)<< endl;
+	cout <<"Put European Bond Option price: " << bdt3.europeanBondBDT(PUT,N3,T3,strike,principal)<< endl;
 
 
 
