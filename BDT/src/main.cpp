@@ -73,6 +73,17 @@ int main() {
 					cout <<"Put European Bond Option price: " << bdt3.europeanBondBDT(PUT,N3,T3,strike,principal3)<< endl;
 					break;
 				}
+				case 4:{
+
+					double* yield = new double[TAM_MAX];
+					double* vol = new double[TAM_MAX];
+					IO io;
+					int tam = io.importMarketData(yield, vol);
+					for(int i=0; i< tam; i++){
+						cout << "yield: " << yield[i] <<" vol: " << vol[i] << endl;
+					}
+					break;
+				}
             }
             cout << endl << "Menu:";
             cout << "\t1. Gerar Short Rate"<< endl;

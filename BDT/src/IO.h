@@ -5,6 +5,7 @@ public:
 	IO();
 	void exportShortRate2RStudio(double short_rate[TAM_MAX][TAM_MAX], int N);
 	void exportBondPrice2RStudio(double short_rate[TAM_MAX][TAM_MAX], int N);
+	int importMarketData(double* yield, double* volatility);
 	virtual ~IO();
 };
 

@@ -1,15 +1,15 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include <iostream>
 #include <fstream>
 #include "IO.h"
-
+#include <sstream>
 
 using namespace std;
 
-const char exportShortRateTree[]
+char exportShortRateTree[]
 	= "/storage/data/mestrado/2012/workspace/BDT/data/shortRateTree.out";
-const char importMarketData[]
-	= "/storage/data/mestrado/2012/workspace/BDT/data/marketData.csv";
-const char exportBondPrice[]
+char exportBondPrice[]
 	= "/storage/data/mestrado/2012/workspace/BDT/data/bondPriceTree.out";
 
 IO::IO() {
@@ -91,6 +91,30 @@ void IO::exportBondPrice2RStudio(double bond[TAM_MAX][TAM_MAX], int N){
 		file << endl;
 	}
 	file.close();
+}
+
+
+int IO::importMarketData(double* yield, double* volatility){
+    ifstream inFile;
+    inFile.open("/storage/data/mestrado/2012/workspace/BDT/data/marketData.csv");
+
+    string line;
+    int linenum = 0;
+    while (getline (inFile, line)){
+
+        istringstream linestream(line);
+        string item;
+        int itemnum = 0;
+        while (getline (linestream, item, ';')){
+        	if(itemnum == 0)
+        		yield[linenum] = atof(item.c_str());
+        	else
+        		volatility[linenum] = atof(item.c_str());
+            itemnum++;
+        }
+        linenum++;
+    }
+	return linenum;
 }
 
 
