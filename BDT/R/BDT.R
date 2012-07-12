@@ -23,7 +23,11 @@ BinomialTreePlot =
   }
 
 # ------------------------------------------------------------------------------
-input <- read.delim("/storage/data/R/bdt_short_rate.in", header=F)
-BinomialTreePlot(input,dy = 0.4,cex = 0.9,ylim = c(-4, 4),xlab = "n",ylab = "rate")
+shortRateTree <- read.delim("/storage/data/mestrado/2012/workspace/BDT/data/shortRateTree.out", header=F)
+BinomialTreePlot(shortRateTree,dy = 0.4,cex = 0.9,ylim = c(-4, 4),xlab = "n",ylab = "rate")
 title(main = "Short Rate Tree")
+# ------------------------------------------------------------------------------
+bondPriceTree <- read.delim("/storage/data/mestrado/2012/workspace/BDT/data/bondPriceTree.out", header=F)
+BinomialTreePlot(bondPriceTree,dy = 0.4,cex = 0.9,ylim = c(-4, 4),xlab = "n",ylab = "price")
+title(main = "Bond Price Tree")
 # ------------------------------------------------------------------------------

@@ -5,11 +5,12 @@
 
 using namespace std;
 
-const char fileNameExportShortRate[]="/storage/data/R/bdt_short_rate.in";
-
-const char fileNameImportMarketData[]="/storage/data/R/bdt_MD_input.csv";
-
-const char fileNameBondData[]="/storage/data/R/bdt_bond_price.csv";
+const char exportShortRateTree[]
+	= "/storage/data/mestrado/2012/workspace/BDT/data/shortRateTree.out";
+const char importMarketData[]
+	= "/storage/data/mestrado/2012/workspace/BDT/data/marketData.csv";
+const char exportBondPrice[]
+	= "/storage/data/mestrado/2012/workspace/BDT/data/bondPriceTree.out";
 
 IO::IO() {
 }
@@ -42,7 +43,7 @@ void IO::exportShortRate2RStudio(double short_rate[TAM_MAX][TAM_MAX], int N){
 
 
 	ofstream file;
-	file.open (fileNameExportShortRate);
+	file.open (exportShortRateTree);
 
 	for (int i=0;i<N;i++){
 		for (int j=0;j<N;j++){
@@ -81,7 +82,7 @@ void IO::exportBondPrice2RStudio(double bond[TAM_MAX][TAM_MAX], int N){
 
 
 	ofstream file;
-	file.open (fileNameBondData);
+	file.open (exportBondPrice);
 
 	for (int i=0;i<N;i++){
 		for (int j=0;j<N;j++){
