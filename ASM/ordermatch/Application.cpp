@@ -1,21 +1,3 @@
-/****************************************************************************
-** Copyright (c) quickfixengine.org  All rights reserved.
-**
-** This file is part of the QuickFIX FIX Engine
-**
-** This file may be distributed under the terms of the quickfixengine.org
-** license as defined by quickfixengine.org and appearing in the file
-** LICENSE included in the packaging of this file.
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-**
-** See http://www.quickfixengine.org/LICENSE for licensing information.
-**
-** Contact ask@quickfixengine.org if any conditions of this licensing are
-** not clear to you.
-**
-****************************************************************************/
 
 #ifdef _MSC_VER
 #pragma warning( disable : 4503 4355 4786 )
@@ -27,6 +9,8 @@
 #include "quickfix/Session.h"
 
 #include "quickfix/fix42/ExecutionReport.h"
+#include "quickfix/fix42/MarketDataRequest.h"
+#include "quickfix/fix42/MarketDataSnapshotFullRefresh.h"
 
 void Application::onLogon( const FIX::SessionID& sessionID ) {}
 
@@ -138,8 +122,11 @@ void Application::onMessage( const FIX42::OrderCancelRequest& message, const FIX
   }
   catch ( std::exception& ) {}}
 
+
+/*
 void Application::onMessage( const FIX42::MarketDataRequest& message, const FIX::SessionID& )
 {
+
   FIX::MDReqID mdReqID;
   FIX::SubscriptionRequestType subscriptionRequestType;
   FIX::MarketDepth marketDepth;
@@ -159,7 +146,53 @@ void Application::onMessage( const FIX42::MarketDataRequest& message, const FIX:
     message.getGroup( i, noRelatedSymGroup );
     noRelatedSymGroup.get( symbol );
   }
+
 }
+*/
+
+
+void Application::onMessage( const FIX42::MarketDataRequest& message, const FIX::SessionID& )
+{
+
+  std::cout  << "[MarketDataSnapshotFullRefresh]"<< std::endl;
+
+
+  FIX::MDReqID mdReqID ("IBM.US");
+  FIX::Symbol symbol("IBM");
+  FIX42::MarketDataSnapshotFullRefresh resp;
+
+  resp.setField(symbol);
+  resp.setField(mdReqID);
+
+
+  FIX42::MarketDataSnapshotFullRefresh::NoMDEntries group;
+
+
+  m_orderMatcher.display();
+
+  FIX::MDEntryType MDEntryType(FIX::MDEntryType_BID);
+  FIX::MDEntryPx MDEntryPx(FIX::PRICE);
+  FIX::MDEntrySize MDEntrySize;
+
+  group.set(MDEntryType);
+  group.set(MDEntryPx);
+  group.set(MDEntrySize);
+
+  resp.addGroup(group);
+
+
+  FIX::SenderCompID senderCompID;
+  FIX::TargetCompID targetCompID;
+
+  message.getHeader().get( senderCompID );
+  message.getHeader().get( targetCompID );
+
+  FIX::Session::sendToTarget( resp,targetCompID ,senderCompID  );
+
+}
+
+
+
 
 void Application::onMessage( const FIX43::MarketDataRequest& message, const FIX::SessionID& )
 {

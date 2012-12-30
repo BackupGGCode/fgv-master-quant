@@ -23,7 +23,8 @@
 #include "config.h"
 #endif
 
-#include "quickfix/FileStore.h"
+//#include "quickfix/FileStore.h"
+#include "quickfix/MySQLStore.h"
 #include "quickfix/SocketInitiator.h"
 #include "quickfix/SessionSettings.h"
 #include "Application.h"
@@ -31,7 +32,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "../../src/getopt-repl.h"
+//#include "../../src/getopt-repl.h"
 
 int main( int argc, char** argv )
 {
@@ -48,8 +49,10 @@ int main( int argc, char** argv )
     FIX::SessionSettings settings( file );
 
     Application application;
-    FIX::FileStoreFactory storeFactory( settings );
-    FIX::SocketInitiator initiator( application, storeFactory, settings );
+    //FIX::FileStoreFactory storeFactory( settings );
+    FIX::MySQLStoreFactory  m_settings( settings );
+    //FIX::SocketInitiator initiator( application, storeFactory, settings );
+    FIX::SocketInitiator initiator( application, m_settings, settings );
 
     initiator.start();
     application.run();

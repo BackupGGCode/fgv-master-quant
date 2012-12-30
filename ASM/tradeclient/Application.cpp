@@ -44,6 +44,7 @@ throw( FIX::FieldNotFound, FIX::IncorrectDataFormat, FIX::IncorrectTagValue, FIX
 {
   crack( message, sessionID );
   std::cout << std::endl << "IN: " << message << std::endl;
+
 }
 
 void Application::toApp( FIX::Message& message, const FIX::SessionID& sessionID )
@@ -58,7 +59,7 @@ throw( FIX::DoNotSend )
   catch ( FIX::FieldNotFound& ) {}
 
   std::cout << std::endl
-  << "OUT: " << message << std::endl;
+  << "OUT: " << message.toXML()  << std::endl;
 }
 
 void Application::onMessage
@@ -73,6 +74,10 @@ void Application::onMessage
 ( const FIX42::ExecutionReport&, const FIX::SessionID& ) {}
 void Application::onMessage
 ( const FIX42::OrderCancelReject&, const FIX::SessionID& ) {}
+
+void Application::onMessage
+( const FIX42::MarketDataSnapshotFullRefresh&, const FIX::SessionID& ) {}
+
 void Application::onMessage
 ( const FIX43::ExecutionReport&, const FIX::SessionID& ) {}
 void Application::onMessage
@@ -217,10 +222,15 @@ void Application::queryReplaceOrder()
 void Application::queryMarketDataRequest()
 {
   int version = queryVersion();
-  std::cout << "\nMarketDataRequest\n";
+  std::cout << "\nMarketDataRequest v2\n";
   FIX::Message md;
+  md = queryMarketDataRequest42();
 
+/*
   switch (version) {
+  case 42:
+    md = queryMarketDataRequest42();
+    break;
   case 43:
     md = queryMarketDataRequest43();
     break;
@@ -233,7 +243,9 @@ void Application::queryMarketDataRequest()
   default:
     std::cerr << "No test for version " << version << std::endl;
     break;
+
   }
+  */
 
   FIX::Session::sendToTarget( md );
 }
@@ -513,6 +525,75 @@ FIX50::OrderCancelReplaceRequest Application::queryCancelReplaceRequest50()
   queryHeader( cancelReplaceRequest.getHeader() );
   return cancelReplaceRequest;
 }
+/*
+FIX42::MarketDataRequest Application::queryMarketDataRequest42()
+{
+  FIX::MDReqID mdReqID( "MARKETDATAID" );
+  FIX::SubscriptionRequestType subType( FIX::SubscriptionRequestType_SNAPSHOT );
+  FIX::MarketDepth marketDepth( 0 );
+
+  FIX42::MarketDataRequest::NoMDEntryTypes marketDataEntryGroup;
+  FIX::MDEntryType mdEntryType( FIX::MDEntryType_BID );
+  marketDataEntryGroup.set( mdEntryType );
+
+  FIX42::MarketDataRequest::NoRelatedSym symbolGroup;
+  FIX::Symbol symbol( "LNUX" );
+  symbolGroup.set( symbol );
+
+  FIX42::MarketDataRequest message( mdReqID, subType, marketDepth );
+  message.addGroup( marketDataEntryGroup );
+  message.addGroup( symbolGroup );
+
+  queryHeader( message.getHeader() );
+
+  std::cout << message.toXML() << std::endl;
+  std::cout << message.toString() << std::endl;
+
+  FIX::Session::sendToTarget( message );
+
+  return message;
+}
+*/
+
+FIX42::MarketDataRequest Application::queryMarketDataRequest42()
+{
+
+
+
+  FIX::MDReqID mdReqID( "MARKETDATAID" );
+  FIX::SubscriptionRequestType subType( '1' );
+  FIX::MarketDepth marketDepth( 1 );
+  FIX::MDUpdateType mDUpdateType(1);
+  FIX::AggregatedBook aggregatedBook(true);
+  //FIX::NoMDEntryTypes
+
+  FIX42::MarketDataRequest::NoMDEntryTypes marketDataEntryGroup;
+  FIX::MDEntryType mdEntryType1( FIX::MDEntryType_BID );
+  FIX::MDEntryType mdEntryType2( FIX::MDEntryType_OFFER );
+  marketDataEntryGroup.set( mdEntryType1 );
+  marketDataEntryGroup.set( mdEntryType2 );
+
+
+  FIX42::MarketDataRequest::NoRelatedSym symbolGroup;
+  FIX::Symbol symbol( "IBM" );
+  symbolGroup.set( symbol );
+
+  FIX42::MarketDataRequest message( mdReqID, subType, marketDepth );
+  message.addGroup( marketDataEntryGroup );
+  message.addGroup( symbolGroup );
+  message.set(mDUpdateType);
+  message.set(aggregatedBook);
+
+  queryHeader( message.getHeader() );
+
+  //std::cout << message.toXML() << std::endl;
+  //std::cout << message.toString() << std::endl;
+
+  FIX::Session::sendToTarget( message );
+
+  return message;
+}
+
 
 FIX43::MarketDataRequest Application::queryMarketDataRequest43()
 {
@@ -597,8 +678,8 @@ void Application::queryHeader( FIX::Header& header )
   header.setField( querySenderCompID() );
   header.setField( queryTargetCompID() );
 
-  if ( queryConfirm( "Use a TargetSubID" ) )
-    header.setField( queryTargetSubID() );
+  //if ( queryConfirm( "Use a TargetSubID" ) )
+  //  header.setField( queryTargetSubID() );
 }
 
 char Application::queryAction()
@@ -655,24 +736,30 @@ bool Application::queryConfirm( const std::string& query )
 FIX::SenderCompID Application::querySenderCompID()
 {
   std::string value;
-  std::cout << std::endl << "SenderCompID: ";
-  std::cin >> value;
+ // std::cout << std::endl << "SenderCompID: ";
+  //std::cin >> value;
+  value = "CLIENT3";
+  std::cout << std::endl << "SenderCompID: "<< value;
   return FIX::SenderCompID( value );
 }
 
 FIX::TargetCompID Application::queryTargetCompID()
 {
   std::string value;
+  //std::cout << std::endl << "TargetCompID: ";
+  //std::cin >> value;
+  value = "ORDERMATCH";
   std::cout << std::endl << "TargetCompID: ";
-  std::cin >> value;
   return FIX::TargetCompID( value );
 }
 
 FIX::TargetSubID Application::queryTargetSubID()
 {
   std::string value;
-  std::cout << std::endl << "TargetSubID: ";
-  std::cin >> value;
+  //std::cout << std::endl << "TargetSubID: ";
+  //std::cin >> value;
+  value="2";
+  std::cout << std::endl << "TargetSubID: " << value;
   return FIX::TargetSubID( value );
 }
 

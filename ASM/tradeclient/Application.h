@@ -44,6 +44,8 @@
 #include "quickfix/fix42/OrderCancelRequest.h"
 #include "quickfix/fix42/OrderCancelReject.h"
 #include "quickfix/fix42/OrderCancelReplaceRequest.h"
+#include "quickfix/fix42/MarketDataRequest.h"
+#include "quickfix/fix42/MarketDataSnapshotFullRefresh.h"
 
 #include "quickfix/fix43/NewOrderSingle.h"
 #include "quickfix/fix43/ExecutionReport.h"
@@ -93,6 +95,9 @@ private:
   void onMessage( const FIX41::OrderCancelReject&, const FIX::SessionID& );
   void onMessage( const FIX42::ExecutionReport&, const FIX::SessionID& );
   void onMessage( const FIX42::OrderCancelReject&, const FIX::SessionID& );
+
+  void onMessage( const FIX42::MarketDataSnapshotFullRefresh&, const FIX::SessionID& );
+
   void onMessage( const FIX43::ExecutionReport&, const FIX::SessionID& );
   void onMessage( const FIX43::OrderCancelReject&, const FIX::SessionID& );
   void onMessage( const FIX44::ExecutionReport&, const FIX::SessionID& );
@@ -123,6 +128,8 @@ private:
   FIX43::OrderCancelReplaceRequest queryCancelReplaceRequest43();
   FIX44::OrderCancelReplaceRequest queryCancelReplaceRequest44();
   FIX50::OrderCancelReplaceRequest queryCancelReplaceRequest50();
+  //FIX42::MarketDataRequest queryMarketDataRequest42();
+  FIX42::MarketDataRequest queryMarketDataRequest42();
   FIX43::MarketDataRequest queryMarketDataRequest43();
   FIX44::MarketDataRequest queryMarketDataRequest44();
   FIX50::MarketDataRequest queryMarketDataRequest50();

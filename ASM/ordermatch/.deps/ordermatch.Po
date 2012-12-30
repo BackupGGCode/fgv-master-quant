@@ -1,7 +1,7 @@
 ordermatch.o: ordermatch.cpp ../../config.h \
- ../../include/quickfix/FileStore.h ../../include/quickfix/MessageStore.h \
- ../../include/quickfix/Message.h ../../include/quickfix/FieldMap.h \
- ../../include/quickfix/Field.h \
+ ../../include/quickfix/MySQLStore.h \
+ ../../include/quickfix/MessageStore.h ../../include/quickfix/Message.h \
+ ../../include/quickfix/FieldMap.h ../../include/quickfix/Field.h \
  /usr/lib/gcc/x86_64-redhat-linux/4.6.3/../../../../include/c++/4.6.3/sstream \
  /usr/lib/gcc/x86_64-redhat-linux/4.6.3/../../../../include/c++/4.6.3/istream \
  /usr/lib/gcc/x86_64-redhat-linux/4.6.3/../../../../include/c++/4.6.3/ios \
@@ -169,6 +169,13 @@ ordermatch.o: ordermatch.cpp ../../config.h \
  ../../include/quickfix/Values.h ../../include/quickfix/FixValues.h \
  ../../include/quickfix/SessionSettings.h \
  ../../include/quickfix/Dictionary.h \
+ ../../include/quickfix/MySQLConnection.h /usr/include/mysql/mysql.h \
+ /usr/include/mysql/mysql_version.h /usr/include/mysql/mysql_com.h \
+ /usr/include/mysql/mysql_time.h /usr/include/mysql/my_list.h \
+ /usr/include/mysql/typelib.h /usr/include/mysql/my_alloc.h \
+ /usr/include/mysql/errmsg.h \
+ ../../include/quickfix/DatabaseConnectionID.h \
+ ../../include/quickfix/DatabaseConnectionPool.h \
  /usr/lib/gcc/x86_64-redhat-linux/4.6.3/../../../../include/c++/4.6.3/fstream \
  /usr/lib/gcc/x86_64-redhat-linux/4.6.3/../../../../include/c++/4.6.3/bits/codecvt.h \
  /usr/lib/gcc/x86_64-redhat-linux/4.6.3/../../../../include/c++/4.6.3/x86_64-redhat-linux/bits/basic_file.h \
@@ -236,6 +243,7 @@ ordermatch.o: ordermatch.cpp ../../config.h \
  ../../include/quickfix/fix42/NewOrderSingle.h \
  ../../include/quickfix/fix42/Message.h \
  ../../include/quickfix/fix42/OrderCancelRequest.h \
+ ../../include/quickfix/fix42/MarketDataSnapshotFullRefresh.h \
  ../../include/quickfix/fix42/MarketDataRequest.h \
  ../../include/quickfix/fix43/MarketDataRequest.h \
  ../../include/quickfix/fix43/Message.h \
@@ -244,7 +252,7 @@ ordermatch.o: ordermatch.cpp ../../config.h \
 
 ../../config.h:
 
-../../include/quickfix/FileStore.h:
+../../include/quickfix/MySQLStore.h:
 
 ../../include/quickfix/MessageStore.h:
 
@@ -688,6 +696,28 @@ ordermatch.o: ordermatch.cpp ../../config.h \
 
 ../../include/quickfix/Dictionary.h:
 
+../../include/quickfix/MySQLConnection.h:
+
+/usr/include/mysql/mysql.h:
+
+/usr/include/mysql/mysql_version.h:
+
+/usr/include/mysql/mysql_com.h:
+
+/usr/include/mysql/mysql_time.h:
+
+/usr/include/mysql/my_list.h:
+
+/usr/include/mysql/typelib.h:
+
+/usr/include/mysql/my_alloc.h:
+
+/usr/include/mysql/errmsg.h:
+
+../../include/quickfix/DatabaseConnectionID.h:
+
+../../include/quickfix/DatabaseConnectionPool.h:
+
 /usr/lib/gcc/x86_64-redhat-linux/4.6.3/../../../../include/c++/4.6.3/fstream:
 
 /usr/lib/gcc/x86_64-redhat-linux/4.6.3/../../../../include/c++/4.6.3/bits/codecvt.h:
@@ -839,6 +869,8 @@ Order.h:
 ../../include/quickfix/fix42/Message.h:
 
 ../../include/quickfix/fix42/OrderCancelRequest.h:
+
+../../include/quickfix/fix42/MarketDataSnapshotFullRefresh.h:
 
 ../../include/quickfix/fix42/MarketDataRequest.h:
 

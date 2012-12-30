@@ -237,6 +237,8 @@ Application.o: Application.cpp ../../config.h Application.h \
  ../../include/quickfix/fix42/OrderCancelRequest.h \
  ../../include/quickfix/fix42/OrderCancelReject.h \
  ../../include/quickfix/fix42/OrderCancelReplaceRequest.h \
+ ../../include/quickfix/fix42/MarketDataRequest.h \
+ ../../include/quickfix/fix42/MarketDataSnapshotFullRefresh.h \
  ../../include/quickfix/fix43/NewOrderSingle.h \
  ../../include/quickfix/fix43/Message.h \
  ../../include/quickfix/fix43/ExecutionReport.h \
@@ -851,6 +853,10 @@ Application.h:
 ../../include/quickfix/fix42/OrderCancelReject.h:
 
 ../../include/quickfix/fix42/OrderCancelReplaceRequest.h:
+
+../../include/quickfix/fix42/MarketDataRequest.h:
+
+../../include/quickfix/fix42/MarketDataSnapshotFullRefresh.h:
 
 ../../include/quickfix/fix43/NewOrderSingle.h:
 
