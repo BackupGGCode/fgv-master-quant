@@ -182,21 +182,32 @@ void Application::onMessage( const FIX42::MarketDataRequest& message, const FIX:
 	  FIX::Symbol symbol;
 	  message.getGroup(1, noRelatedSymGroup );
 	  noRelatedSymGroup.get( symbol );
-
 	  resp.setField(symbol);
 
-	  FIX42::MarketDataSnapshotFullRefresh::NoMDEntries group;
-
-	  m_orderMatcher.getMarketData(symbol,Order::buy);
-
-	  FIX::MDEntryType MDEntryType(Order::buy);
-	  FIX::MDEntryPx MDEntryPx(m_orderMatcher.getMarketData(symbol,Order::buy).getLastExecutedPrice());
-	  FIX::MDEntrySize MDEntrySize(m_orderMatcher.getMarketData(symbol,Order::buy).getOpenQuantity());
-
-	  group.set(MDEntryType);
-	  group.set(MDEntryPx);
-	  group.set(MDEntrySize);
-	  resp.addGroup(group);
+	  std::vector<Order> mdOrderBuy = m_orderMatcher.getMDOrderBook(symbol, Order::buy);
+	  std::cout  << "mdOrderBuy.size="<< mdOrderBuy.size()<<std::endl;
+	  for (int i=0; (i < mdOrderBuy.size()/*  && i < marketDepth*/); i++){
+		  FIX42::MarketDataSnapshotFullRefresh::NoMDEntries group;
+		  FIX::MDEntryType MDEntryType(FIX::MDEntryType_OFFER);
+		  FIX::MDEntryPx MDEntryPx(mdOrderBuy[i].getPrice());
+		  FIX::MDEntrySize MDEntrySize(mdOrderBuy[i].getQuantity());
+		  group.set(MDEntryType);
+		  group.set(MDEntryPx);
+		  group.set(MDEntrySize);
+		  resp.addGroup(group);
+	  }
+	  std::vector<Order> mdOrderSell = m_orderMatcher.getMDOrderBook(symbol, Order::sell);
+	  std::cout  << "mdOrderSell.size="<< mdOrderSell.size()<<std::endl;
+	  for (int i=0; (i < mdOrderSell.size()/* && i < marketDepth*/); i++){
+		  FIX42::MarketDataSnapshotFullRefresh::NoMDEntries group;
+		  FIX::MDEntryType MDEntryType(FIX::MDEntryType_BID);
+		  FIX::MDEntryPx MDEntryPx(mdOrderSell[i].getPrice());
+		  FIX::MDEntrySize MDEntrySize(mdOrderSell[i].getQuantity());
+		  group.set(MDEntryType);
+		  group.set(MDEntryPx);
+		  group.set(MDEntrySize);
+		  resp.addGroup(group);
+	  }
 	  FIX::Session::sendToTarget( resp,targetCompID ,senderCompID  );
 
   }else{

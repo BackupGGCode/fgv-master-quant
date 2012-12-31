@@ -4,6 +4,7 @@
 #include "Market.h"
 #include <map>
 #include <iostream>
+#include <vector>
 
 class OrderMatcher
 {
@@ -32,16 +33,29 @@ public:
   }
 
 
-  Order& getMarketData( std::string symbol, Order::Side side)
+  Order& getLastMarketData( std::string symbol, Order::Side side)
   {
     Markets::iterator i = m_markets.find( symbol );
     if ( i == m_markets.end() ) throw std::exception();
     if ( side == Order::sell )
-    	return i->second.getAskOrder();
+    	return i->second.getLastAskOrder();
     else
-    	return i->second.getBidOrder();
+    	return i->second.getLastBidOrder();
   }
 
+  std::vector<Order>  getMDOrderBook( std::string symbol, Order::Side side)
+  {
+	  std::vector<Order>  resp;
+    Markets::iterator market = m_markets.find( symbol );
+    if ( market == m_markets.end() ) throw std::exception();
+    if ( side == Order::sell ){
+    	resp = market->second.getBidOrders();
+    }
+    else  if ( side == Order::buy ){
+    	resp =  market->second.getAskOrders();
+    }
+    return resp;
+  }
 
 
   bool match( std::string symbol, std::queue < Order > & orders )

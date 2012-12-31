@@ -84,15 +84,37 @@ Order& Market::find( Order::Side side, std::string id )
 }
 
 
-Order& Market::getBidOrder()
+Order& Market::getLastBidOrder()
 {
 
+	return m_bidOrders.begin()->second;
+}
+
+Order& Market::getLastAskOrder()
+{
 	return m_askOrders.begin()->second;
 }
 
-Order& Market::getAskOrder()
+
+std::vector<Order> Market::getBidOrders()
 {
-	return m_askOrders.begin()->second;
+	  std::vector<Order> resp;
+	  BidOrders::const_iterator iBid;
+
+	  for ( iBid = m_bidOrders.begin(); iBid != m_bidOrders.end(); ++iBid )
+		  resp.push_back(iBid->second);
+
+	return resp;
+}
+
+std::vector<Order> Market::getAskOrders()
+{
+	  std::vector<Order> resp;
+	  AskOrders::const_iterator iAsk;
+
+	  for ( iAsk = m_askOrders.begin(); iAsk != m_askOrders.end(); ++iAsk )
+		  resp.push_back(iAsk->second);
+	return resp;
 }
 
 void Market::match( Order& bid, Order& ask )

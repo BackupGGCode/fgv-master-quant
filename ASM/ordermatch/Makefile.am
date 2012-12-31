@@ -1,4 +1,4 @@
-SUBDIRS = test
+#SUBDIRS = test
 
 noinst_PROGRAMS = ordermatch
 

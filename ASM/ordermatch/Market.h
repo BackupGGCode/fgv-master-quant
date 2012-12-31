@@ -29,14 +29,6 @@
 
 class Market
 {
-public:
-  bool insert( const Order& order );
-  void erase( const Order& order );
-  Order& find( Order::Side side, std::string id );
-  bool match( std::queue < Order > & );
-  void display() const;
-  Order& getBidOrder();
-  Order& getAskOrder();
 
 private:
   typedef std::multimap < double, Order, std::greater < double > > BidOrders;
@@ -47,6 +39,19 @@ private:
   std::queue < Order > m_orderUpdates;
   BidOrders m_bidOrders;
   AskOrders m_askOrders;
+
+public:
+  bool insert( const Order& order );
+  void erase( const Order& order );
+  Order& find( Order::Side side, std::string id );
+  bool match( std::queue < Order > & );
+  void display() const;
+  Order& getLastBidOrder();
+  Order& getLastAskOrder();
+  std::vector<Order> getBidOrders();
+  std::vector<Order> getAskOrders();
+
+
 };
 
 #endif

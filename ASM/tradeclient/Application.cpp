@@ -562,14 +562,14 @@ FIX42::MarketDataRequest Application::queryMarketDataRequest42()
 
   FIX::MDReqID mdReqID( "MARKETDATAID" );
   FIX::SubscriptionRequestType subType( '1' );
-  FIX::MarketDepth marketDepth( 1 );
+  FIX::MarketDepth marketDepth( 2 );
   FIX::MDUpdateType mDUpdateType(1);
   FIX::AggregatedBook aggregatedBook(true);
   //FIX::NoMDEntryTypes
 
   FIX42::MarketDataRequest::NoMDEntryTypes marketDataEntryGroup;
   FIX::MDEntryType mdEntryType1( FIX::MDEntryType_BID );
-  FIX::MDEntryType mdEntryType2( FIX::MDEntryType_OFFER );
+  FIX::MDEntryType mdEntryType2( FIX::MDEntryType_OFFER);
   marketDataEntryGroup.set( mdEntryType1 );
   marketDataEntryGroup.set( mdEntryType2 );
 
