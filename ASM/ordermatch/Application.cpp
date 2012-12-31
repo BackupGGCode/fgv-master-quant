@@ -157,29 +157,11 @@ void Application::onMessage( const FIX42::MarketDataRequest& message, const FIX:
   std::cout  << "[MarketDataSnapshotFullRefresh]"<< std::endl;
 
 
-  FIX::MDReqID mdReqID ("IBM.US");
-  FIX::Symbol symbol("IBM");
-  FIX42::MarketDataSnapshotFullRefresh resp;
-
-  resp.setField(symbol);
-  resp.setField(mdReqID);
-
-
-  FIX42::MarketDataSnapshotFullRefresh::NoMDEntries group;
-
-
-  m_orderMatcher.display();
-
-  FIX::MDEntryType MDEntryType(FIX::MDEntryType_BID);
-  FIX::MDEntryPx MDEntryPx(FIX::PRICE);
-  FIX::MDEntrySize MDEntrySize;
-
-  group.set(MDEntryType);
-  group.set(MDEntryPx);
-  group.set(MDEntrySize);
-
-  resp.addGroup(group);
-
+  FIX::MDReqID mdReqID;
+  FIX::SubscriptionRequestType subscriptionRequestType;
+  FIX::MarketDepth marketDepth;
+  FIX::NoRelatedSym noRelatedSym;
+  FIX42::MarketDataRequest::NoRelatedSym noRelatedSymGroup;
 
   FIX::SenderCompID senderCompID;
   FIX::TargetCompID targetCompID;
@@ -187,7 +169,47 @@ void Application::onMessage( const FIX42::MarketDataRequest& message, const FIX:
   message.getHeader().get( senderCompID );
   message.getHeader().get( targetCompID );
 
-  FIX::Session::sendToTarget( resp,targetCompID ,senderCompID  );
+  message.get( mdReqID );
+
+  message.get( subscriptionRequestType );
+  message.get( noRelatedSym );
+  message.get( marketDepth );
+
+
+  if ( noRelatedSym == 1){
+	  FIX42::MarketDataSnapshotFullRefresh resp;
+
+	  FIX::Symbol symbol;
+	  message.getGroup(1, noRelatedSymGroup );
+	  noRelatedSymGroup.get( symbol );
+
+	  resp.setField(symbol);
+
+	  FIX42::MarketDataSnapshotFullRefresh::NoMDEntries group;
+
+	  m_orderMatcher.getMarketData(symbol,Order::buy);
+
+	  FIX::MDEntryType MDEntryType(Order::buy);
+	  FIX::MDEntryPx MDEntryPx(m_orderMatcher.getMarketData(symbol,Order::buy).getLastExecutedPrice());
+	  FIX::MDEntrySize MDEntrySize(m_orderMatcher.getMarketData(symbol,Order::buy).getOpenQuantity());
+
+	  group.set(MDEntryType);
+	  group.set(MDEntryPx);
+	  group.set(MDEntrySize);
+	  resp.addGroup(group);
+	  FIX::Session::sendToTarget( resp,targetCompID ,senderCompID  );
+
+  }else{
+
+	  for ( int i = 1; i <= noRelatedSym; ++i ){
+	    FIX::Symbol symbol;
+	    message.getGroup( i, noRelatedSymGroup );
+	    noRelatedSymGroup.get( symbol );
+
+	  }
+
+  }
+
 
 }
 

@@ -35,6 +35,8 @@ public:
   Order& find( Order::Side side, std::string id );
   bool match( std::queue < Order > & );
   void display() const;
+  Order& getBidOrder();
+  Order& getAskOrder();
 
 private:
   typedef std::multimap < double, Order, std::greater < double > > BidOrders;

@@ -83,6 +83,18 @@ Order& Market::find( Order::Side side, std::string id )
   throw std::exception();
 }
 
+
+Order& Market::getBidOrder()
+{
+
+	return m_askOrders.begin()->second;
+}
+
+Order& Market::getAskOrder()
+{
+	return m_askOrders.begin()->second;
+}
+
 void Market::match( Order& bid, Order& ask )
 {
   double price = ask.getPrice();

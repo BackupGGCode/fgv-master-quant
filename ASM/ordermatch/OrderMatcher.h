@@ -31,6 +31,19 @@ public:
     return i->second.find( side, id );
   }
 
+
+  Order& getMarketData( std::string symbol, Order::Side side)
+  {
+    Markets::iterator i = m_markets.find( symbol );
+    if ( i == m_markets.end() ) throw std::exception();
+    if ( side == Order::sell )
+    	return i->second.getAskOrder();
+    else
+    	return i->second.getBidOrder();
+  }
+
+
+
   bool match( std::string symbol, std::queue < Order > & orders )
   {
     Markets::iterator i = m_markets.find( symbol );
