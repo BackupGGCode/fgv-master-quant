@@ -26,7 +26,7 @@ int main( int argc, char** argv )
     FIX::SocketInitiator initiator( application, m_settings, settings );
 
     initiator.start();
-    application.run();
+    application.runBOT();
     initiator.stop();
 
     return 0;

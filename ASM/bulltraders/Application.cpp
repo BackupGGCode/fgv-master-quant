@@ -78,24 +78,45 @@ void Application::runBOT()
   {
     try
     {
-      char action = queryAction();
-
-      if ( action == '1' )
-        queryEnterOrder();
-      else if ( action == '2' )
-        queryCancelOrder();
-      else if ( action == '3' )
-        queryReplaceOrder();
-      else if ( action == '4' )
-        queryMarketDataRequest();
-      else if ( action == '5' )
-        break;
+      char action = canGo();
+      if ( action == 'y' ){
+    	  FIX::Symbol symbol("IBM");
+    	  this->sendOrder("BOT01", symbol, FIX::Side_BUY, 314, 125.9);
+      }else{
+    	  queryMarketDataRequest();
+      }
     }
     catch ( std::exception & e )
     {
-      std::cout << "Message Not Sent: " << e.what();
+      std::cout << "Problem " << e.what();
     }
   }
+}
+
+char Application::canGo()
+{
+  char value;
+  std::cout << std::endl
+  << "Continue?: ";
+  std::cin >> value;
+  return value;
+}
+
+void Application::sendOrder(std::string clOrdID, FIX::Symbol symbol, FIX::Side side,
+													FIX::OrderQty orderQty, FIX::Price price){
+
+  FIX42::NewOrderSingle newOrderSingle;
+  newOrderSingle.set(FIX::ClOrdID( clOrdID ));
+  newOrderSingle.set(FIX::HandlInst( '1' ));
+  newOrderSingle.set( symbol );
+  newOrderSingle.set( side );
+  newOrderSingle.set(FIX::TransactTime());
+  newOrderSingle.set( FIX::OrdType( FIX::OrdType_LIMIT ) );
+  newOrderSingle.set( orderQty );
+  newOrderSingle.set( FIX::TimeInForce( FIX::TimeInForce_DAY ) );
+  newOrderSingle.set( price );
+  setHeader( newOrderSingle.getHeader() );
+  FIX::Session::sendToTarget( newOrderSingle );
 }
 
 void Application::queryEnterOrder()
@@ -136,27 +157,6 @@ void Application::queryMarketDataRequest()
 
   FIX::Session::sendToTarget( md );
 }
-
-
-FIX42::NewOrderSingle Application::newOrderSingle42(std::string clOrdID, FIX::Symbol symbol, FIX::Side side,
-													FIX::OrderQty orderQty, FIX::Price price)
-{
-
-  FIX42::NewOrderSingle newOrderSingle;
-  newOrderSingle.set(FIX::ClOrdID( clOrdID ));
-  newOrderSingle.set(FIX::HandlInst( '1' ));
-  newOrderSingle.set( symbol );
-  newOrderSingle.set( side );
-  newOrderSingle.set(FIX::TransactTime());
-  newOrderSingle.set( FIX::OrdType( FIX::OrdType_LIMIT ) );
-  newOrderSingle.set( orderQty );
-  newOrderSingle.set( FIX::TimeInForce( FIX::TimeInForce_DAY ) );
-  newOrderSingle.set(price);
-
-  setHeader( newOrderSingle.getHeader() );
-  return newOrderSingle;
-}
-
 
 
 FIX42::NewOrderSingle Application::queryNewOrderSingle42()

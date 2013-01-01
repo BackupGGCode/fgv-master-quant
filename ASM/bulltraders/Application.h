@@ -48,7 +48,7 @@ private:
   void queryMarketDataRequest();
 
   FIX42::NewOrderSingle queryNewOrderSingle42();
-  FIX42::NewOrderSingle newOrderSingle42(std::string clOrdID, FIX::Symbol symbol, FIX::Side side,
+  void sendOrder(std::string clOrdID, FIX::Symbol symbol, FIX::Side side,
   													FIX::OrderQty orderQty, FIX::Price price);
   FIX42::OrderCancelRequest queryOrderCancelRequest42();
   FIX42::OrderCancelReplaceRequest queryCancelReplaceRequest42();
@@ -56,6 +56,7 @@ private:
 
   void setHeader( FIX::Header& header );
   char queryAction();
+  char canGo();
   bool queryConfirm( const std::string& query );
 
   FIX::TargetSubID queryTargetSubID();
