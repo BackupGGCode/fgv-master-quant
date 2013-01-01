@@ -191,9 +191,11 @@ void Application::onMessage( const FIX42::MarketDataRequest& message, const FIX:
 		  FIX::MDEntryType MDEntryType(FIX::MDEntryType_OFFER);
 		  FIX::MDEntryPx MDEntryPx(mdOrderBuy[i].getPrice());
 		  FIX::MDEntrySize MDEntrySize(mdOrderBuy[i].getQuantity());
+		  FIX::MDEntrySeller MDEntrySeller(mdOrderBuy[i].getClientID());
 		  group.set(MDEntryType);
 		  group.set(MDEntryPx);
 		  group.set(MDEntrySize);
+		  group.set(MDEntrySeller);
 		  resp.addGroup(group);
 	  }
 	  std::vector<Order> mdOrderSell = m_orderMatcher.getMDOrderBook(symbol, Order::sell);
@@ -203,6 +205,7 @@ void Application::onMessage( const FIX42::MarketDataRequest& message, const FIX:
 		  FIX::MDEntryType MDEntryType(FIX::MDEntryType_BID);
 		  FIX::MDEntryPx MDEntryPx(mdOrderSell[i].getPrice());
 		  FIX::MDEntrySize MDEntrySize(mdOrderSell[i].getQuantity());
+		  FIX::MDEntryBuyer MDEntryBuyer(mdOrderSell[i].getClientID());
 		  group.set(MDEntryType);
 		  group.set(MDEntryPx);
 		  group.set(MDEntrySize);
