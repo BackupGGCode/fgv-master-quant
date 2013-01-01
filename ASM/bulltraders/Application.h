@@ -22,8 +22,11 @@ class Application :
 {
 public:
   void run();
+  void runBOT();
 
 private:
+  FIX::SenderCompID senderCompID;
+  FIX::TargetCompID targetCompID;
   void onCreate( const FIX::SessionID& ) {}
   void onLogon( const FIX::SessionID& sessionID );
   void onLogout( const FIX::SessionID& sessionID );
@@ -45,16 +48,16 @@ private:
   void queryMarketDataRequest();
 
   FIX42::NewOrderSingle queryNewOrderSingle42();
+  FIX42::NewOrderSingle newOrderSingle42(std::string clOrdID, FIX::Symbol symbol, FIX::Side side,
+  													FIX::OrderQty orderQty, FIX::Price price);
   FIX42::OrderCancelRequest queryOrderCancelRequest42();
   FIX42::OrderCancelReplaceRequest queryCancelReplaceRequest42();
   FIX42::MarketDataRequest queryMarketDataRequest42();
 
-  void queryHeader( FIX::Header& header );
+  void setHeader( FIX::Header& header );
   char queryAction();
   bool queryConfirm( const std::string& query );
 
-  FIX::SenderCompID querySenderCompID();
-  FIX::TargetCompID queryTargetCompID();
   FIX::TargetSubID queryTargetSubID();
   FIX::ClOrdID queryClOrdID();
   FIX::OrigClOrdID queryOrigClOrdID();

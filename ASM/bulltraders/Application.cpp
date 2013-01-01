@@ -6,6 +6,9 @@
 void Application::onLogon( const FIX::SessionID& sessionID )
 {
   std::cout << std::endl << "Logon - " << sessionID << std::endl;
+  this->senderCompID = sessionID.getSenderCompID();
+  this->targetCompID = sessionID.getTargetCompID();
+
 }
 
 void Application::onLogout( const FIX::SessionID& sessionID )
@@ -44,6 +47,32 @@ void Application::onMessage
 ( const FIX42::MarketDataSnapshotFullRefresh&, const FIX::SessionID& ) {}
 
 void Application::run()
+{
+  while ( true )
+  {
+    try
+    {
+      char action = queryAction();
+
+      if ( action == '1' )
+        queryEnterOrder();
+      else if ( action == '2' )
+        queryCancelOrder();
+      else if ( action == '3' )
+        queryReplaceOrder();
+      else if ( action == '4' )
+        queryMarketDataRequest();
+      else if ( action == '5' )
+        break;
+    }
+    catch ( std::exception & e )
+    {
+      std::cout << "Message Not Sent: " << e.what();
+    }
+  }
+}
+
+void Application::runBOT()
 {
   while ( true )
   {
@@ -108,6 +137,28 @@ void Application::queryMarketDataRequest()
   FIX::Session::sendToTarget( md );
 }
 
+
+FIX42::NewOrderSingle Application::newOrderSingle42(std::string clOrdID, FIX::Symbol symbol, FIX::Side side,
+													FIX::OrderQty orderQty, FIX::Price price)
+{
+
+  FIX42::NewOrderSingle newOrderSingle;
+  newOrderSingle.set(FIX::ClOrdID( clOrdID ));
+  newOrderSingle.set(FIX::HandlInst( '1' ));
+  newOrderSingle.set( symbol );
+  newOrderSingle.set( side );
+  newOrderSingle.set(FIX::TransactTime());
+  newOrderSingle.set( FIX::OrdType( FIX::OrdType_LIMIT ) );
+  newOrderSingle.set( orderQty );
+  newOrderSingle.set( FIX::TimeInForce( FIX::TimeInForce_DAY ) );
+  newOrderSingle.set(price);
+
+  setHeader( newOrderSingle.getHeader() );
+  return newOrderSingle;
+}
+
+
+
 FIX42::NewOrderSingle Application::queryNewOrderSingle42()
 {
   FIX::OrdType ordType;
@@ -123,7 +174,7 @@ FIX42::NewOrderSingle Application::queryNewOrderSingle42()
   if ( ordType == FIX::OrdType_STOP || ordType == FIX::OrdType_STOP_LIMIT )
     newOrderSingle.set( queryStopPx() );
 
-  queryHeader( newOrderSingle.getHeader() );
+  setHeader( newOrderSingle.getHeader() );
   return newOrderSingle;
 }
 
@@ -133,7 +184,7 @@ FIX42::OrderCancelRequest Application::queryOrderCancelRequest42()
       queryClOrdID(), querySymbol(), querySide(), FIX::TransactTime() );
 
   orderCancelRequest.set( queryOrderQty() );
-  queryHeader( orderCancelRequest.getHeader() );
+  setHeader( orderCancelRequest.getHeader() );
   return orderCancelRequest;
 }
 
@@ -149,7 +200,7 @@ FIX42::OrderCancelReplaceRequest Application::queryCancelReplaceRequest42()
   if ( queryConfirm( "New quantity" ) )
     cancelReplaceRequest.set( queryOrderQty() );
 
-  queryHeader( cancelReplaceRequest.getHeader() );
+  setHeader( cancelReplaceRequest.getHeader() );
   return cancelReplaceRequest;
 }
 
@@ -181,7 +232,7 @@ FIX42::MarketDataRequest Application::queryMarketDataRequest42()
   message.set(mDUpdateType);
   message.set(aggregatedBook);
 
-  queryHeader( message.getHeader() );
+  setHeader( message.getHeader() );
 
   //std::cout << message.toXML() << std::endl;
   //std::cout << message.toString() << std::endl;
@@ -191,10 +242,10 @@ FIX42::MarketDataRequest Application::queryMarketDataRequest42()
   return message;
 }
 
-void Application::queryHeader( FIX::Header& header )
+void Application::setHeader( FIX::Header& header )
 {
-  header.setField( querySenderCompID() );
-  header.setField( queryTargetCompID() );
+  header.setField(this->senderCompID);
+  header.setField( this->targetCompID );
 
   //if ( queryConfirm( "Use a TargetSubID" ) )
   //  header.setField( queryTargetSubID() );
@@ -226,26 +277,6 @@ bool Application::queryConfirm( const std::string& query )
   std::cout << std::endl << query << "?: ";
   std::cin >> value;
   return toupper( *value.c_str() ) == 'Y';
-}
-
-FIX::SenderCompID Application::querySenderCompID()
-{
-  std::string value;
- // std::cout << std::endl << "SenderCompID: ";
-  //std::cin >> value;
-  value = "CLIENT4";
-  std::cout << std::endl << "SenderCompID: "<< value;
-  return FIX::SenderCompID( value );
-}
-
-FIX::TargetCompID Application::queryTargetCompID()
-{
-  std::string value;
-  //std::cout << std::endl << "TargetCompID: ";
-  //std::cin >> value;
-  value = "ORDERMATCH";
-  std::cout << std::endl << "TargetCompID: ";
-  return FIX::TargetCompID( value );
 }
 
 FIX::TargetSubID Application::queryTargetSubID()
