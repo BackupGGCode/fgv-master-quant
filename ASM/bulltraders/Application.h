@@ -1,10 +1,11 @@
-#ifndef TRADECLIENT_APPLICATION_H
-#define TRADECLIENT_APPLICATION_H
+#ifndef BULLTRADERS_APPLICATION_H
+#define BULLTRADERS_APPLICATION_H
 
 #include "quickfix/Application.h"
 #include "quickfix/MessageCracker.h"
 #include "quickfix/Values.h"
 #include "quickfix/Mutex.h"
+#include "IDGenerator.h"
 
 #include "quickfix/fix42/NewOrderSingle.h"
 #include "quickfix/fix42/ExecutionReport.h"
@@ -27,6 +28,11 @@ public:
 private:
   FIX::SenderCompID senderCompID;
   FIX::TargetCompID targetCompID;
+  typedef std::vector<FIX::Message> Messages;
+  Messages m_messages;
+  IDGenerator m_generator;
+
+
   void onCreate( const FIX::SessionID& ) {}
   void onLogon( const FIX::SessionID& sessionID );
   void onLogout( const FIX::SessionID& sessionID );
@@ -48,8 +54,9 @@ private:
   void queryMarketDataRequest();
 
   FIX42::NewOrderSingle queryNewOrderSingle42();
-  void sendOrder(std::string clOrdID, FIX::Symbol symbol, FIX::Side side,
-  													FIX::OrderQty orderQty, FIX::Price price);
+  void sendOrder(FIX::Symbol symbol, FIX::Side side, FIX::OrderQty orderQty, FIX::Price price);
+  void cancelOrder( FIX::Symbol symbol, FIX::Side side,	FIX::OrderQty orderQty, FIX::Price price);
+
   FIX42::OrderCancelRequest queryOrderCancelRequest42();
   FIX42::OrderCancelReplaceRequest queryCancelReplaceRequest42();
   FIX42::MarketDataRequest queryMarketDataRequest42();

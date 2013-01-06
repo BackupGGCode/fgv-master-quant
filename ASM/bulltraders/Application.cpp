@@ -20,7 +20,7 @@ void Application::fromApp( const FIX::Message& message, const FIX::SessionID& se
 throw( FIX::FieldNotFound, FIX::IncorrectDataFormat, FIX::IncorrectTagValue, FIX::UnsupportedMessageType )
 {
   crack( message, sessionID );
-  std::cout << std::endl << "IN: " << message << std::endl;
+  std::cout << std::endl << "IN: " << message.toXML() << std::endl;
 
 }
 
@@ -46,6 +46,7 @@ void Application::onMessage
 void Application::onMessage
 ( const FIX42::MarketDataSnapshotFullRefresh&, const FIX::SessionID& ) {}
 
+/*
 void Application::run()
 {
   while ( true )
@@ -71,7 +72,7 @@ void Application::run()
     }
   }
 }
-
+*/
 void Application::runBOT()
 {
   while ( true )
@@ -79,11 +80,21 @@ void Application::runBOT()
     try
     {
       char action = canGo();
-      if ( action == 'y' ){
-    	  FIX::Symbol symbol("IBM");
-    	  this->sendOrder("BOT01", symbol, FIX::Side_BUY, 314, 125.9);
-      }else{
+      FIX::Symbol symbol("IBM");
+
+      switch(action){
+      case 's':
+    	  std::cout << "Sending order ... " << std::endl;
+    	  this->sendOrder(symbol, FIX::Side_BUY, 314, 125.9);
+    	  break;
+      case 'c':
+    	  std::cout << "Canceling order ... " << std::endl;
+    	  this->cancelOrder(symbol, FIX::Side_BUY, 314, 125.9);
+    	  break;
+      default:
+    	  std::cout << "Getting market data... " << std::endl;
     	  queryMarketDataRequest();
+    	  break;
       }
     }
     catch ( std::exception & e )
@@ -97,16 +108,20 @@ char Application::canGo()
 {
   char value;
   std::cout << std::endl
-  << "Continue?: ";
+  << "(s)end Order" << std::endl
+  << "(c)ancel Order" << std::endl
+  << "Action: ";
   std::cin >> value;
   return value;
 }
 
-void Application::sendOrder(std::string clOrdID, FIX::Symbol symbol, FIX::Side side,
-													FIX::OrderQty orderQty, FIX::Price price){
+void Application::sendOrder(FIX::Symbol symbol, FIX::Side side,
+							FIX::OrderQty orderQty, FIX::Price price){
 
+  FIX::ClOrdID clOrdID;
+  clOrdID = m_generator.genOrderID();
   FIX42::NewOrderSingle newOrderSingle;
-  newOrderSingle.set(FIX::ClOrdID( clOrdID ));
+  newOrderSingle.set( clOrdID );
   newOrderSingle.set(FIX::HandlInst( '1' ));
   newOrderSingle.set( symbol );
   newOrderSingle.set( side );
@@ -116,7 +131,45 @@ void Application::sendOrder(std::string clOrdID, FIX::Symbol symbol, FIX::Side s
   newOrderSingle.set( FIX::TimeInForce( FIX::TimeInForce_DAY ) );
   newOrderSingle.set( price );
   setHeader( newOrderSingle.getHeader() );
+  m_messages.push_back(newOrderSingle);
   FIX::Session::sendToTarget( newOrderSingle );
+}
+
+void Application::cancelOrder(FIX::Symbol symbol, FIX::Side side,
+													FIX::OrderQty orderQty, FIX::Price price){
+
+  FIX42::OrderCancelRequest orderCancelRequest;
+  FIX::ClOrdID clOrdID;
+  clOrdID = m_generator.genOrderID();
+  orderCancelRequest.set(FIX::ClOrdID( clOrdID ));
+  //orderCancelRequest.set(FIX::OrigClOrdID( origClOrdID ));
+  orderCancelRequest.set( symbol );
+  orderCancelRequest.set( side );
+  orderCancelRequest.set(FIX::TransactTime());
+  orderCancelRequest.set( orderQty );
+  setHeader( orderCancelRequest.getHeader() );
+
+
+  for (int i=0; i < m_messages.size(); i++){
+	  FIX::Symbol _symbol;
+  	  FIX::Side _side;
+  	  FIX::OrderQty _orderQty;
+  	  FIX::Price _price;
+  	  FIX::ClOrdID _origClOrdID;
+  	  m_messages[i].getField(_symbol);
+  	  m_messages[i].getField(_side);
+  	  m_messages[i].getField(_orderQty);
+  	  m_messages[i].getField(_price);
+  	  m_messages[i].getField(_origClOrdID);
+
+    if ( (_symbol==symbol)&&(_side==side)&&(_orderQty==orderQty)&&(_price==price))
+    {
+      orderCancelRequest.set(FIX::OrigClOrdID (_origClOrdID));
+      m_messages.erase(m_messages.begin()+i);
+      FIX::Session::sendToTarget( orderCancelRequest );
+    }
+  }
+
 }
 
 void Application::queryEnterOrder()
