@@ -238,7 +238,7 @@ bulltraders.o: bulltraders.cpp ../../config.h \
  ../../include/quickfix/fixt11/../fixt11/../Message.h \
  ../../include/quickfix/fixt11/../fixt11/../Group.h \
  ../../include/quickfix/Values.h ../../include/quickfix/Mutex.h \
- ../../include/quickfix/fix42/NewOrderSingle.h \
+ IDGenerator.h ../../include/quickfix/fix42/NewOrderSingle.h \
  ../../include/quickfix/fix42/Message.h \
  ../../include/quickfix/fix42/ExecutionReport.h \
  ../../include/quickfix/fix42/OrderCancelRequest.h \
@@ -850,6 +850,8 @@ Application.h:
 ../../include/quickfix/Values.h:
 
 ../../include/quickfix/Mutex.h:
+
+IDGenerator.h:
 
 ../../include/quickfix/fix42/NewOrderSingle.h:
 

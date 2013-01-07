@@ -16,6 +16,7 @@
 #include "quickfix/fix42/NewOrderSingle.h"
 #include "quickfix/fix42/OrderCancelRequest.h"
 #include "quickfix/fix42/MarketDataSnapshotFullRefresh.h"
+#include "quickfix/fix42/QuoteRequest.h"
 
 #include "quickfix/fix42/MarketDataRequest.h"
 #include "quickfix/fix43/MarketDataRequest.h"
@@ -41,8 +42,8 @@ class Application
   void onMessage( const FIX42::NewOrderSingle&, const FIX::SessionID& );
   void onMessage( const FIX44::NewOrderSingle&, const FIX::SessionID& );
   void onMessage( const FIX42::OrderCancelRequest&, const FIX::SessionID& );
-//  void onMessage( const FIX42::MarketDataRequest&, const FIX::SessionID& );
   void onMessage( const FIX42::MarketDataRequest&, const FIX::SessionID& );
+  void onMessage( const FIX42::QuoteRequest&, const FIX::SessionID& );
   void onMessage( const FIX43::MarketDataRequest&, const FIX::SessionID& );
 
   // Order functionality

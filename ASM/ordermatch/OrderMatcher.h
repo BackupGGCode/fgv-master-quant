@@ -49,10 +49,10 @@ public:
     Markets::iterator market = m_markets.find( symbol );
     if ( market == m_markets.end() ) throw std::exception();
     if ( side == Order::sell ){
-    	resp = market->second.getBidOrders();
+    	resp =  market->second.getAskOrders();
     }
     else  if ( side == Order::buy ){
-    	resp =  market->second.getAskOrders();
+    	resp = market->second.getBidOrders();
     }
     return resp;
   }

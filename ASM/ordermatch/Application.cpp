@@ -186,12 +186,12 @@ void Application::onMessage( const FIX42::MarketDataRequest& message, const FIX:
 
 	  std::vector<Order> mdOrderBuy = m_orderMatcher.getMDOrderBook(symbol, Order::buy);
 	  std::cout  << "mdOrderBuy.size="<< mdOrderBuy.size()<<std::endl;
-	  for (int i=0; (i < mdOrderBuy.size()/*  && i < marketDepth*/); i++){
+	  for (int i=0; (i < mdOrderBuy.size()  && i < marketDepth); i++){
 		  FIX42::MarketDataSnapshotFullRefresh::NoMDEntries group;
 		  FIX::MDEntryType MDEntryType(FIX::MDEntryType_OFFER);
 		  FIX::MDEntryPx MDEntryPx(mdOrderBuy[i].getPrice());
-		  FIX::MDEntrySize MDEntrySize(mdOrderBuy[i].getQuantity());
-		  FIX::MDEntrySeller MDEntrySeller(mdOrderBuy[i].getClientID());
+		  FIX::MDEntrySize MDEntrySize(mdOrderBuy[i].getOpenQuantity());
+		  FIX::MDEntrySeller MDEntrySeller(mdOrderBuy[i].getOwner());
 		  group.set(MDEntryType);
 		  group.set(MDEntryPx);
 		  group.set(MDEntrySize);
@@ -200,12 +200,12 @@ void Application::onMessage( const FIX42::MarketDataRequest& message, const FIX:
 	  }
 	  std::vector<Order> mdOrderSell = m_orderMatcher.getMDOrderBook(symbol, Order::sell);
 	  std::cout  << "mdOrderSell.size="<< mdOrderSell.size()<<std::endl;
-	  for (int i=0; (i < mdOrderSell.size()/* && i < marketDepth*/); i++){
+	  for (int i=0; (i < mdOrderSell.size() && i < marketDepth); i++){
 		  FIX42::MarketDataSnapshotFullRefresh::NoMDEntries group;
 		  FIX::MDEntryType MDEntryType(FIX::MDEntryType_BID);
 		  FIX::MDEntryPx MDEntryPx(mdOrderSell[i].getPrice());
-		  FIX::MDEntrySize MDEntrySize(mdOrderSell[i].getQuantity());
-		  FIX::MDEntryBuyer MDEntryBuyer(mdOrderSell[i].getClientID());
+		  FIX::MDEntrySize MDEntrySize(mdOrderSell[i].getOpenQuantity());
+		  FIX::MDEntryBuyer MDEntryBuyer(mdOrderSell[i].getOwner());
 		  group.set(MDEntryType);
 		  group.set(MDEntryPx);
 		  group.set(MDEntrySize);
@@ -227,7 +227,11 @@ void Application::onMessage( const FIX42::MarketDataRequest& message, const FIX:
 
 }
 
-
+void Application::onMessage( const FIX42::QuoteRequest& message, const FIX::SessionID& )
+{
+	//TODO: fazer!!!!!
+    std::cout << message.toXML() << std::endl;
+}
 
 
 void Application::onMessage( const FIX43::MarketDataRequest& message, const FIX::SessionID& )

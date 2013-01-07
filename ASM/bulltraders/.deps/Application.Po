@@ -219,7 +219,7 @@ Application.o: Application.cpp ../../config.h Application.h \
  /usr/lib/gcc/x86_64-redhat-linux/4.6.3/../../../../include/c++/4.6.3/queue \
  /usr/lib/gcc/x86_64-redhat-linux/4.6.3/../../../../include/c++/4.6.3/bits/stl_queue.h \
  ../../include/quickfix/Values.h ../../include/quickfix/Mutex.h \
- ../../include/quickfix/fix42/NewOrderSingle.h \
+ IDGenerator.h ../../include/quickfix/fix42/NewOrderSingle.h \
  ../../include/quickfix/fix42/Message.h \
  ../../include/quickfix/fix42/ExecutionReport.h \
  ../../include/quickfix/fix42/OrderCancelRequest.h \
@@ -784,6 +784,8 @@ Application.h:
 ../../include/quickfix/Values.h:
 
 ../../include/quickfix/Mutex.h:
+
+IDGenerator.h:
 
 ../../include/quickfix/fix42/NewOrderSingle.h:
 
