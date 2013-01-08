@@ -15,6 +15,7 @@
 #include "quickfix/fix42/MarketDataRequest.h"
 #include "quickfix/fix42/MarketDataSnapshotFullRefresh.h"
 #include "quickfix/fix42/QuoteRequest.h"
+#include "quickfix/fix42/Quote.h"
 
 
 #include <queue>
@@ -49,6 +50,7 @@ private:
   void onMessage( const FIX42::ExecutionReport&, const FIX::SessionID& );
   void onMessage( const FIX42::OrderCancelReject&, const FIX::SessionID& );
   void onMessage( const FIX42::MarketDataSnapshotFullRefresh&, const FIX::SessionID& );
+  void onMessage( const FIX42::Quote&, const FIX::SessionID& );
 
   void queryEnterOrder();
   void queryCancelOrder();

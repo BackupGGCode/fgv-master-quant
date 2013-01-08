@@ -178,6 +178,8 @@ void Application::onMessage( const FIX42::MarketDataRequest& message, const FIX:
   if ( noRelatedSym == 1){
 	  FIX42::MarketDataSnapshotFullRefresh resp;
 
+	  resp.setField(mdReqID);
+
 	  FIX::Symbol symbol;
 	  message.getGroup(1, noRelatedSymGroup );
 	  noRelatedSymGroup.get( symbol );
@@ -236,25 +238,26 @@ void Application::onMessage( const FIX42::QuoteRequest& message, const FIX::Sess
 	  FIX42::QuoteRequest::NoRelatedSym noRelatedSymGroup;
 
 	  FIX42::Quote resp;
+
+	  FIX::QuoteID quoteID( m_generator.genQuoteID());
+
 	  FIX::Symbol symbol;
-	  FIX::BidPx bidPx;
-	  FIX::BidSize bidSize;
-	  FIX::CouponRate rate;
+
 	  message.getGroup(1, noRelatedSymGroup );
 	  noRelatedSymGroup.get( symbol );
+	  FIX::BidPx bidPx(m_orderMatcher.getLastMarketData(symbol,Order::buy).getPrice());
+	  FIX::OfferPx offerPx(m_orderMatcher.getLastMarketData(symbol,Order::sell).getPrice());
+	  FIX::BidSize bidSize(m_orderMatcher.getLastMarketData(symbol,Order::buy).getOpenQuantity());
+	  FIX::OfferSize offerSize(m_orderMatcher.getLastMarketData(symbol,Order::sell).getOpenQuantity());
 
-
-
-
+	  resp.setField(quoteID);
 	  resp.setField(symbol);
 	  resp.setField(bidPx);
 	  resp.setField(bidSize);
-	  resp.setField(rate);
-
+	  resp.setField(offerPx);
+	  resp.setField(offerSize);
 
 	 FIX::Session::sendToTarget( resp,targetCompID ,senderCompID  );
-
-
 }
 
 

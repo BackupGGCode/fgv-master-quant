@@ -20,7 +20,7 @@ void Application::fromApp( const FIX::Message& message, const FIX::SessionID& se
 throw( FIX::FieldNotFound, FIX::IncorrectDataFormat, FIX::IncorrectTagValue, FIX::UnsupportedMessageType )
 {
   crack( message, sessionID );
-  std::cout << std::endl << "IN: " << message.toXML() << std::endl;
+  //std::cout << std::endl << "IN: " << message.toXML() << std::endl;
 
 }
 
@@ -35,8 +35,7 @@ throw( FIX::DoNotSend )
   }
   catch ( FIX::FieldNotFound& ) {}
 
-  std::cout << std::endl
-  << "OUT: " << message.toXML()  << std::endl;
+  //std::cout << std::endl << "OUT: " << message.toXML()  << std::endl;
 }
 
 void Application::onMessage
@@ -45,6 +44,27 @@ void Application::onMessage
 ( const FIX42::OrderCancelReject&, const FIX::SessionID& ) {}
 void Application::onMessage
 ( const FIX42::MarketDataSnapshotFullRefresh&, const FIX::SessionID& ) {}
+
+void Application::onMessage( const FIX42::Quote& message, const FIX::SessionID& ) {
+	FIX::Symbol symbol;
+	FIX::BidPx bidPx;
+	FIX::OfferPx offerPx;
+	FIX::BidSize bidSize;
+	FIX::OfferSize offerSize;
+
+	message.get(symbol);
+	message.get(bidPx);
+	message.get(offerPx);
+	message.get(bidSize);
+	message.get(offerSize);
+
+	std::cout << "symbol:" << symbol
+			<< "\nbidPx:" << bidPx
+			<< "\nbidSize:" << bidSize
+			<< "\nofferPx:" << offerPx
+			<< "\nofferSize:" << offerSize
+			<<std::endl;
+}
 
 /*
 void Application::run()

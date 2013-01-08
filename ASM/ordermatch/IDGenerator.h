@@ -28,7 +28,7 @@
 class IDGenerator
 {
 public:
-IDGenerator() : m_orderID( 0 ), m_executionID( 0 ) {}
+IDGenerator() : m_orderID( 0 ), m_executionID( 0 ), m_quoteID( 0 ) , m_marketDataID( 0 ) {}
 
   std::string genOrderID()
   {
@@ -44,9 +44,25 @@ IDGenerator() : m_orderID( 0 ), m_executionID( 0 ) {}
     return stream.str();
   }
 
+  std::string genQuoteID()
+  {
+    std::stringstream stream;
+    stream << ++m_quoteID;
+    return stream.str();
+  }
+
+  std::string genMarketDataID()
+  {
+    std::stringstream stream;
+    stream << ++m_marketDataID;
+    return stream.str();
+  }
+
 private:
   long m_orderID;
   long m_executionID;
+  long m_quoteID;
+  long m_marketDataID;
 };
 
 #endif
