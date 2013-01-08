@@ -17,6 +17,7 @@
 #include "quickfix/fix42/OrderCancelRequest.h"
 #include "quickfix/fix42/MarketDataSnapshotFullRefresh.h"
 #include "quickfix/fix42/QuoteRequest.h"
+#include "quickfix/fix42/Quote.h"
 
 #include "quickfix/fix42/MarketDataRequest.h"
 #include "quickfix/fix43/MarketDataRequest.h"

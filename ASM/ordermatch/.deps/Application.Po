@@ -224,6 +224,8 @@ Application.o: Application.cpp ../../config.h Application.h IDGenerator.h \
  ../../include/quickfix/fix42/Message.h \
  ../../include/quickfix/fix42/OrderCancelRequest.h \
  ../../include/quickfix/fix42/MarketDataSnapshotFullRefresh.h \
+ ../../include/quickfix/fix42/QuoteRequest.h \
+ ../../include/quickfix/fix42/Quote.h \
  ../../include/quickfix/fix42/MarketDataRequest.h \
  ../../include/quickfix/fix43/MarketDataRequest.h \
  ../../include/quickfix/fix43/Message.h \
@@ -804,6 +806,10 @@ Order.h:
 ../../include/quickfix/fix42/OrderCancelRequest.h:
 
 ../../include/quickfix/fix42/MarketDataSnapshotFullRefresh.h:
+
+../../include/quickfix/fix42/QuoteRequest.h:
+
+../../include/quickfix/fix42/Quote.h:
 
 ../../include/quickfix/fix42/MarketDataRequest.h:
 

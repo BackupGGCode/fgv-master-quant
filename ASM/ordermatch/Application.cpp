@@ -154,8 +154,7 @@ void Application::onMessage( const FIX42::MarketDataRequest& message, const FIX:
 void Application::onMessage( const FIX42::MarketDataRequest& message, const FIX::SessionID& )
 {
 
-  std::cout  << "[MarketDataSnapshotFullRefresh]"<< std::endl;
-
+  //std::cout  << "[MarketDataSnapshotFullRefresh]"<< std::endl;
 
   FIX::MDReqID mdReqID;
   FIX::SubscriptionRequestType subscriptionRequestType;
@@ -229,8 +228,33 @@ void Application::onMessage( const FIX42::MarketDataRequest& message, const FIX:
 
 void Application::onMessage( const FIX42::QuoteRequest& message, const FIX::SessionID& )
 {
-	//TODO: fazer!!!!!
-    std::cout << message.toXML() << std::endl;
+	  FIX::SenderCompID senderCompID;
+	  FIX::TargetCompID targetCompID;
+	  message.getHeader().get( senderCompID );
+	  message.getHeader().get( targetCompID );
+
+	  FIX42::QuoteRequest::NoRelatedSym noRelatedSymGroup;
+
+	  FIX42::Quote resp;
+	  FIX::Symbol symbol;
+	  FIX::BidPx bidPx;
+	  FIX::BidSize bidSize;
+	  FIX::CouponRate rate;
+	  message.getGroup(1, noRelatedSymGroup );
+	  noRelatedSymGroup.get( symbol );
+
+
+
+
+	  resp.setField(symbol);
+	  resp.setField(bidPx);
+	  resp.setField(bidSize);
+	  resp.setField(rate);
+
+
+	 FIX::Session::sendToTarget( resp,targetCompID ,senderCompID  );
+
+
 }
 
 

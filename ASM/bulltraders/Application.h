@@ -14,6 +14,8 @@
 #include "quickfix/fix42/OrderCancelReplaceRequest.h"
 #include "quickfix/fix42/MarketDataRequest.h"
 #include "quickfix/fix42/MarketDataSnapshotFullRefresh.h"
+#include "quickfix/fix42/QuoteRequest.h"
+
 
 #include <queue>
 
@@ -52,6 +54,7 @@ private:
   void queryCancelOrder();
   void queryReplaceOrder();
   void queryMarketDataRequest();
+  void queryQuoteRequest();
 
   FIX42::NewOrderSingle queryNewOrderSingle42();
   void sendOrder(FIX::Symbol symbol, FIX::Side side, FIX::OrderQty orderQty, FIX::Price price);
@@ -59,7 +62,6 @@ private:
 
   FIX42::OrderCancelRequest queryOrderCancelRequest42();
   FIX42::OrderCancelReplaceRequest queryCancelReplaceRequest42();
-  FIX42::MarketDataRequest queryMarketDataRequest42();
 
   void setHeader( FIX::Header& header );
   char queryAction();

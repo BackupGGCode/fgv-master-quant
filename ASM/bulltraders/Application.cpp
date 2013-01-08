@@ -91,6 +91,10 @@ void Application::runBOT()
     	  std::cout << "Canceling order ... " << std::endl;
     	  this->cancelOrder(symbol, FIX::Side_BUY, 314, 125.9);
     	  break;
+      case 'q':
+    	  std::cout << "Quote Request ... " << std::endl;
+    	  this->queryQuoteRequest();
+    	  break;
       default:
     	  std::cout << "Getting market data... " << std::endl;
     	  queryMarketDataRequest();
@@ -202,16 +206,6 @@ void Application::queryReplaceOrder()
     FIX::Session::sendToTarget( replace );
 }
 
-void Application::queryMarketDataRequest()
-{
-  std::cout << "\nMarketDataRequest\n";
-  FIX::Message md;
-  md = queryMarketDataRequest42();
-
-  FIX::Session::sendToTarget( md );
-}
-
-
 FIX42::NewOrderSingle Application::queryNewOrderSingle42()
 {
   FIX::OrdType ordType;
@@ -258,10 +252,12 @@ FIX42::OrderCancelReplaceRequest Application::queryCancelReplaceRequest42()
 }
 
 
-FIX42::MarketDataRequest Application::queryMarketDataRequest42()
+void Application::queryMarketDataRequest()
 {
 
-  FIX::MDReqID mdReqID( "MARKETDATAID" );
+  FIX::MDReqID genMDReqID;
+  genMDReqID = m_generator.genOrderID();
+  FIX::MDReqID mdReqID( genMDReqID );
   FIX::SubscriptionRequestType subType( '1' );
   FIX::MarketDepth marketDepth( 2 );
   FIX::MDUpdateType mDUpdateType(1);
@@ -276,12 +272,16 @@ FIX42::MarketDataRequest Application::queryMarketDataRequest42()
 
 
   FIX42::MarketDataRequest::NoRelatedSym symbolGroup;
+
   FIX::Symbol symbol( "IBM" );
   symbolGroup.set( symbol );
+
+
 
   FIX42::MarketDataRequest message( mdReqID, subType, marketDepth );
   message.addGroup( marketDataEntryGroup );
   message.addGroup( symbolGroup );
+
   message.set(mDUpdateType);
   message.set(aggregatedBook);
 
@@ -291,9 +291,31 @@ FIX42::MarketDataRequest Application::queryMarketDataRequest42()
   //std::cout << message.toString() << std::endl;
 
   FIX::Session::sendToTarget( message );
-
-  return message;
 }
+
+
+
+void Application::queryQuoteRequest()
+{
+  FIX42::QuoteRequest message;
+
+  FIX::QuoteReqID genQuoteReqID;
+  genQuoteReqID = m_generator.genOrderID();
+  message.set(genQuoteReqID);
+
+  FIX42::QuoteRequest::NoRelatedSym symbolGroup;
+  FIX::Symbol symbol( "IBM" );
+  symbolGroup.set( symbol );
+
+  message.addGroup(symbolGroup);
+
+
+  setHeader( message.getHeader() );
+
+  FIX::Session::sendToTarget( message );
+}
+
+
 
 void Application::setHeader( FIX::Header& header )
 {

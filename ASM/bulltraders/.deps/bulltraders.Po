@@ -245,7 +245,8 @@ bulltraders.o: bulltraders.cpp ../../config.h \
  ../../include/quickfix/fix42/OrderCancelReject.h \
  ../../include/quickfix/fix42/OrderCancelReplaceRequest.h \
  ../../include/quickfix/fix42/MarketDataRequest.h \
- ../../include/quickfix/fix42/MarketDataSnapshotFullRefresh.h
+ ../../include/quickfix/fix42/MarketDataSnapshotFullRefresh.h \
+ ../../include/quickfix/fix42/QuoteRequest.h
 
 ../../config.h:
 
@@ -868,3 +869,5 @@ IDGenerator.h:
 ../../include/quickfix/fix42/MarketDataRequest.h:
 
 ../../include/quickfix/fix42/MarketDataSnapshotFullRefresh.h:
+
+../../include/quickfix/fix42/QuoteRequest.h:
