@@ -151,6 +151,7 @@ LDFLAGS = @LDFLAGS@
 LEX = @LEX@
 LEXLIB = @LEXLIB@
 LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
+LIBCONFIG_LIBS = @LIBCONFIG_LIBS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
@@ -252,7 +253,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-SUBDIRS = executor ordermatch tradeclient tradeclientgui bulltraders
+SUBDIRS = executor ordermatch tradeclient tradeclientgui bulltraders beartraders randomtraders feeder
 EXTRA_DIST = configure configure.in bootstrap Makefile.am
 all: all-recursive
 

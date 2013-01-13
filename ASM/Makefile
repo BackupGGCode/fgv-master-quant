@@ -151,8 +151,9 @@ LDFLAGS =
 LEX = ${SHELL} /storage/data/projetos/artificial-market/quickfix-1.13.3/config/missing --run flex
 LEXLIB = 
 LEX_OUTPUT_ROOT = 
+LIBCONFIG_LIBS = -lconfig++
 LIBOBJS = 
-LIBS = -lpthread  -lxml2 -lz -lm -L/usr/lib64/mysql -lmysqlclient  
+LIBS = -lpthread  -lxml2 -lz -lm -L/usr/lib64/mysql -lmysqlclient -lconfig++  
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = 
 LN_S = ln -s
@@ -252,7 +253,7 @@ target_alias =
 top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
-SUBDIRS = executor ordermatch tradeclient tradeclientgui bulltraders
+SUBDIRS = executor ordermatch tradeclient tradeclientgui bulltraders beartraders randomtraders feeder
 EXTRA_DIST = configure configure.in bootstrap Makefile.am
 all: all-recursive
 
