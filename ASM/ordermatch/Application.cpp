@@ -12,7 +12,9 @@
 #include "quickfix/fix42/MarketDataRequest.h"
 #include "quickfix/fix42/MarketDataSnapshotFullRefresh.h"
 
-void Application::onLogon( const FIX::SessionID& sessionID ) {}
+void Application::onLogon( const FIX::SessionID& sessionID ) {
+	  this->_senderCompID = sessionID.getSenderCompID();
+}
 
 void Application::onLogout( const FIX::SessionID& sessionID ) {}
 
@@ -230,21 +232,19 @@ void Application::onMessage( const FIX42::MarketDataRequest& message, const FIX:
 
 void Application::onMessage( const FIX42::QuoteRequest& message, const FIX::SessionID& )
 {
-	  FIX::SenderCompID senderCompID;
-	  FIX::TargetCompID targetCompID;
-	  message.getHeader().get( senderCompID );
+	  FIX::SenderCompID targetCompID;
 	  message.getHeader().get( targetCompID );
-
-	  FIX42::QuoteRequest::NoRelatedSym noRelatedSymGroup;
-
-	  FIX42::Quote resp;
-
-	  FIX::QuoteID quoteID( m_generator.genQuoteID());
-
 	  FIX::Symbol symbol;
-
+	  FIX42::QuoteRequest::NoRelatedSym noRelatedSymGroup;
 	  message.getGroup(1, noRelatedSymGroup );
 	  noRelatedSymGroup.get( symbol );
+
+	  this->sendQuoteMessage(symbol,targetCompID );
+}
+
+void Application::sendQuoteMessage(FIX::Symbol symbol,FIX::SenderCompID targetCompID){
+	  FIX42::Quote resp;
+	  FIX::QuoteID quoteID( m_generator.genQuoteID());
 	  FIX::BidPx bidPx(m_orderMatcher.getLastMarketData(symbol,Order::buy).getPrice());
 	  FIX::OfferPx offerPx(m_orderMatcher.getLastMarketData(symbol,Order::sell).getPrice());
 	  FIX::BidSize bidSize(m_orderMatcher.getLastMarketData(symbol,Order::buy).getOpenQuantity());
@@ -257,7 +257,8 @@ void Application::onMessage( const FIX42::QuoteRequest& message, const FIX::Sess
 	  resp.setField(offerPx);
 	  resp.setField(offerSize);
 
-	 FIX::Session::sendToTarget( resp,targetCompID ,senderCompID  );
+	  FIX::Session::sendToTarget( resp,this->_senderCompID ,targetCompID);
+
 }
 
 
@@ -296,6 +297,7 @@ void Application::updateOrder( const Order& order, char status )
   try
   {
     FIX::Session::sendToTarget( fixOrder, senderCompID, targetCompID );
+    this->sendQuoteMessage(order.getSymbol(), FIX::SenderCompID("FEEDER"));
   }
   catch ( FIX::SessionNotFound& ) {}}
 
