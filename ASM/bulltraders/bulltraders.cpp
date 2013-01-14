@@ -7,6 +7,7 @@
 #include <iostream>
 #include <fstream>
 
+
 int main( int argc, char** argv )
 {
   if ( argc != 2 )
@@ -15,17 +16,19 @@ int main( int argc, char** argv )
     << " FILE." << std::endl;
     return 0;
   }
-  std::string file = argv[ 1 ];
+  std::string file_FIX_config = argv[ 1 ];
+  //std::string file_strategy = argv[ 2 ];
 
   try
   {
-    FIX::SessionSettings settings( file );
+    FIX::SessionSettings settings( file_FIX_config );
 
     Application application;
     FIX::MySQLStoreFactory  m_settings( settings );
     FIX::SocketInitiator initiator( application, m_settings, settings );
 
     initiator.start();
+
     application.runBOT();
     initiator.stop();
 

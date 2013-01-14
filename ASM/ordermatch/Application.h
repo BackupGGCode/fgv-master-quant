@@ -45,6 +45,7 @@ class Application
   void onMessage( const FIX42::OrderCancelRequest&, const FIX::SessionID& );
   void onMessage( const FIX42::MarketDataRequest&, const FIX::SessionID& );
   void onMessage( const FIX42::QuoteRequest&, const FIX::SessionID& );
+  void sendQuoteMessage( FIX::Symbol symbol,FIX::SenderCompID targetCompID);
   void onMessage( const FIX43::MarketDataRequest&, const FIX::SessionID& );
 
   // Order functionality
@@ -77,6 +78,7 @@ class Application
 
   OrderMatcher m_orderMatcher;
   IDGenerator m_generator;
+  FIX::SenderCompID _senderCompID;
 
 public:
   const OrderMatcher& orderMatcher() { return m_orderMatcher; }

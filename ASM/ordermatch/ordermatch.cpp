@@ -40,6 +40,7 @@ int main( int argc, char** argv )
       std::string value;
       std::cin >> value;
 
+
       if ( value == "#symbols" )
         application.orderMatcher().display();
       else if( value == "#quit" )

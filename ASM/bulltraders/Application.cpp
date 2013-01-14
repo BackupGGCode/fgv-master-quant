@@ -105,11 +105,11 @@ void Application::runBOT()
       switch(action){
       case 's':
     	  std::cout << "Sending order ... " << std::endl;
-    	  this->sendOrder(symbol, FIX::Side_BUY, 314, 125.9);
+    	  this->sendOrder(symbol, FIX::Side_SELL, 200, 92.05);
     	  break;
       case 'c':
     	  std::cout << "Canceling order ... " << std::endl;
-    	  this->cancelOrder(symbol, FIX::Side_BUY, 314, 125.9);
+    	  this->cancelOrder(symbol, FIX::Side_BUY, 150, 92.05);
     	  break;
       case 'q':
     	  std::cout << "Quote Request ... " << std::endl;
