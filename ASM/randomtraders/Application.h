@@ -16,7 +16,7 @@
 #include "quickfix/fix42/MarketDataSnapshotFullRefresh.h"
 #include "quickfix/fix42/QuoteRequest.h"
 #include "quickfix/fix42/Quote.h"
-
+#include "quickfix/fix42/Message.h"
 
 #include <queue>
 
@@ -34,6 +34,7 @@ public:
 private:
   FIX::SenderCompID senderCompID;
   FIX::TargetCompID targetCompID;
+
   typedef std::vector<FIX::Message> Messages;
   Messages m_messages;
   IDGenerator m_generator;

@@ -247,7 +247,8 @@ randomtraders.o: randomtraders.cpp ../../config.h \
  ../../include/quickfix/fix42/MarketDataRequest.h \
  ../../include/quickfix/fix42/MarketDataSnapshotFullRefresh.h \
  ../../include/quickfix/fix42/QuoteRequest.h \
- ../../include/quickfix/fix42/Quote.h Strategy.h \
+ ../../include/quickfix/fix42/Quote.h \
+ ../../include/quickfix/fix42/Message.h Strategy.h \
  /usr/include/libconfig.h++
 
 ../../config.h:
@@ -875,6 +876,8 @@ IDGenerator.h:
 ../../include/quickfix/fix42/QuoteRequest.h:
 
 ../../include/quickfix/fix42/Quote.h:
+
+../../include/quickfix/fix42/Message.h:
 
 Strategy.h:
 

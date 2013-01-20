@@ -6,7 +6,7 @@
 #endif
 
 #include "Application.h"
-#include "quickfix/Session.h"
+#include "../../src/C++/Session.h"
 
 #include "quickfix/fix42/ExecutionReport.h"
 #include "quickfix/fix42/MarketDataRequest.h"
@@ -27,6 +27,8 @@ throw( FIX::FieldNotFound, FIX::IncorrectDataFormat, FIX::IncorrectTagValue, FIX
 
 void Application::onMessage( const FIX42::NewOrderSingle& message, const FIX::SessionID& )
 {
+
+
   FIX::SenderCompID senderCompID;
   FIX::TargetCompID targetCompID;
   FIX::ClOrdID clOrdID;

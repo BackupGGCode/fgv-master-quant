@@ -109,7 +109,7 @@ void Application::runBOT()
     	  break;
       case 'c':
     	  std::cout << "Canceling order ... " << std::endl;
-    	  this->cancelOrder(symbol, FIX::Side_BUY, 150, 92.05);
+    	  this->cancelOrder(symbol, FIX::Side_SELL, 200, 92.05);
     	  break;
       case 'q':
     	  std::cout << "Quote Request ... " << std::endl;
@@ -137,6 +137,7 @@ char Application::canGo()
   << "Action: ";
   std::cin >> value;
   return value;
+
 }
 
 void Application::sendOrder(FIX::Symbol symbol, FIX::Side side,
@@ -162,7 +163,7 @@ void Application::sendOrder(FIX::Symbol symbol, FIX::Side side,
 }
 
 void Application::cancelOrder(FIX::Symbol symbol, FIX::Side side,
-													FIX::OrderQty orderQty, FIX::Price price){
+							  FIX::OrderQty orderQty, FIX::Price price){
 
   FIX42::OrderCancelRequest orderCancelRequest;
   FIX::ClOrdID clOrdID;
@@ -192,7 +193,9 @@ void Application::cancelOrder(FIX::Symbol symbol, FIX::Side side,
     {
       orderCancelRequest.set(FIX::OrigClOrdID (_origClOrdID));
       m_messages.erase(m_messages.begin()+i);
+      std::cout << "Sending canceling order message... " << std::endl;
       FIX::Session::sendToTarget( orderCancelRequest );
+      break;
     }
   }
 

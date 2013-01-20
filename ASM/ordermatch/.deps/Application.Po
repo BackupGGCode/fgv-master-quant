@@ -230,7 +230,7 @@ Application.o: Application.cpp ../../config.h Application.h IDGenerator.h \
  ../../include/quickfix/fix43/MarketDataRequest.h \
  ../../include/quickfix/fix43/Message.h \
  ../../include/quickfix/fix44/NewOrderSingle.h \
- ../../include/quickfix/fix44/Message.h ../../include/quickfix/Session.h \
+ ../../include/quickfix/fix44/Message.h ../../src/C++/Session.h \
  ../../include/quickfix/fix42/ExecutionReport.h
 
 ../../config.h:
@@ -821,6 +821,6 @@ Order.h:
 
 ../../include/quickfix/fix44/Message.h:
 
-../../include/quickfix/Session.h:
+../../src/C++/Session.h:
 
 ../../include/quickfix/fix42/ExecutionReport.h:

@@ -15,11 +15,11 @@ MySQLStorePassword=quickfix
 MySQLStoreHost=localhost
 MySQLStorePort=3036
 
-MySQLLogDatabase=quickfix
-MySQLLogUser=quickfix
-MySQLLogPassword=quickfix
-MySQLLogHost=localhost
-MySQLLogPort=3036
+#MySQLLogDatabase=quickfix
+#MySQLLogUser=quickfix
+#MySQLLogPassword=quickfix
+#MySQLLogHost=localhost
+#MySQLLogPort=3036
 
 ResetOnLogon=Y
 #ResetOnDisconnect=Y

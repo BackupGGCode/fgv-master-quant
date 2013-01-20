@@ -462,6 +462,7 @@ FIX::OrdType Application::queryOrdType()
     case '4': return FIX::OrdType( FIX::OrdType_STOP_LIMIT );
     default: throw std::exception();
   }
+
 }
 
 FIX::Price Application::queryPrice()

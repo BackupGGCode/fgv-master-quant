@@ -221,7 +221,7 @@ void Application::queryReplaceOrder()
 
 void Application::queryMarketDataRequest()
 {
-  int version = queryVersion();
+  //int version = queryVersion();
   std::cout << "\nMarketDataRequest v2\n";
   FIX::Message md;
   md = queryMarketDataRequest42();
