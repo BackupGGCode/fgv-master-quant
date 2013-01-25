@@ -15,20 +15,9 @@ MySQLStorePassword=quickfix
 MySQLStoreHost=localhost
 MySQLStorePort=3036
 
-#MySQLLogDatabase=quickfix
-#MySQLLogUser=quickfix
-#MySQLLogPassword=quickfix
-#MySQLLogHost=localhost
-#MySQLLogPort=3036
-
 ResetOnLogon=Y
-#ResetOnDisconnect=Y
-#ResetOnLogout=Y
-
-# standard config elements
 
 [SESSION]
-# inherit ConnectionType, ReconnectInterval and SenderCompID from default
 BeginString=FIX.4.2
 SenderCompID=RANDOMTRADER01
 TargetCompID=ORDERMATCH

@@ -31,9 +31,11 @@ int main( int argc, char** argv )
 
     initiator.start();
 
-    Strategy strategy(file_strategy, application);
-    //strategy.run();
-    application.runBOT();
+    Strategy strategy(file_strategy);
+    application.setStrategy(strategy);
+
+    application.run();
+    //application.runBOT();
     initiator.stop();
 
     return 0;

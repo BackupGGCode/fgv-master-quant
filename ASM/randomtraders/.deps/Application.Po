@@ -229,7 +229,8 @@ Application.o: Application.cpp ../../config.h Application.h \
  ../../include/quickfix/fix42/MarketDataSnapshotFullRefresh.h \
  ../../include/quickfix/fix42/QuoteRequest.h \
  ../../include/quickfix/fix42/Quote.h \
- ../../include/quickfix/fix42/Message.h ../../include/quickfix/Session.h
+ ../../include/quickfix/fix42/Message.h Strategy.h \
+ /usr/include/libconfig.h++ ../../include/quickfix/Session.h
 
 ../../config.h:
 
@@ -810,5 +811,9 @@ IDGenerator.h:
 ../../include/quickfix/fix42/Quote.h:
 
 ../../include/quickfix/fix42/Message.h:
+
+Strategy.h:
+
+/usr/include/libconfig.h++:
 
 ../../include/quickfix/Session.h:

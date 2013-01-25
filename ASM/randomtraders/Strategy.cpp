@@ -10,7 +10,7 @@
 Strategy::Strategy() {
 }
 
-Strategy::Strategy(std::string file, Application application) {
+Strategy::Strategy(std::string file) {
 	libconfig::Config cfg;
 
 	try{
@@ -26,23 +26,21 @@ Strategy::Strategy(std::string file, Application application) {
 
 	  if(cfg.lookupValue("PRECO_ACAO_INICIAL", preco_acao_inicial)
 	   && cfg.lookupValue("DINHEIRO_INICIAL", dinheiro_inicial)
-	   && cfg.lookupValue("MIN_TEMPO_NEG", min_tempo_neg)){
+	   && cfg.lookupValue("TEMPO_INI", tempo_ini)
+	   && cfg.lookupValue("TEMPO_CICLO", tempo_ciclo)){
 		  std::cout << "preco_acao_inicial:" << preco_acao_inicial<<std::endl;
 		  std::cout << "dinheiro_inicial:" << dinheiro_inicial <<std::endl;
-		  std::cout << "min_tempo_neg:" << min_tempo_neg <<std::endl;
+		  std::cout << "tempo_ini:" << tempo_ini <<std::endl;
+		  std::cout << "tempo_ciclo:" << tempo_ciclo <<std::endl;
 	  }else{
 		  std::cout << "configs vars not found" << std::endl;
 		  exit(1);
 	  }
-
-	  this->application = application;
-
 }
 
 void Strategy::run(){
 
     try{
-    	sleep(min_tempo_neg);
 //    	application.sendOrder()
 
     }

@@ -9,7 +9,6 @@
 #define STRATEGY_H_
 
 #include <libconfig.h++>
-#include "Application.h"
 #include <iostream>
 #include <iomanip>
 #include <cstdlib>
@@ -20,17 +19,15 @@ class Strategy {
 public:
 	float preco_acao_inicial;
 	float dinheiro_inicial;
-	float min_tempo_neg;
-	Application application;
+	float tempo_ciclo;
+	float tempo_ini;
 
 
 	Strategy();
-	Strategy(std::string file, Application application);
+	Strategy(std::string file);
 	void run();
 	virtual ~Strategy();
 
-private:
-	Application fix;
 };
 
 #endif /* STRATEGY_H_ */

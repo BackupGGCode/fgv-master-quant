@@ -24,6 +24,13 @@ throw( FIX::FieldNotFound, FIX::IncorrectDataFormat, FIX::IncorrectTagValue, FIX
 
 }
 
+
+void Application::setStrategy(Strategy& strategy)
+{
+	this->strategy = strategy;
+}
+
+
 void Application::toApp( FIX::Message& message, const FIX::SessionID& sessionID )
 throw( FIX::DoNotSend )
 {
@@ -46,7 +53,7 @@ void Application::onMessage
 ( const FIX42::MarketDataSnapshotFullRefresh&, const FIX::SessionID& ) {}
 
 void Application::onMessage( const FIX42::Quote& message, const FIX::SessionID& ) {
-	FIX::Symbol symbol;
+/*	FIX::Symbol symbol;
 	FIX::BidPx bidPx;
 	FIX::OfferPx offerPx;
 	FIX::BidSize bidSize;
@@ -64,35 +71,43 @@ void Application::onMessage( const FIX42::Quote& message, const FIX::SessionID& 
 			<< "\nofferPx:" << offerPx
 			<< "\nofferSize:" << offerSize
 			<<std::endl;
+*/
+	this->quote = message;
+	getQuote=true;
 }
 
-/*
+FIX42::Quote Application::getQuoteResponse() {
+	 while ( !getQuote ){
+		 sleep(0.5);
+	 }
+	 getQuote=false;
+	 return this->quote;
+}
+
 void Application::run()
 {
   while ( true )
   {
-    try
-    {
-      char action = queryAction();
 
-      if ( action == '1' )
-        queryEnterOrder();
-      else if ( action == '2' )
-        queryCancelOrder();
-      else if ( action == '3' )
-        queryReplaceOrder();
-      else if ( action == '4' )
-        queryMarketDataRequest();
-      else if ( action == '5' )
-        break;
+    try{
+    	sleep(strategy.tempo_ini);
+    	std::cout << "<< COTAR >>"<<std::endl;
+    	this->queryQuoteRequest();
+    	this->QuoteToString(getQuoteResponse());
+    	std::cout << "ARMA"<<std::endl;
+
+    	sleep(strategy.tempo_ciclo);
+    	std::cout << "DESARMA"<<std::endl;
+
+
     }
     catch ( std::exception & e )
     {
-      std::cout << "Message Not Sent: " << e.what();
+      std::cout << "Problem! " << e.what();
     }
   }
 }
-*/
+
 void Application::runBOT()
 {
   while ( true )
@@ -322,6 +337,7 @@ void Application::queryMarketDataRequest()
 
 void Application::queryQuoteRequest()
 {
+  getQuote=false;
   FIX42::QuoteRequest message;
 
   FIX::QuoteReqID genQuoteReqID;
@@ -506,4 +522,27 @@ FIX::TimeInForce Application::queryTimeInForce()
     case '5': return FIX::TimeInForce( FIX::TimeInForce_GOOD_TILL_CROSSING );
     default: throw std::exception();
   }
+}
+
+
+std::string Application::QuoteToString( const FIX42::Quote message ) {
+	FIX::Symbol symbol;
+	FIX::BidPx bidPx;
+	FIX::OfferPx offerPx;
+	FIX::BidSize bidSize;
+	FIX::OfferSize offerSize;
+
+	message.get(symbol);
+	message.get(bidPx);
+	message.get(offerPx);
+	message.get(bidSize);
+	message.get(offerSize);
+
+	return  "symbol:" + symbol.getString()
+			+ "\nbidPx:" + bidPx.getString()
+			+ "\nbidSize:" + bidSize.getString()
+			+ "\nofferPx:" + offerPx.getString()
+			+ "\nofferSize:" + offerSize.getString()
+			+ "\n";
+
 }

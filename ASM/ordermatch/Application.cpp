@@ -246,20 +246,39 @@ void Application::onMessage( const FIX42::QuoteRequest& message, const FIX::Sess
 
 void Application::sendQuoteMessage(FIX::Symbol symbol,FIX::SenderCompID targetCompID){
 	  FIX42::Quote resp;
-	  FIX::QuoteID quoteID( m_generator.genQuoteID());
-	  FIX::BidPx bidPx(m_orderMatcher.getLastMarketData(symbol,Order::buy).getPrice());
-	  FIX::OfferPx offerPx(m_orderMatcher.getLastMarketData(symbol,Order::sell).getPrice());
-	  FIX::BidSize bidSize(m_orderMatcher.getLastMarketData(symbol,Order::buy).getOpenQuantity());
-	  FIX::OfferSize offerSize(m_orderMatcher.getLastMarketData(symbol,Order::sell).getOpenQuantity());
 
-	  resp.setField(quoteID);
-	  resp.setField(symbol);
-	  resp.setField(bidPx);
-	  resp.setField(bidSize);
-	  resp.setField(offerPx);
-	  resp.setField(offerSize);
+	  if(m_orderMatcher.isThereLastMarketData(symbol)){
+		  FIX::QuoteID quoteID( m_generator.genQuoteID());
+		  FIX::BidPx bidPx(m_orderMatcher.getLastMarketData(symbol,Order::buy).getPrice());
+		  FIX::OfferPx offerPx(m_orderMatcher.getLastMarketData(symbol,Order::sell).getPrice());
+		  FIX::BidSize bidSize(m_orderMatcher.getLastMarketData(symbol,Order::buy).getOpenQuantity());
+		  FIX::OfferSize offerSize(m_orderMatcher.getLastMarketData(symbol,Order::sell).getOpenQuantity());
 
-	  FIX::Session::sendToTarget( resp,this->_senderCompID ,targetCompID);
+		  resp.setField(quoteID);
+		  resp.setField(symbol);
+		  resp.setField(bidPx);
+		  resp.setField(bidSize);
+		  resp.setField(offerPx);
+		  resp.setField(offerSize);
+
+		  FIX::Session::sendToTarget( resp,this->_senderCompID ,targetCompID);
+	  }
+	  else{
+
+		  FIX::QuoteID quoteID( m_generator.genQuoteID());
+		  FIX::BidPx bidPx(0);
+		  FIX::OfferPx offerPx(0);
+		  FIX::BidSize bidSize(0);
+		  FIX::OfferSize offerSize(0);
+
+		  resp.setField(quoteID);
+		  resp.setField(symbol);
+		  resp.setField(bidPx);
+		  resp.setField(bidSize);
+		  resp.setField(offerPx);
+		  resp.setField(offerSize);
+		  FIX::Session::sendToTarget( resp,this->_senderCompID ,targetCompID);
+	  }
 
 }
 

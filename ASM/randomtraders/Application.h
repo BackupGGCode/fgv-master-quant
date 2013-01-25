@@ -17,6 +17,7 @@
 #include "quickfix/fix42/QuoteRequest.h"
 #include "quickfix/fix42/Quote.h"
 #include "quickfix/fix42/Message.h"
+#include "Strategy.h"
 
 #include <queue>
 
@@ -27,22 +28,24 @@ class Application :
 public:
   void run();
   void runBOT();
-  void sendOrder(FIX::Symbol symbol, FIX::Side side, FIX::OrderQty orderQty, FIX::Price price);
-  void cancelOrder( FIX::Symbol symbol, FIX::Side side,	FIX::OrderQty orderQty, FIX::Price price);
+  void setStrategy( Strategy& strategy );
 
 
 private:
+  Strategy strategy;
   FIX::SenderCompID senderCompID;
   FIX::TargetCompID targetCompID;
+  FIX42::Quote quote;
+  bool getQuote;
 
   typedef std::vector<FIX::Message> Messages;
   Messages m_messages;
   IDGenerator m_generator;
 
-
   void onCreate( const FIX::SessionID& ) {}
   void onLogon( const FIX::SessionID& sessionID );
   void onLogout( const FIX::SessionID& sessionID );
+
   void toAdmin( FIX::Message&, const FIX::SessionID& ) {}
   void toApp( FIX::Message&, const FIX::SessionID& )
   throw( FIX::DoNotSend );
@@ -55,6 +58,13 @@ private:
   void onMessage( const FIX42::OrderCancelReject&, const FIX::SessionID& );
   void onMessage( const FIX42::MarketDataSnapshotFullRefresh&, const FIX::SessionID& );
   void onMessage( const FIX42::Quote&, const FIX::SessionID& );
+
+
+  void sendOrder(FIX::Symbol symbol, FIX::Side side, FIX::OrderQty orderQty, FIX::Price price);
+  void cancelOrder( FIX::Symbol symbol, FIX::Side side,	FIX::OrderQty orderQty, FIX::Price price);
+  FIX42::Quote getQuoteResponse();
+  std::string QuoteToString( const FIX42::Quote message );
+
 
   void queryEnterOrder();
   void queryCancelOrder();

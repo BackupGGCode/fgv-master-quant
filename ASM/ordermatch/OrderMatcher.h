@@ -32,15 +32,22 @@ public:
     return i->second.find( side, id );
   }
 
+  bool isThereLastMarketData(std::string symbol){
+	  Markets::iterator i = m_markets.find( symbol );
+	  if ( i == m_markets.end() ) return false;
+	  else	return true;
+  }
 
   Order& getLastMarketData( std::string symbol, Order::Side side)
   {
     Markets::iterator i = m_markets.find( symbol );
     if ( i == m_markets.end() ) throw std::exception();
-    if ( side == Order::sell )
-    	return i->second.getLastAskOrder();
-    else
-    	return i->second.getLastBidOrder();
+
+		if ( side == Order::sell )
+			return i->second.getLastAskOrder();
+		else
+			return i->second.getLastBidOrder();
+
   }
 
   std::vector<Order>  getMDOrderBook( std::string symbol, Order::Side side)
