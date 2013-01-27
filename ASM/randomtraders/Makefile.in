@@ -64,7 +64,7 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
 am_randomtraders_OBJECTS = randomtraders.$(OBJEXT) \
-	Application.$(OBJEXT) Strategy.$(OBJEXT)
+	Application.$(OBJEXT) Strategy.$(OBJEXT) SimpleOrder.$(OBJEXT)
 randomtraders_OBJECTS = $(am_randomtraders_OBJECTS)
 randomtraders_DEPENDENCIES = $(top_builddir)/src/C++/libquickfix.la
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
@@ -249,7 +249,9 @@ randomtraders_SOURCES = \
 	Application.h \
 	Application.cpp \
 	Strategy.h \
-	Strategy.cpp 
+	Strategy.cpp \
+	SimpleOrder.h \
+	SimpleOrder.cpp
 
 randomtraders_LDADD = $(top_builddir)/src/C++/libquickfix.la 
 INCLUDES = -I$(top_builddir)/include -I.. 
@@ -307,6 +309,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Application.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SimpleOrder.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Strategy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/randomtraders.Po@am__quote@
 

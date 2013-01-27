@@ -18,6 +18,7 @@
 #include "quickfix/fix42/Quote.h"
 #include "quickfix/fix42/Message.h"
 #include "Strategy.h"
+#include "SimpleOrder.h"
 
 #include <queue>
 
@@ -37,6 +38,8 @@ private:
   FIX::TargetCompID targetCompID;
   FIX42::Quote quote;
   bool getQuote;
+  FIX42::ExecutionReport ereport;
+  bool getConfirmationTrade;
 
   typedef std::vector<FIX::Message> Messages;
   Messages m_messages;
@@ -61,16 +64,18 @@ private:
 
 
   void sendOrder(FIX::Symbol symbol, FIX::Side side, FIX::OrderQty orderQty, FIX::Price price);
+  void sendOrder(SimpleOrder order);
   void cancelOrder( FIX::Symbol symbol, FIX::Side side,	FIX::OrderQty orderQty, FIX::Price price);
   FIX42::Quote getQuoteResponse();
-  std::string QuoteToString( const FIX42::Quote message );
+  FIX42::ExecutionReport getTradeConfirmationResponse();
+
 
 
   void queryEnterOrder();
   void queryCancelOrder();
   void queryReplaceOrder();
   void queryMarketDataRequest();
-  void queryQuoteRequest();
+  void queryQuoteRequest(FIX::Symbol symbol);
 
   FIX42::NewOrderSingle queryNewOrderSingle42();
 

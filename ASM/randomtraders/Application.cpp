@@ -46,32 +46,25 @@ throw( FIX::DoNotSend )
 }
 
 void Application::onMessage
-( const FIX42::ExecutionReport&, const FIX::SessionID& ) {}
+( const FIX42::ExecutionReport& message, const FIX::SessionID& ) {
+    FIX::OrdStatus status;
+    message.get(status);
+	this->ereport = message;
+	if(status == FIX::OrdStatus_NEW){
+
+		getConfirmationTrade=true;
+	}
+	if(status == FIX::OrdStatus_FILLED ||status == FIX::OrdStatus_NEW ){
+
+	}
+
+}
 void Application::onMessage
 ( const FIX42::OrderCancelReject&, const FIX::SessionID& ) {}
 void Application::onMessage
 ( const FIX42::MarketDataSnapshotFullRefresh&, const FIX::SessionID& ) {}
 
 void Application::onMessage( const FIX42::Quote& message, const FIX::SessionID& ) {
-/*	FIX::Symbol symbol;
-	FIX::BidPx bidPx;
-	FIX::OfferPx offerPx;
-	FIX::BidSize bidSize;
-	FIX::OfferSize offerSize;
-
-	message.get(symbol);
-	message.get(bidPx);
-	message.get(offerPx);
-	message.get(bidSize);
-	message.get(offerSize);
-
-	std::cout << "symbol:" << symbol
-			<< "\nbidPx:" << bidPx
-			<< "\nbidSize:" << bidSize
-			<< "\nofferPx:" << offerPx
-			<< "\nofferSize:" << offerSize
-			<<std::endl;
-*/
 	this->quote = message;
 	getQuote=true;
 }
@@ -84,21 +77,26 @@ FIX42::Quote Application::getQuoteResponse() {
 	 return this->quote;
 }
 
+FIX42::ExecutionReport Application::getTradeConfirmationResponse() {
+	 while ( !getConfirmationTrade ){
+		 sleep(0.5);
+	 }
+	 getConfirmationTrade=false;
+	 return this->ereport;
+}
+
 void Application::run()
 {
-  while ( true )
-  {
+  while (true){
 
     try{
     	sleep(strategy.tempo_ini);
-    	std::cout << "<< COTAR >>"<<std::endl;
-    	this->queryQuoteRequest();
-    	this->QuoteToString(getQuoteResponse());
-    	std::cout << "ARMA"<<std::endl;
+    	this->queryQuoteRequest(FIX::Symbol(strategy.ticker));
+    	this->strategy.preTrade(getQuoteResponse());
 
+    	this->sendOrder(this->strategy.trade());
+    	this->getTradeConfirmationResponse();
     	sleep(strategy.tempo_ciclo);
-    	std::cout << "DESARMA"<<std::endl;
-
 
     }
     catch ( std::exception & e )
@@ -128,7 +126,7 @@ void Application::runBOT()
     	  break;
       case 'q':
     	  std::cout << "Quote Request ... " << std::endl;
-    	  this->queryQuoteRequest();
+    	  this->queryQuoteRequest(FIX::Symbol("FGV"));
     	  break;
       default:
     	  std::cout << "Getting market data... " << std::endl;
@@ -154,6 +152,29 @@ char Application::canGo()
   return value;
 
 }
+
+
+void Application::sendOrder(SimpleOrder order){
+
+  FIX::ClOrdID clOrdID;
+  clOrdID = m_generator.genOrderID();
+  FIX42::NewOrderSingle newOrderSingle;
+  newOrderSingle.set( clOrdID );
+  newOrderSingle.set(FIX::HandlInst( '1' ));
+  newOrderSingle.set( order.symbol );
+  newOrderSingle.set( order.side );
+  newOrderSingle.set(FIX::TransactTime());
+  newOrderSingle.set( FIX::OrdType( FIX::OrdType_LIMIT ) );
+  newOrderSingle.set( order.orderQty );
+  newOrderSingle.set( FIX::TimeInForce( FIX::TimeInForce_DAY ) );
+  newOrderSingle.set( order.price );
+  setHeader( newOrderSingle.getHeader() );
+  m_messages.push_back(newOrderSingle);
+  FIX::Session::sendToTarget( newOrderSingle );
+
+
+}
+
 
 void Application::sendOrder(FIX::Symbol symbol, FIX::Side side,
 							FIX::OrderQty orderQty, FIX::Price price){
@@ -335,7 +356,7 @@ void Application::queryMarketDataRequest()
 
 
 
-void Application::queryQuoteRequest()
+void Application::queryQuoteRequest(FIX::Symbol symbol)
 {
   getQuote=false;
   FIX42::QuoteRequest message;
@@ -345,7 +366,6 @@ void Application::queryQuoteRequest()
   message.set(genQuoteReqID);
 
   FIX42::QuoteRequest::NoRelatedSym symbolGroup;
-  FIX::Symbol symbol( "IBM" );
   symbolGroup.set( symbol );
 
   message.addGroup(symbolGroup);
@@ -525,24 +545,4 @@ FIX::TimeInForce Application::queryTimeInForce()
 }
 
 
-std::string Application::QuoteToString( const FIX42::Quote message ) {
-	FIX::Symbol symbol;
-	FIX::BidPx bidPx;
-	FIX::OfferPx offerPx;
-	FIX::BidSize bidSize;
-	FIX::OfferSize offerSize;
 
-	message.get(symbol);
-	message.get(bidPx);
-	message.get(offerPx);
-	message.get(bidSize);
-	message.get(offerSize);
-
-	return  "symbol:" + symbol.getString()
-			+ "\nbidPx:" + bidPx.getString()
-			+ "\nbidSize:" + bidSize.getString()
-			+ "\nofferPx:" + offerPx.getString()
-			+ "\nofferSize:" + offerSize.getString()
-			+ "\n";
-
-}

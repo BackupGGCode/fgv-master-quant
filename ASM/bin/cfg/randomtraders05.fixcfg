@@ -7,19 +7,19 @@ UseDataDictionary=Y
 PersistMessages=Y
 HeartBtInt=30
 DataDictionary=../spec/FIX42.xml
-HttpAcceptPort=9911
+#HttpAcceptPort=9911
 
 MySQLStoreDatabase=quickfix
 MySQLStoreUser=quickfix
 MySQLStorePassword=quickfix
-MySQLStoreHost=localhost
-MySQLStorePort=3036
+MySQLStoreHost=192.168.1.10
+MySQLStorePort=3306
 
 ResetOnLogon=Y
 
 [SESSION]
 BeginString=FIX.4.2
-SenderCompID=RANDOMTRADER01
+SenderCompID=RANDOMTRADER05
 TargetCompID=ORDERMATCH
 SocketConnectHost=127.0.0.1
 SocketConnectPort=5002

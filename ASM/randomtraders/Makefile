@@ -64,7 +64,7 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
 am_randomtraders_OBJECTS = randomtraders.$(OBJEXT) \
-	Application.$(OBJEXT) Strategy.$(OBJEXT)
+	Application.$(OBJEXT) Strategy.$(OBJEXT) SimpleOrder.$(OBJEXT)
 randomtraders_OBJECTS = $(am_randomtraders_OBJECTS)
 randomtraders_DEPENDENCIES = $(top_builddir)/src/C++/libquickfix.la
 DEFAULT_INCLUDES = -I. -I$(top_builddir)
@@ -127,10 +127,10 @@ DUMPBIN =
 ECHO_C = 
 ECHO_N = -n
 ECHO_T = 
-EGREP = /bin/grep -E
+EGREP = /usr/bin/grep -E
 EXEEXT = 
-FGREP = /bin/grep -F
-GREP = /bin/grep
+FGREP = /usr/bin/grep -F
+GREP = /usr/bin/grep
 INSTALL = /usr/bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
@@ -144,14 +144,14 @@ LEXLIB =
 LEX_OUTPUT_ROOT = 
 LIBCONFIG_LIBS = -lconfig++
 LIBOBJS = 
-LIBS = -lpthread  -lxml2 -lz -lm -L/usr/lib64/mysql -lmysqlclient -lconfig++  
+LIBS =  -lxml2 -lz -lm -ldl -L/usr/lib64/mysql -lmysqlclient -lconfig++  
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = 
 LN_S = ln -s
 LTLIBOBJS = 
 MAKEINFO = ${SHELL} /storage/data/projetos/artificial-market/quickfix-1.13.3/config/missing --run makeinfo
 MANIFEST_TOOL = :
-MKDIR_P = /bin/mkdir -p
+MKDIR_P = /usr/bin/mkdir -p
 MYSQL_CFLAGS = -I/usr/include/mysql
 MYSQL_LIBS = -L/usr/lib64/mysql -lmysqlclient
 MYSQL_PREFIX = 
@@ -177,9 +177,9 @@ PYTHON_PREFIX =
 PYTHON_SITE_PACKAGES = 
 RANLIB = ranlib
 RUBY_CFLAGS = 
-RUBY_PREFIX = /usr/lib64/ruby/1.8/x86_64-linux
+RUBY_PREFIX = 
 RUBY_SITE_PACKAGES = 
-SED = /bin/sed
+SED = /usr/bin/sed
 SET_MAKE = 
 SHELL = /bin/sh
 STLPORT_CFLAGS = 
@@ -189,7 +189,7 @@ STRIP = strip
 VERSION = 1.13.3
 XML2_CONFIG = /usr/bin/xml2-config
 XML_CPPFLAGS = -I/usr/include/libxml2
-XML_LIBS = -lxml2 -lz -lm
+XML_LIBS = -lxml2 -lz -lm -ldl
 abs_builddir = /storage/data/projetos/artificial-market/quickfix-1.13.3/ASM/randomtraders
 abs_srcdir = /storage/data/projetos/artificial-market/quickfix-1.13.3/ASM/randomtraders
 abs_top_builddir = /storage/data/projetos/artificial-market/quickfix-1.13.3
@@ -230,7 +230,7 @@ libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
 localstatedir = ${prefix}/var
 mandir = ${datarootdir}/man
-mkdir_p = /bin/mkdir -p
+mkdir_p = /usr/bin/mkdir -p
 oldincludedir = /usr/include
 pdfdir = ${docdir}
 prefix = /usr/local
@@ -249,7 +249,9 @@ randomtraders_SOURCES = \
 	Application.h \
 	Application.cpp \
 	Strategy.h \
-	Strategy.cpp 
+	Strategy.cpp \
+	SimpleOrder.h \
+	SimpleOrder.cpp
 
 randomtraders_LDADD = $(top_builddir)/src/C++/libquickfix.la 
 INCLUDES = -I$(top_builddir)/include -I.. 
@@ -307,6 +309,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 include ./$(DEPDIR)/Application.Po
+include ./$(DEPDIR)/SimpleOrder.Po
 include ./$(DEPDIR)/Strategy.Po
 include ./$(DEPDIR)/randomtraders.Po
 

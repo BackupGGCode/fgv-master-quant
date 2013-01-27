@@ -9,6 +9,8 @@
 #define STRATEGY_H_
 
 #include <libconfig.h++>
+#include "quickfix/fix42/Quote.h"
+#include "SimpleOrder.h"
 #include <iostream>
 #include <iomanip>
 #include <cstdlib>
@@ -17,16 +19,22 @@ class Strategy {
 
 
 public:
+	std::string	ticker;
 	float preco_acao_inicial;
 	float dinheiro_inicial;
+	float percentual_max_negs;
 	float tempo_ciclo;
 	float tempo_ini;
+	FIX42::Quote lastQuote;
 
 
 	Strategy();
 	Strategy(std::string file);
-	void run();
 	virtual ~Strategy();
+	void preTrade(FIX42::Quote message);
+	SimpleOrder trade();
+	void postTrade();
+	std::string QuoteToString( const FIX42::Quote message );
 
 };
 

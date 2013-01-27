@@ -5,7 +5,9 @@ randomtraders_SOURCES = \
 	Application.h \
 	Application.cpp \
 	Strategy.h \
-	Strategy.cpp 
+	Strategy.cpp \
+	SimpleOrder.h \
+	SimpleOrder.cpp
 
 randomtraders_LDADD = $(top_builddir)/src/C++/libquickfix.la 
 
