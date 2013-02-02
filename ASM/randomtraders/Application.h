@@ -40,6 +40,7 @@ private:
   bool getQuote;
   FIX42::ExecutionReport ereport;
   bool getConfirmationTrade;
+  bool getConfirmationExecutionTrade;
 
   typedef std::vector<FIX::Message> Messages;
   Messages m_messages;
@@ -68,6 +69,7 @@ private:
   void cancelOrder( FIX::Symbol symbol, FIX::Side side,	FIX::OrderQty orderQty, FIX::Price price);
   FIX42::Quote getQuoteResponse();
   FIX42::ExecutionReport getTradeConfirmationResponse();
+  FIX42::ExecutionReport getTradeConfirmationExecutionResponse();
 
 
 

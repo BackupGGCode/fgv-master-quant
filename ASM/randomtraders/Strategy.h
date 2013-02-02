@@ -10,21 +10,24 @@
 
 #include <libconfig.h++>
 #include "quickfix/fix42/Quote.h"
+#include "quickfix/fix42/ExecutionReport.h"
 #include "SimpleOrder.h"
 #include <iostream>
 #include <iomanip>
 #include <cstdlib>
+#include <math.h>
 
 class Strategy {
 
 
 public:
 	std::string	ticker;
-	float preco_acao_inicial;
-	float dinheiro_inicial;
+	float initialStockPrice;
+	float cash;
+	float numberStock;
 	float percentual_max_negs;
-	float tempo_ciclo;
-	float tempo_ini;
+	float cycleTime;
+	float initialTime;
 	FIX42::Quote lastQuote;
 
 
@@ -33,8 +36,10 @@ public:
 	virtual ~Strategy();
 	void preTrade(FIX42::Quote message);
 	SimpleOrder trade();
-	void postTrade();
-	std::string QuoteToString( const FIX42::Quote message );
+	void postTrade(FIX42::ExecutionReport ereport);
+	void printQuote( const FIX42::Quote message );
+	void printExecutionReport( const FIX42::ExecutionReport ereport );
+
 
 };
 

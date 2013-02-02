@@ -7,6 +7,8 @@
 
 #include "Strategy.h"
 
+float roundASM(float x) { return floorf(x * 100 + 0.5) / 100; }
+
 Strategy::Strategy() {
 }
 
@@ -25,32 +27,37 @@ Strategy::Strategy(std::string file) {
 	  }
 
 	  if(cfg.lookupValue("TICKER", ticker)
-	   && cfg.lookupValue("PRECO_ACAO_INICIAL", preco_acao_inicial)
-	   && cfg.lookupValue("DINHEIRO_INICIAL", dinheiro_inicial)
+	   && cfg.lookupValue("INITIAL_STOCK_PRICE", initialStockPrice)
+	   && cfg.lookupValue("CASH", cash)
+	   && cfg.lookupValue("NUMBER_STOCK", numberStock)
 	   && cfg.lookupValue("PERCENTUAL_MAX_NEG", percentual_max_negs)
-	   && cfg.lookupValue("TEMPO_INI", tempo_ini)
-	   && cfg.lookupValue("TEMPO_CICLO", tempo_ciclo)){
-		  std::cout << "ticker:" << ticker<<std::endl;
-		  std::cout << "preco_acao_inicial:" << preco_acao_inicial<<std::endl;
-		  std::cout << "dinheiro_inicial:" << dinheiro_inicial <<std::endl;
-		  std::cout << "percentual_max_negs:" << percentual_max_negs <<std::endl;
-		  std::cout << "tempo_ini:" << tempo_ini <<std::endl;
-		  std::cout << "tempo_ciclo:" << tempo_ciclo <<std::endl;
+	   && cfg.lookupValue("INITIAL_TIME", initialTime)
+	   && cfg.lookupValue("CYCLE_TIME", cycleTime)){
+		  std::cout << "ticker:" << ticker<< std::endl;
+		  std::cout << "initialStockPrice:" << initialStockPrice<< std::endl;
+		  std::cout << "cash:" << cash << std::endl;
+		  std::cout << "numberStock:" << numberStock << std::endl;
+		  std::cout << "percentual_max_negs:" << percentual_max_negs << std::endl;
+		  std::cout << "initialTime:" << initialTime << std::endl;
+		  std::cout << "cycleTime:" << cycleTime << std::endl;
 	  }else{
 		  std::cout << "configs vars not found" << std::endl;
 		  exit(1);
 	  }
 }
 
+
+
 void Strategy::preTrade(FIX42::Quote message){
 	std::cout << "Strategy::PreTrade"<<std::endl;
-	std::cout << this->QuoteToString(message) << std::endl;
+	this->printQuote(message);
 	this->lastQuote = message;
 
 }
 
 SimpleOrder Strategy::trade(){
 	std::cout << "Strategy::Trade"<<std::endl;
+	float price = 0.0;
 	SimpleOrder order;
 
 	FIX::Symbol symbol;
@@ -69,26 +76,72 @@ SimpleOrder Strategy::trade(){
 	}
 
 	if(order.side == FIX::Side_SELL){
-		order.price = (bidPx <= 0.0 ? this->preco_acao_inicial: (float)bidPx);
+		price = (bidPx <= 0.0 ? this->initialStockPrice: (float)bidPx);
 	}else{
-		order.price = (offerPx <= 0.0 ? this->preco_acao_inicial: (float)offerPx);
+		price = (offerPx <= 0.0 ? this->initialStockPrice: (float)offerPx);
 	}
 
-	order.price = order.price*(1.0+0.7/(rand()%100));
-	order.orderQty = percentual_max_negs*this->dinheiro_inicial/order.price;
+	price += price*(0.7/(rand()%100));
 
-	std::cout << order.toString() << std::endl;
+	order.price = roundASM(price);
+	order.orderQty = (int) (percentual_max_negs*this->cash/order.price);
+
+	order.print();
 
 	return order;
 }
 
-void Strategy::postTrade(){
+void Strategy::postTrade(FIX42::ExecutionReport ereport){
+	std::cout << "Strategy::PostTrade"<<std::endl;
+	this->printExecutionReport(ereport);
+
+	FIX::CumQty cumQty;
+	FIX::AvgPx avgPx;
+	FIX::Side side;
+
+	ereport.get(cumQty);
+	ereport.get(avgPx);
+	ereport.get(side);
+
+
+	this->numberStock += ( side == FIX::Side_SELL ? -cumQty : +cumQty );
+	this->cash += ( side == FIX::Side_SELL ? +cumQty*avgPx : -cumQty*avgPx );
 
 }
 
+void Strategy::printExecutionReport( const FIX42::ExecutionReport ereport ) {
+
+	FIX::OrderID orderID;
+	FIX::ExecID execID;
+	FIX::ExecTransType execTransType;
+	FIX::ExecType execType;
+	FIX::OrdStatus ordStatus;
+	FIX::Symbol symbol;
+	FIX::Side side;
+	FIX::LeavesQty leavesQty;
+	FIX::CumQty cumQty;
+	FIX::AvgPx avgPx;
+
+	ereport.get(orderID);
+	ereport.get(execID);
+	ereport.get(execTransType);
+	ereport.get(execType);
+	ereport.get(ordStatus);
+	ereport.get(symbol);
+	ereport.get(side);
+	ereport.get(leavesQty);
+	ereport.get(cumQty);
+	ereport.get(avgPx);
+
+	std::cout<<  "[EXECUTION REPORT] symbol:" << symbol
+			<< "\tLeavesQty:" << leavesQty
+			<< "\tCumQty:" << cumQty
+			<< "\tAvgPx:"<< std::fixed << std::setprecision(2) << (double)avgPx
+			<< std::endl;
+}
 
 
-std::string Strategy::QuoteToString( const FIX42::Quote message ) {
+void Strategy::printQuote( const FIX42::Quote message ) {
 	FIX::Symbol symbol;
 	FIX::BidPx bidPx;
 	FIX::OfferPx offerPx;
@@ -100,13 +153,12 @@ std::string Strategy::QuoteToString( const FIX42::Quote message ) {
 	message.get(offerPx);
 	message.get(bidSize);
 	message.get(offerSize);
-
-	return  "[QUOTE] symbol:" + symbol.getString()
-			+ "\tbidPx:" + bidPx.getString()
-			+ "\tbidSize:" + bidSize.getString()
-			+ "\tofferPx:" + offerPx.getString()
-			+ "\tofferSize:" + offerSize.getString();
-
+	std::cout<<  "[QUOTE] symbol:" << symbol
+			<< "\tbidPx:" << std::fixed << std::setprecision(2) << (double)bidPx
+			<< "\tbidSize:" << bidSize
+			<< "\tofferPx:" << std::fixed << std::setprecision(2) << (double)offerPx
+			<< "\tofferSize:" << offerSize
+			<< std::endl;
 }
 
 

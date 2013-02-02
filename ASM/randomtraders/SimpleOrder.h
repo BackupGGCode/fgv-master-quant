@@ -19,7 +19,7 @@ public:
     FIX::OrderQty orderQty;
     FIX::Price price;
 
-    std::string toString();
+    void print();
 };
 
 #endif /* SIMPLEORDER_H_ */

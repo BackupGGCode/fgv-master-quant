@@ -190,8 +190,8 @@ void Application::onMessage( const FIX42::MarketDataRequest& message, const FIX:
 	  resp.setField(symbol);
 
 	  std::vector<Order> mdOrderBuy = m_orderMatcher.getMDOrderBook(symbol, Order::buy);
-	  std::cout  << "mdOrderBuy.size="<< mdOrderBuy.size()<<std::endl;
-	  for (int i=0; (i < mdOrderBuy.size()  && i < marketDepth); i++){
+	  //std::cout  << "mdOrderBuy.size="<< mdOrderBuy.size()<<std::endl;
+	  for (int i=0; (i < (int)mdOrderBuy.size()  && i < marketDepth); i++){
 		  FIX42::MarketDataSnapshotFullRefresh::NoMDEntries group;
 		  FIX::MDEntryType MDEntryType(FIX::MDEntryType_OFFER);
 		  FIX::MDEntryPx MDEntryPx(mdOrderBuy[i].getPrice());
@@ -204,8 +204,8 @@ void Application::onMessage( const FIX42::MarketDataRequest& message, const FIX:
 		  resp.addGroup(group);
 	  }
 	  std::vector<Order> mdOrderSell = m_orderMatcher.getMDOrderBook(symbol, Order::sell);
-	  std::cout  << "mdOrderSell.size="<< mdOrderSell.size()<<std::endl;
-	  for (int i=0; (i < mdOrderSell.size() && i < marketDepth); i++){
+	  //std::cout  << "mdOrderSell.size="<< mdOrderSell.size()<<std::endl;
+	  for (int i=0; (i < (int)mdOrderSell.size() && i < marketDepth); i++){
 		  FIX42::MarketDataSnapshotFullRefresh::NoMDEntries group;
 		  FIX::MDEntryType MDEntryType(FIX::MDEntryType_BID);
 		  FIX::MDEntryPx MDEntryPx(mdOrderSell[i].getPrice());
@@ -247,12 +247,23 @@ void Application::onMessage( const FIX42::QuoteRequest& message, const FIX::Sess
 void Application::sendQuoteMessage(FIX::Symbol symbol,FIX::SenderCompID targetCompID){
 	  FIX42::Quote resp;
 
-	  if(m_orderMatcher.isThereLastMarketData(symbol)){
+	  if(m_orderMatcher.isThereLastMarketData(symbol)){ // tem pelo menos 1 bid ou 1 ask
+
 		  FIX::QuoteID quoteID( m_generator.genQuoteID());
-		  FIX::BidPx bidPx(m_orderMatcher.getLastMarketData(symbol,Order::buy).getPrice());
-		  FIX::OfferPx offerPx(m_orderMatcher.getLastMarketData(symbol,Order::sell).getPrice());
-		  FIX::BidSize bidSize(m_orderMatcher.getLastMarketData(symbol,Order::buy).getOpenQuantity());
-		  FIX::OfferSize offerSize(m_orderMatcher.getLastMarketData(symbol,Order::sell).getOpenQuantity());
+		  FIX::BidPx bidPx(0);
+		  FIX::OfferPx offerPx(0);
+		  FIX::BidSize bidSize(0);
+		  FIX::OfferSize offerSize(0);
+
+		  try{
+			  FIX::BidPx bidPx(m_orderMatcher.getLastMarketData(symbol,Order::buy).getPrice());
+			  FIX::BidSize bidSize(m_orderMatcher.getLastMarketData(symbol,Order::buy).getOpenQuantity());
+		  }catch ( std::exception & e ){}
+
+		  try{
+			  FIX::OfferPx offerPx(m_orderMatcher.getLastMarketData(symbol,Order::sell).getPrice());
+			  FIX::OfferSize offerSize(m_orderMatcher.getLastMarketData(symbol,Order::sell).getOpenQuantity());
+		  }catch ( std::exception & e ){}
 
 		  resp.setField(quoteID);
 		  resp.setField(symbol);
@@ -285,7 +296,7 @@ void Application::sendQuoteMessage(FIX::Symbol symbol,FIX::SenderCompID targetCo
 
 void Application::onMessage( const FIX43::MarketDataRequest& message, const FIX::SessionID& )
 {
-    std::cout << message.toXML() << std::endl;
+    //std::cout << message.toXML() << std::endl;
 }
 
 void Application::updateOrder( const Order& order, char status )

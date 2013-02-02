@@ -16,10 +16,11 @@ SimpleOrder::~SimpleOrder() {
 	// TODO Auto-generated destructor stub
 }
 
-std::string SimpleOrder::toString() {
+void SimpleOrder::print() {
 
-	return "[ORDER] symbol: " + symbol.getString()
-			  + "\tside: "+( side == FIX::Side_SELL ? "SELL" : "BUY" )
-			  +"\torderQty: "+orderQty.getString()
-			  +"\tprice: "+price.getString();
+	std::cout << "[ORDER] symbol: " << symbol
+			  << "\tside: " << ( side == FIX::Side_SELL ? "SELL" : "BUY" )
+			  << "\torderQty: " << orderQty
+			  << "\tprice: " <<  std::fixed << std::setprecision(2) << (double)price
+			  << std::endl;
 }

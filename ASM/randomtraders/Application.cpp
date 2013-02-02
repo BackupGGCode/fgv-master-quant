@@ -55,7 +55,7 @@ void Application::onMessage
 		getConfirmationTrade=true;
 	}
 	if(status == FIX::OrdStatus_FILLED ||status == FIX::OrdStatus_NEW ){
-
+		getConfirmationExecutionTrade=true;
 	}
 
 }
@@ -71,7 +71,7 @@ void Application::onMessage( const FIX42::Quote& message, const FIX::SessionID& 
 
 FIX42::Quote Application::getQuoteResponse() {
 	 while ( !getQuote ){
-		 sleep(0.5);
+		 sleep(0.05);
 	 }
 	 getQuote=false;
 	 return this->quote;
@@ -79,9 +79,17 @@ FIX42::Quote Application::getQuoteResponse() {
 
 FIX42::ExecutionReport Application::getTradeConfirmationResponse() {
 	 while ( !getConfirmationTrade ){
-		 sleep(0.5);
+		 sleep(0.05);
 	 }
 	 getConfirmationTrade=false;
+	 return this->ereport;
+}
+
+FIX42::ExecutionReport Application::getTradeConfirmationExecutionResponse() {
+	 while ( !getConfirmationExecutionTrade ){
+		 sleep(0.05);
+	 }
+	 getConfirmationExecutionTrade=false;
 	 return this->ereport;
 }
 
@@ -90,13 +98,14 @@ void Application::run()
   while (true){
 
     try{
-    	sleep(strategy.tempo_ini);
+    	sleep(strategy.initialTime);
     	this->queryQuoteRequest(FIX::Symbol(strategy.ticker));
     	this->strategy.preTrade(getQuoteResponse());
 
     	this->sendOrder(this->strategy.trade());
     	this->getTradeConfirmationResponse();
-    	sleep(strategy.tempo_ciclo);
+    	this->strategy.postTrade(this->getTradeConfirmationExecutionResponse());
+    	sleep(strategy.cycleTime);
 
     }
     catch ( std::exception & e )
@@ -213,7 +222,7 @@ void Application::cancelOrder(FIX::Symbol symbol, FIX::Side side,
   setHeader( orderCancelRequest.getHeader() );
 
 
-  for (int i=0; i < m_messages.size(); i++){
+  for (int i=0; i < (int)m_messages.size(); i++){
 	  FIX::Symbol _symbol;
   	  FIX::Side _side;
   	  FIX::OrderQty _orderQty;

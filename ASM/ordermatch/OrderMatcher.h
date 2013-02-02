@@ -46,7 +46,10 @@ public:
 		if ( side == Order::sell )
 			return i->second.getLastAskOrder();
 		else
+		if ( side == Order::buy )
 			return i->second.getLastBidOrder();
+
+	throw std::exception();
 
   }
 

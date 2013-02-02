@@ -86,13 +86,23 @@ Order& Market::find( Order::Side side, std::string id )
 
 Order& Market::getLastBidOrder()
 {
-
-	return m_bidOrders.begin()->second;
+	BidOrders::iterator i;
+	if ( i == m_bidOrders.end() ){
+		throw std::exception();
+	}
+	else
+		return m_bidOrders.begin()->second;
 }
 
 Order& Market::getLastAskOrder()
 {
-	return m_askOrders.begin()->second;
+	AskOrders::iterator i;
+	if ( i == m_askOrders.end() ){
+		 throw std::exception();
+	}
+
+	else
+		return m_askOrders.begin()->second;
 }
 
 

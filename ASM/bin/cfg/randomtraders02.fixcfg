@@ -12,7 +12,7 @@ DataDictionary=../spec/FIX42.xml
 MySQLStoreDatabase=quickfix
 MySQLStoreUser=quickfix
 MySQLStorePassword=quickfix
-MySQLStoreHost=192.168.1.10
+MySQLStoreHost=localhost
 MySQLStorePort=3306
 
 ResetOnLogon=Y
