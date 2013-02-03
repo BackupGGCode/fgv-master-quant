@@ -83,26 +83,34 @@ Order& Market::find( Order::Side side, std::string id )
   throw std::exception();
 }
 
+bool  Market::isThereLastBidOrder(){
+	  if ( m_bidOrders.begin() == m_bidOrders.end() ) return false;
+	  else	return true;
+}
+
+bool  Market::isThereLastAskOrder(){
+	  if ( m_askOrders.begin() == m_askOrders.end() ) return false;
+	  else	return true;
+}
 
 Order& Market::getLastBidOrder()
 {
-	BidOrders::iterator i;
-	if ( i == m_bidOrders.end() ){
-		throw std::exception();
+
+	if( !isThereLastBidOrder() ){
+		Order order;
+		return order;
 	}
-	else
-		return m_bidOrders.begin()->second;
+	return m_bidOrders.begin()->second;
 }
 
 Order& Market::getLastAskOrder()
 {
-	AskOrders::iterator i;
-	if ( i == m_askOrders.end() ){
-		 throw std::exception();
-	}
 
-	else
-		return m_askOrders.begin()->second;
+	if( !isThereLastAskOrder() ){
+		Order order;
+		return order;
+	}
+	return m_askOrders.begin()->second;
 }
 
 

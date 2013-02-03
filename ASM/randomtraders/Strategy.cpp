@@ -58,6 +58,7 @@ void Strategy::preTrade(FIX42::Quote message){
 SimpleOrder Strategy::trade(){
 	std::cout << "Strategy::Trade"<<std::endl;
 	float price = 0.0;
+	float refPrice = 0.0;
 	SimpleOrder order;
 
 	FIX::Symbol symbol;
@@ -67,9 +68,22 @@ SimpleOrder Strategy::trade(){
 	this->lastQuote.get(bidPx);
 	this->lastQuote.get(offerPx);
 
+
+	if(bidPx <= 0.0 && offerPx <= 0.0)
+		refPrice = this->initialStockPrice;
+	else
+		if(bidPx <= 0.0 && offerPx >= 0.0)
+			refPrice = offerPx;
+		else
+			if(offerPx <= 0.0 && bidPx >= 0.0)
+				refPrice = bidPx;
+			else
+				refPrice = (bidPx+offerPx)/2.0;
+
 	order.symbol = symbol;
 
-	if(rand()%100 > 50){
+	//if(rand()%100 > 50){
+	if(this->cash < this->numberStock*refPrice){
 		order.side = FIX::Side_SELL;
 	}else{
 		order.side = FIX::Side_BUY;
@@ -102,7 +116,6 @@ void Strategy::postTrade(FIX42::ExecutionReport ereport){
 	ereport.get(cumQty);
 	ereport.get(avgPx);
 	ereport.get(side);
-
 
 	this->numberStock += ( side == FIX::Side_SELL ? -cumQty : +cumQty );
 	this->cash += ( side == FIX::Side_SELL ? +cumQty*avgPx : -cumQty*avgPx );

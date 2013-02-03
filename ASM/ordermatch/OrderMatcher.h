@@ -38,18 +38,28 @@ public:
 	  else	return true;
   }
 
+ // bool isThereLastBidMarketData(std::string symbol){
+//	  if (  !isThereLastMarketData(symbol) ) return false;
+//	  else{
+//
+//		  return true;
+//	  }
+ // }
+
   Order& getLastMarketData( std::string symbol, Order::Side side)
   {
     Markets::iterator i = m_markets.find( symbol );
     if ( i == m_markets.end() ) throw std::exception();
 
 		if ( side == Order::sell )
-			return i->second.getLastAskOrder();
+			//try{
+				return i->second.getLastAskOrder();
+  	  	  //	  }catch ( std::exception & e ){throw std::exception();}
 		else
 		if ( side == Order::buy )
+		//	try{
 			return i->second.getLastBidOrder();
-
-	throw std::exception();
+  	  	 // 	  }catch ( std::exception & e ){throw std::exception();}
 
   }
 

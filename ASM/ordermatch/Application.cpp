@@ -250,20 +250,18 @@ void Application::sendQuoteMessage(FIX::Symbol symbol,FIX::SenderCompID targetCo
 	  if(m_orderMatcher.isThereLastMarketData(symbol)){ // tem pelo menos 1 bid ou 1 ask
 
 		  FIX::QuoteID quoteID( m_generator.genQuoteID());
-		  FIX::BidPx bidPx(0);
-		  FIX::OfferPx offerPx(0);
-		  FIX::BidSize bidSize(0);
-		  FIX::OfferSize offerSize(0);
 
-		  try{
+		  //try{
 			  FIX::BidPx bidPx(m_orderMatcher.getLastMarketData(symbol,Order::buy).getPrice());
-			  FIX::BidSize bidSize(m_orderMatcher.getLastMarketData(symbol,Order::buy).getOpenQuantity());
-		  }catch ( std::exception & e ){}
+			 FIX::BidSize bidSize(m_orderMatcher.getLastMarketData(symbol,Order::buy).getOpenQuantity());
 
-		  try{
-			  FIX::OfferPx offerPx(m_orderMatcher.getLastMarketData(symbol,Order::sell).getPrice());
+		 // }catch ( std::exception & e ){}
+
+		 // try{
+			 FIX::OfferPx offerPx(m_orderMatcher.getLastMarketData(symbol,Order::sell).getPrice());
 			  FIX::OfferSize offerSize(m_orderMatcher.getLastMarketData(symbol,Order::sell).getOpenQuantity());
-		  }catch ( std::exception & e ){}
+
+		  //}catch ( std::exception & e ){}
 
 		  resp.setField(quoteID);
 		  resp.setField(symbol);

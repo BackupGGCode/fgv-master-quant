@@ -34,6 +34,18 @@ public:
   enum Side { buy, sell };
   enum Type { market, limit };
 
+
+  Order(){
+    m_openQuantity = 0;
+    m_executedQuantity = 0;
+    m_avgExecutedPrice = 0;
+    m_lastExecutedPrice = 0;
+    m_lastExecutedQuantity = 0;
+    m_price = 0;
+    m_quantity = 0;
+  }
+
+
   Order( const std::string& clientId, const std::string& symbol,
          const std::string& owner, const std::string& target,
          Side side, Type type, double price, long quantity )

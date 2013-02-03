@@ -50,6 +50,8 @@ public:
   Order& getLastAskOrder();
   std::vector<Order> getBidOrders();
   std::vector<Order> getAskOrders();
+  bool isThereLastBidOrder();
+  bool isThereLastAskOrder();
 
 
 };
