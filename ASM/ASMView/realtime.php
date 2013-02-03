@@ -1,4 +1,6 @@
 <?php
+
+header('Refresh: 1');
 $username="quickfix";
 $password="quickfix";
 $database="quickfix";
@@ -84,7 +86,7 @@ while ($i < $num) {
 		$date = date_create_from_format('Ymd-H:i:s.u', $TransTime);
 		$dateformatted = date_format($date, 'd-m-Y H:i:s.u');
 		
-		echo  "TIME=$dateformatted   BID=$BidPX   ASK=$OfferPx<br><hr><br>";
+		//echo  "TIME=$dateformatted   BID=$BidPX   ASK=$OfferPx<br><hr><br>";
 
 	
 		//$row_bid_array=array($dateformatted,(float)$BidPX);
@@ -122,7 +124,7 @@ echo "<script type='text/javascript'> var ask_array = ".json_encode($quote_ask_a
 <body>
 
 
-<div id="chart1" style="height:300px; width:500px;"></div>
+<div id="chart1" style="height:600px; width:1000px;"></div>
 </div>
 
 </body>
@@ -132,13 +134,16 @@ echo "<script type='text/javascript'> var ask_array = ".json_encode($quote_ask_a
 $(document).ready(function(){
 	  var plot1 = $.jqplot('chart1', [bid_array, ask_array], {  
 		 title:'Bid and Ask Prices',
-	     series:[{showMarker:false}],
-	      axes:{
-	        xaxis:{
-	        },
-	        yaxis:{
-	        }
-	      }
+		 series:[ 
+		          {
+		            lineWidth:1, 
+		            showMarker:false
+		          }, 
+		          {
+			        lineWidth:1, 
+			        showMarker:false
+		          }
+		  ]
 	  });
 	});
 
