@@ -73,14 +73,26 @@ while ($i < $num) {
 		}
 		#echo "$value    |    ";
 	}
-	if ($QuoteMsgType){
-		$TransTime = $TransTime."000";
-		echo  "TIME=$TransTime     BID=$BidPX       ASK=$OfferPx";
+	if ($QuoteMsgType && $BidPX > 0.0 && $OfferPx > 0.0){
+		$BidPX = round($BidPX, 2);
+		$OfferPx = round($OfferPx, 2);
+		
+		//$TransTime = $TransTime."000";
+
 		
 		$date = date_create_from_format('Ymd-H:i:s.u', $TransTime);
+		$dateformatted = date_format($date, 'd-m-Y H:i:s.u');
+		//$dateformatted = date_format($date, 'H:i:s.u');
+		echo  "TIME=$dateformatted   BID=$BidPX   ASK=$OfferPx";
+
+	
+		//$row_bid_array=array($dateformatted,(float)$BidPX);
+		//$row_ask_array=array($dateformatted,(float)$OfferPx);
 		
-		$row_bid_array=array($date,(float)$BidPX);
-		$row_ask_array=array($date,(float)$OfferPx);
+		$row_bid_array=array($i,(float)$BidPX);
+		$row_ask_array=array($i,(float)$OfferPx);
+		
+		
 		$QuoteMsgType=false;
 		echo "<br><hr><br>";
 				
@@ -94,6 +106,7 @@ while ($i < $num) {
 
 echo "<script type='text/javascript'> var bid_array = ".json_encode($quote_bid_array).";</script>";
 echo "<script type='text/javascript'> var ask_array = ".json_encode($quote_ask_array).";</script>";
+
 
 $my_page_title = 'My first PHP/JS';
 ?>
@@ -122,18 +135,11 @@ $my_page_title = 'My first PHP/JS';
 
 <script type="text/javascript">
 $(document).ready(function(){
-	//  var cosPoints = []; 
-	 // for (var i=0; i<2*Math.PI; i+=0.1){ 
-	 //    cosPoints.push([i, Math.cos(i)]); 
-	  //} 
 	  var plot1 = $.jqplot('chart1', [bid_array], {  
-	     // series:[{showMarker:false}],
+	     series:[{showMarker:false}],
 	      axes:{
 	        xaxis:{
 	            renderer:$.jqplot.DateAxisRenderer,
-	            tickOptions:{
-	              formatString:'%b&nbsp;%#d'
-	            }   
 	        },
 	        yaxis:{
 	          label:'Price'
