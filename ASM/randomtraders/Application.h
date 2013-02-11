@@ -1,6 +1,3 @@
-#ifndef BULLTRADERS_APPLICATION_H
-#define BULLTRADERS_APPLICATION_H
-
 #include "quickfix/Application.h"
 #include "quickfix/MessageCracker.h"
 #include "quickfix/Values.h"
@@ -20,15 +17,12 @@
 #include "Strategy.h"
 #include "SimpleOrder.h"
 
-#include <queue>
-
 class Application :
       public FIX::Application,
       public FIX::MessageCracker
 {
 public:
   void run();
-  void runBOT();
   void setStrategy( Strategy& strategy );
 
 
@@ -36,14 +30,13 @@ private:
   Strategy strategy;
   FIX::SenderCompID senderCompID;
   FIX::TargetCompID targetCompID;
-  FIX42::Quote quote;
   bool getQuote;
-  FIX42::ExecutionReport ereport;
+  bool waitQuoteTimeOut;
   bool getConfirmationTrade;
   bool getConfirmationExecutionTrade;
+  bool getConfirmationPartialExecutionTrade;
+  bool getConfirmationCanceledTrade;
 
-  typedef std::vector<FIX::Message> Messages;
-  Messages m_messages;
   IDGenerator m_generator;
 
   void onCreate( const FIX::SessionID& ) {}
@@ -63,42 +56,19 @@ private:
   void onMessage( const FIX42::MarketDataSnapshotFullRefresh&, const FIX::SessionID& );
   void onMessage( const FIX42::Quote&, const FIX::SessionID& );
 
+  void resetFlags();
 
-  void sendOrder(FIX::Symbol symbol, FIX::Side side, FIX::OrderQty orderQty, FIX::Price price);
   void sendOrder(SimpleOrder order);
-  void cancelOrder( FIX::Symbol symbol, FIX::Side side,	FIX::OrderQty orderQty, FIX::Price price);
-  FIX42::Quote getQuoteResponse();
-  FIX42::ExecutionReport getTradeConfirmationResponse();
-  FIX42::ExecutionReport getTradeConfirmationExecutionResponse();
+  void cancelOrder(SimpleOrder order);
+  void waitGetQuoteResponse();
+  void waitGetCancelConfirmationResponse();
 
 
-
-  void queryEnterOrder();
-  void queryCancelOrder();
-  void queryReplaceOrder();
   void queryMarketDataRequest();
   void queryQuoteRequest(FIX::Symbol symbol);
 
-  FIX42::NewOrderSingle queryNewOrderSingle42();
-
-  FIX42::OrderCancelRequest queryOrderCancelRequest42();
-  FIX42::OrderCancelReplaceRequest queryCancelReplaceRequest42();
-
   void setHeader( FIX::Header& header );
-  char queryAction();
-  char canGo();
-  bool queryConfirm( const std::string& query );
 
-  FIX::TargetSubID queryTargetSubID();
-  FIX::ClOrdID queryClOrdID();
-  FIX::OrigClOrdID queryOrigClOrdID();
-  FIX::Symbol querySymbol();
-  FIX::Side querySide();
-  FIX::OrderQty queryOrderQty();
-  FIX::OrdType queryOrdType();
-  FIX::Price queryPrice();
-  FIX::StopPx queryStopPx();
-  FIX::TimeInForce queryTimeInForce();
+
 };
 
-#endif

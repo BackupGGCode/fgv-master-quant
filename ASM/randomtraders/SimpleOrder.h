@@ -10,6 +10,7 @@
 
 #include "quickfix/Message.h"
 
+
 class SimpleOrder {
 public:
 	SimpleOrder();
@@ -18,6 +19,7 @@ public:
 	FIX::Side side;
     FIX::OrderQty orderQty;
     FIX::Price price;
+    FIX::ClOrdID clOrdID;
 
     void print();
 };

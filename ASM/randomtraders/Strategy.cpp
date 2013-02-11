@@ -27,14 +27,14 @@ Strategy::Strategy(std::string file) {
 	  }
 
 	  if(cfg.lookupValue("TICKER", ticker)
-	   && cfg.lookupValue("INITIAL_STOCK_PRICE", initialStockPrice)
+	   && cfg.lookupValue("REFERENCE_STOCK_PRICE", referenceStockPrice)
 	   && cfg.lookupValue("CASH", cash)
 	   && cfg.lookupValue("NUMBER_STOCK", numberStock)
 	   && cfg.lookupValue("PERCENTUAL_MAX_NEG", percentual_max_negs)
 	   && cfg.lookupValue("INITIAL_TIME", initialTime)
 	   && cfg.lookupValue("CYCLE_TIME", cycleTime)){
 		  std::cout << "ticker:" << ticker<< std::endl;
-		  std::cout << "initialStockPrice:" << initialStockPrice<< std::endl;
+		  std::cout << "referenceStockPrice:" << referenceStockPrice<< std::endl;
 		  std::cout << "cash:" << cash << std::endl;
 		  std::cout << "numberStock:" << numberStock << std::endl;
 		  std::cout << "percentual_max_negs:" << percentual_max_negs << std::endl;
@@ -57,8 +57,6 @@ void Strategy::preTrade(FIX42::Quote message){
 
 SimpleOrder Strategy::trade(){
 	std::cout << "Strategy::Trade"<<std::endl;
-	float price = 0.0;
-	float refPrice = 0.0;
 	SimpleOrder order;
 
 	FIX::Symbol symbol;
@@ -69,39 +67,131 @@ SimpleOrder Strategy::trade(){
 	this->lastQuote.get(offerPx);
 
 
-	if(bidPx <= 0.0 && offerPx <= 0.0)
-		refPrice = this->initialStockPrice;
-	else
-		if(bidPx <= 0.0 && offerPx >= 0.0)
-			refPrice = offerPx;
-		else
-			if(offerPx <= 0.0 && bidPx >= 0.0)
-				refPrice = bidPx;
-			else
-				refPrice = (bidPx+offerPx)/2.0;
-
 	order.symbol = symbol;
+	order.clOrdID = m_generator.genOrderID();
 
-	//if(rand()%100 > 50){
-	if(this->cash < this->numberStock*refPrice){
-		order.side = FIX::Side_SELL;
+	float volatility = 1.0+(rand()%20 - 10)/100.0;
+
+	// Implementacao do Fluxo de decisao do agente aleatorio ...
+
+	if(offerPx > 0.0 && bidPx > 0.0){
+		this->referenceStockPrice = 0.5*(offerPx+bidPx);
 	}else{
-		order.side = FIX::Side_BUY;
+		if(offerPx > 0.0){
+			this->referenceStockPrice = offerPx;
+		}else{
+			if(bidPx > 0.0){
+				this->referenceStockPrice = bidPx;
+			}else{
+				// nothing => keep previous
+			}
+		}
 	}
 
-	if(order.side == FIX::Side_SELL){
-		price = (bidPx <= 0.0 ? this->initialStockPrice: (float)bidPx);
+	this->referenceStockPrice *= volatility;
+	this->referenceStockPrice = roundASM(this->referenceStockPrice );
+
+	std::cout<<  "referenceStockPrice:" << this->referenceStockPrice << std::endl;
+	std::cout<<  "cash:" << this->cash << std::endl;
+	std::cout<<  "numberStock:" << this->numberStock << std::endl;
+
+	srand(time(0));
+	int rand_decision = rand()%100;
+	float rand_amount =(rand()%100)/100.0;
+
+
+
+	// [DECISAO-01] Possui acao no inventario?
+	if(this->numberStock > 0.0){
+		std::cout<<  "[DECISAO-01] Possui acao no inventario" << std::endl;
+
+		// [DECISAO-01] SIM
+		int qty = (int)(this->cash/this->referenceStockPrice );
+		order.price = this->referenceStockPrice;
+
+		// [DECISAO-02] Possui saldo em dinheiro superior ao preco de pelo menos uma acao (ASK)?
+		if(qty >= 1 ){
+			std::cout<<  "[DECISAO-02] Possui saldo em dinheiro superior ao preco de pelo menos uma acao (ASK)" << std::endl;
+			// [DECISAO-02] SIM => [ACAO 01] Não Operar, Comprar ou Vender acoes
+			if(rand_decision < 33 ){
+				std::cout<<  "[DECISAO-02] SIM => [ACAO 01] Comprar acoes" << std::endl;
+				order.side = FIX::Side_BUY;
+
+				qty=(int)qty*rand_amount;
+				qty=(qty > 1 ? qty: 1);
+
+				order.orderQty = qty ;
+
+			}else{
+				if(rand_decision >= 67 ){
+					std::cout<<  "[DECISAO-02] SIM => [ACAO 01] Vender acoes" << std::endl;
+					order.side = FIX::Side_SELL;
+					qty=(int)this->numberStock*rand_amount;
+					qty=(qty > 1 ? qty: 1);
+					order.orderQty =qty;
+				}else{
+					// Não Operar
+					std::cout<<  "[DECISAO-02] SIM => [ACAO 01]  Não Operar" << std::endl;
+					order.side ='0';
+					order.orderQty = 0;
+					order.price = 0;
+				}
+			}
+
+		}else{
+			// [DECISAO-02] NAO => [ACAO 02] Não Operar ou Vender acoes
+			if(rand_decision > 50 ){
+			std::cout<<  "[DECISAO-02] NAO => [ACAO 02] Vender acoes" << std::endl;
+			order.side = FIX::Side_SELL;
+			qty=(int)this->numberStock*rand_amount;
+			qty=(qty > 1 ? qty: 1);
+			order.orderQty = qty;
+
+			}else{
+				// Não Operar
+				std::cout<<  "[DECISAO-02] NAO => [ACAO 02] Não Operar" << std::endl;
+				order.side ='0';
+				order.orderQty = 0;
+				order.price = 0;
+			}
+		}
 	}else{
-		price = (offerPx <= 0.0 ? this->initialStockPrice: (float)offerPx);
+		// [DECISAO-01] NAO
+		std::cout<<  "[DECISAO-01] NAO possui acao no inventario" << std::endl;
+
+		int qty = (this->cash/this->referenceStockPrice );
+		order.price = this->referenceStockPrice;
+
+		if(qty >= 1 ){
+			// [DECISAO-04] SIM => [ACAO 04] Não Operar ou Comprar acoes
+			if(rand_decision < 50 ){
+				std::cout<<  "[DECISAO-04] SIM => [ACAO 04] Comprar acoes" << std::endl;
+				order.side = FIX::Side_BUY;
+				qty=(int)qty*rand_amount;
+				qty=(qty > 1 ? qty: 1);
+
+				order.orderQty = qty;
+			}else{
+				// Não Operar
+				std::cout<<  "[DECISAO-04] SIM => [ACAO 04] Não Operar" << std::endl;
+				order.side ='0';
+				order.orderQty = 0;
+				order.price = 0;
+			}
+
+		}else{
+			// [DECISAO-03] NAO => [ACAO 03] VALIDO!
+
+			// Não Operar
+			std::cout<<  "[DECISAO-03] NAO => [ACAO 03] VALIDO!" << std::endl;
+			exit(1);
+			order.side ='0';
+			order.orderQty = 0;
+			order.price = 0;
+		}
 	}
-
-	price += price*(0.7/(rand()%100));
-
-	order.price = roundASM(price);
-	order.orderQty = (int) (percentual_max_negs*this->cash/order.price);
 
 	order.print();
-
 	return order;
 }
 
@@ -119,6 +209,9 @@ void Strategy::postTrade(FIX42::ExecutionReport ereport){
 
 	this->numberStock += ( side == FIX::Side_SELL ? -cumQty : +cumQty );
 	this->cash += ( side == FIX::Side_SELL ? +cumQty*avgPx : -cumQty*avgPx );
+
+	if(this->cash <= 0.0 && this->numberStock <= 0.0)
+		exit(1);
 
 }
 
@@ -147,6 +240,7 @@ void Strategy::printExecutionReport( const FIX42::ExecutionReport ereport ) {
 	ereport.get(avgPx);
 
 	std::cout<<  "[EXECUTION REPORT] symbol:" << symbol
+			<< "\tSide:" << ( side == FIX::Side_SELL ? "SELL" : "BUY" )
 			<< "\tLeavesQty:" << leavesQty
 			<< "\tCumQty:" << cumQty
 			<< "\tAvgPx:"<< std::fixed << std::setprecision(2) << (double)avgPx

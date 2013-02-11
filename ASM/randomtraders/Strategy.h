@@ -12,24 +12,20 @@
 #include "quickfix/fix42/Quote.h"
 #include "quickfix/fix42/ExecutionReport.h"
 #include "SimpleOrder.h"
-#include <iostream>
-#include <iomanip>
-#include <cstdlib>
 #include <math.h>
+#include "IDGenerator.h"
 
 class Strategy {
 
-
 public:
 	std::string	ticker;
-	float initialStockPrice;
+	float referenceStockPrice;
 	float cash;
 	float numberStock;
 	float percentual_max_negs;
 	float cycleTime;
 	float initialTime;
 	FIX42::Quote lastQuote;
-
 
 	Strategy();
 	Strategy(std::string file);
@@ -40,7 +36,8 @@ public:
 	void printQuote( const FIX42::Quote message );
 	void printExecutionReport( const FIX42::ExecutionReport ereport );
 
-
+private:
+	  IDGenerator m_generator;
 };
 
 #endif /* STRATEGY_H_ */
