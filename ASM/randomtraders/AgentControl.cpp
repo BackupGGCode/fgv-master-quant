@@ -10,13 +10,14 @@
 AgentControl::AgentControl() {
 
 }
-
-std::string AgentControl::getFixConfiguration(std::string agentID){
+AgentControl::AgentControl(std::string _agentID){
+	this->agentID = _agentID;
+}
+std::string AgentControl::getFixConfiguration(){
 
 	size_t row;
 	std::stringstream sql;
 	std::stringstream msg;
-	int affected_rows;
 	std::string config_str;
 
 	const std::string host = HOST;
@@ -29,7 +30,7 @@ std::string AgentControl::getFixConfiguration(std::string agentID){
 		std::string statement;
 		statement = "SELECT config  FROM quickfix.agents a INNER JOIN quickfix.fix_config f ON a.id_fix_config = f.id_fix_config WHERE id_agent='#USER#'";
 		std::string user("#USER#");
-		statement.replace(statement.find(user),user.length(), agentID );
+		statement.replace(statement.find(user),user.length(), this->agentID );
 
 		std::auto_ptr< sql::ResultSet > res(stmt->executeQuery(statement));
 		row = 0;
@@ -38,9 +39,36 @@ std::string AgentControl::getFixConfiguration(std::string agentID){
 			row++;
 		}
 
-		config_str.replace(config_str.find(user),user.length(), agentID );
+		config_str.replace(config_str.find(user),user.length(), this->agentID );
 		boost::replace_all(config_str, "\\n", "\n");
 		std::cout<<std::endl << "CONFIG = " << config_str <<std::endl;
+
+		/* Clean up */
+		stmt.reset(NULL); /* free the object inside  */
+
+		try {
+			/*s This will implicitly assume that the host is 'localhost' */
+			con.reset(driver->connect(host, USER, PASS));
+		} catch (sql::SQLException &e) {
+			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
+			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		}
+
+		try {
+			con.reset(driver->connect(host, USER, PASS));
+		} catch (sql::SQLException &e) {
+			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
+			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		}
+
+		try {
+			con.reset(driver->connect(host, USER, PASS));
+		} catch (sql::SQLException &e) {
+			std::cout << "#\t\t tcp://hostname_or_ip[:port] caused expected exception" << std::endl;
+			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
+			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		}
+
 
 	} catch (sql::SQLException &e) {
 		std::cout << "# ERR: SQLException in " << __FILE__;
@@ -58,12 +86,11 @@ std::string AgentControl::getFixConfiguration(std::string agentID){
 	  return config_str;
 }
 
-std::string AgentControl::getStrategyConfiguration(std::string agentID){
+std::string AgentControl::getStrategyConfiguration(){
 
 	size_t row;
 	std::stringstream sql;
 	std::stringstream msg;
-	int affected_rows;
 	std::string ticker;
 	float reference_stock_price;
 	float cash;
@@ -84,7 +111,7 @@ std::string AgentControl::getStrategyConfiguration(std::string agentID){
 		std::string statement;
 		statement = "SELECT ticker, reference_stock_price, cash, number_stock, percentual_max_neg, cycle_time, initial_time FROM quickfix.strategy s inner join quickfix.agents a on s.id_strategy = a.id_strategy where id_agent='#USER#'";
 		std::string user("#USER#");
-		statement.replace(statement.find(user),user.length(), agentID );
+		statement.replace(statement.find(user),user.length(), this->agentID );
 
 		std::auto_ptr< sql::ResultSet > res(stmt->executeQuery(statement));
 		row = 0;
@@ -107,6 +134,32 @@ std::string AgentControl::getStrategyConfiguration(std::string agentID){
 						<<percentual_max_neg<<";\nCYCLE_TIME = "<<cycle_time
 						<<";\nINITIAL_TIME = "<<initial_time<<";";
 
+		/* Clean up */
+		stmt.reset(NULL); /* free the object inside  */
+
+		try {
+			/*s This will implicitly assume that the host is 'localhost' */
+			con.reset(driver->connect(host, USER, PASS));
+		} catch (sql::SQLException &e) {
+			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
+			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		}
+
+		try {
+			con.reset(driver->connect(host, USER, PASS));
+		} catch (sql::SQLException &e) {
+			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
+			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		}
+
+		try {
+			con.reset(driver->connect(host, USER, PASS));
+		} catch (sql::SQLException &e) {
+			std::cout << "#\t\t tcp://hostname_or_ip[:port] caused expected exception" << std::endl;
+			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
+			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		}
+
 
 	} catch (sql::SQLException &e) {
 		std::cout << "# ERR: SQLException in " << __FILE__;
@@ -125,6 +178,74 @@ std::string AgentControl::getStrategyConfiguration(std::string agentID){
 }
 
 
+
+
+void AgentControl::setPortfolio(float cash, float  number_stock){
+
+	std::stringstream insert;
+	std::stringstream update;
+	std::stringstream msg;
+	int affected_rows = 0;
+
+	const std::string host = HOST;
+
+	try {
+		sql::Driver * driver = sql::mysql::get_driver_instance();
+		std::auto_ptr< sql::Connection > con(driver->connect(host, USER, PASS));
+		std::auto_ptr< sql::Statement > stmt(con->createStatement());
+
+		/* Usage of UPDATE */
+		update << "UPDATE quickfix.portfolio SET number_stock =" <<number_stock<<", cash="<< cash <<" WHERE id_agent = '"<< this->agentID << "'";
+		affected_rows = stmt->executeUpdate(update.str());
+
+		if (affected_rows != 1) {
+			insert << "INSERT INTO quickfix.portfolio (id_agent, number_stock, cash) VALUES ('"<< this->agentID <<"',"<< number_stock << ","<< cash <<")";
+			stmt->execute(insert.str());
+		}
+
+		/* Clean up */
+		stmt.reset(NULL); /* free the object inside  */
+
+		try {
+			/*s This will implicitly assume that the host is 'localhost' */
+			con.reset(driver->connect(host, USER, PASS));
+		} catch (sql::SQLException &e) {
+			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
+			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		}
+
+		try {
+			con.reset(driver->connect(host, USER, PASS));
+		} catch (sql::SQLException &e) {
+			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
+			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		}
+
+		try {
+			con.reset(driver->connect(host, USER, PASS));
+		} catch (sql::SQLException &e) {
+			std::cout << "#\t\t tcp://hostname_or_ip[:port] caused expected exception" << std::endl;
+			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
+			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		}
+
+	} catch (sql::SQLException &e) {
+		std::cout << "# ERR: SQLException in " << __FILE__;
+		/* Use what() (derived from std::runtime_error) to fetch the error message */
+		std::cout << "# ERR: " << e.what();
+		std::cout << " (MySQL error code: " << e.getErrorCode();
+		std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		std::cout << "not ok 1 - examples/connect.php" << std::endl;
+
+	} catch (std::runtime_error &e) {
+
+		std::cout << "# ERR: runtime_error in " << __FILE__;
+		std::cout << "# ERR: " << e.what() << std::endl;
+		std::cout << "not ok 1 - examples/connect.php" << std::endl;
+
+	}
+
+}
 
 
 AgentControl::~AgentControl() {

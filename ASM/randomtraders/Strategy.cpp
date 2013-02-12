@@ -13,6 +13,7 @@ Strategy::Strategy() {
 }
 
 Strategy::Strategy(const std::string strats) {
+
 	libconfig::Config cfg;
 	cfg.readString(strats);
 
@@ -35,6 +36,13 @@ Strategy::Strategy(const std::string strats) {
 		  exit(1);
 	  }
 }
+
+
+void Strategy::setAgentControl(AgentControl _agentControl){
+	this->agentControl = _agentControl;
+	this->agentControl.setPortfolio(this->cash, this->numberStock);
+}
+
 
 
 
@@ -199,6 +207,8 @@ void Strategy::postTrade(FIX42::ExecutionReport ereport){
 
 	this->numberStock += ( side == FIX::Side_SELL ? -cumQty : +cumQty );
 	this->cash += ( side == FIX::Side_SELL ? +cumQty*avgPx : -cumQty*avgPx );
+
+	this->agentControl.setPortfolio(this->cash, this->numberStock);
 
 	if(this->cash <= 0.0 && this->numberStock <= 0.0)
 		exit(1);

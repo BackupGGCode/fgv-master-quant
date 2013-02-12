@@ -23,12 +23,13 @@ int main( int argc, char** argv )
   try{
 
 
-	  AgentControl agentControl;
-	  std::stringstream fix(agentControl.getFixConfiguration(AGENT_ID));
+	  AgentControl agentControl(AGENT_ID);
+	  std::stringstream fix(agentControl.getFixConfiguration());
 
 	  FIX::SessionSettings settings( fix );
 
-	  Strategy strategy(agentControl.getStrategyConfiguration(AGENT_ID));
+	  Strategy strategy(agentControl.getStrategyConfiguration());
+	  strategy.setAgentControl(agentControl);
 
 	  Application application;
 	  application.setStrategy(strategy);

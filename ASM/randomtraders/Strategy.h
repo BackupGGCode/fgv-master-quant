@@ -12,6 +12,7 @@
 #include "quickfix/fix42/Quote.h"
 #include "quickfix/fix42/ExecutionReport.h"
 #include "SimpleOrder.h"
+#include "AgentControl.h"
 #include <math.h>
 #include "IDGenerator.h"
 #include <iostream>
@@ -30,8 +31,11 @@ public:
 	float initialTime;
 	FIX42::Quote lastQuote;
 
+	AgentControl agentControl;
+
 	Strategy();
 	Strategy(const std::string strats);
+	void setAgentControl(AgentControl agentControl);
 	virtual ~Strategy();
 	void preTrade(FIX42::Quote message);
 	SimpleOrder trade();

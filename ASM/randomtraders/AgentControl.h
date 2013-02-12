@@ -46,10 +46,14 @@
 
 class AgentControl {
 public:
+	std::string agentID;
 	AgentControl();
+	AgentControl(std::string agentID);
+	std::string getFixConfiguration();
+	std::string getStrategyConfiguration();
+	void setPortfolio(	float cash, float  number_stock);
 
-	std::string getFixConfiguration(std::string agentID);
-	std::string getStrategyConfiguration(std::string agentID);
+
 
 	int run();
 
