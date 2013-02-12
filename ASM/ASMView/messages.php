@@ -37,6 +37,7 @@ while ($i < $num) {
 		echo "$value    |    ";
 	}
 	echo "<br>";
+	$i++;
 }
 
 ?>

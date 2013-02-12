@@ -1,6 +1,7 @@
 <?php
 
-header('Refresh: 1');
+header('Refresh: 2');
+
 $username="quickfix";
 $password="quickfix";
 $database="quickfix";
@@ -17,19 +18,24 @@ if (!$db_selected) {
 	die ('Can\'t use $database : ' . mysql_error());
 }
 
-#mysql_connect($host,$username,$password);
-#@mysql_select_db($database) or die( "Unable to select database");
-
 
 mysql_set_charset('utf8');
 $query="SELECT SUBSTRING(message,1,512) AS MSG FROM messages ORDER BY msgseqnum";
 $result=mysql_query($query);
 
-$num=mysql_numrows($result);
+$num=mysql_num_rows($result);
+
+
+$query_portfolio="SELECT id_agent as AGENT, number_stock as NUMBER_STOCK, cash as CASH FROM portfolio";
+$result_portfolio=mysql_query($query_portfolio);
+
+$num_portfolio=mysql_num_rows($result_portfolio);
+
+
 
 mysql_close();
 
-echo "<b><center>ASM FIX Messages</center></b><br><br>";
+echo "<b><center>BrASM Monitor</center></b><br>";
 
 $quote_bid_array = array();
 $quote_ask_array = array();
@@ -37,6 +43,8 @@ $quote_ask_array = array();
 $QuoteMsgType=false;
 $BidPX=0.0;
 $OfferPx=0.0;
+$LastPx=0.0;
+$LastLastPx=0.0;
 $TransTime="";
 
 $i=0;
@@ -49,6 +57,10 @@ while ($i < $num) {
 		$tmp = explode("=",$value);
 
 		switch($tmp[0]){
+			case "31":
+				$LastLastPx=$LastPx;
+				$LastPx=$tmp[1];
+				break;
 			case "35": 
 				switch($tmp[1]){ 
 					case "D": 
@@ -65,6 +77,7 @@ while ($i < $num) {
 			case "52": 
 				$TransTime=$tmp[1];
 				break;
+				
 			case "132":
 				$BidPX=$tmp[1];
 				break;
@@ -101,6 +114,7 @@ while ($i < $num) {
 		array_push($quote_bid_array,$row_bid_array);
 		array_push($quote_ask_array,$row_ask_array);
 	}
+	
 	$i++;
 }
 
@@ -116,18 +130,79 @@ echo "<script type='text/javascript'> var ask_array = ".json_encode($quote_ask_a
 <script type="text/javascript" src="scripts/jquery.jqplot.min.js"></script>
 <script type="text/javascript" src="scripts/plugins/jqplot.canvasTextRenderer.min.js"></script>
 <script type="text/javascript" src="scripts/plugins/jqplot.canvasAxisLabelRenderer.min.js"></script>
-<script type="text/javascript" src="scripts/plugins/jqplot.jqplot.dateAxisRenderer.js"></script>
-<script type="text/javascript" src="scripts/plugins/jqplot.jqplot.dateAxisRenderer.min.js"></script>
-<link rel="stylesheet" type="text/css" hrf="scripts/jquery.jqplot.min.css" />
+<!--  <script type="text/javascript" src="scripts/plugins/jqplot.jqplot.dateAxisRenderer.js"></script>
+<script type="text/javascript" src="scripts/plugins/jqplot.jqplot.dateAxisRenderer.min.js"></script> -->
+<link type="text/css" rel="stylesheet" hrf="scripts/jquery.jqplot.min.css" />
 
 </head>
 <body>
 
+<table>
+  <tr>
+	<td>
+		<div id="chart1" style="height:500px; width:700px; font-size:10pt;"></div>
+	</td>
+	<td>
+		<div>
+		<?php 
+		
+		$arrow="";
+		if ($LastPx > $LastLastPx){
+			$arrow="&uarr;";
+		}
+		if ($LastPx < $LastLastPx){
+			$arrow="&darr;";
+		}
+		if ($LastPx == $LastLastPx){
+			$arrow="&ndash;";
+		}
+		$LastPx = sprintf('%0.2f', $LastPx);
+		echo "<table border='0' cellpadding='6' cellspacing='6' width='400'>";
+		echo "<tbody align='center' style='font-family:verdana; color:red ; font-size: 16pt'>";
+		echo "<tr><td>Stock price: <b>$$LastPx  $arrow</b></td></tr>";
+		echo "</table>";
+		
+		
+		echo "<table border='1' cellpadding='3' cellspacing='0' width='400'>";
+		echo "<tbody align='center' style='font-family:verdana; color:black; background-color:yellow ; font-size: 12pt'>";
+		echo "<tr><td><b>Agent</b></td><td><b>Stock (#)</b></td><td><b>Cash ($)</b></td><td><b>Wealth ($)</b></td></tr>";
+		echo "<tbody align='center' style='font-family:verdana; font-size: 10pt'>";
+		
+		$tot_number_stock = 0;
+		$tot_cash= 0;
+		$tot_wealth =0;
+		$i=0;
 
-<div id="chart1" style="height:600px; width:1000px;"></div>
-</div>
+		while ($i < $num_portfolio) {
+			$agent=mysql_result($result_portfolio,$i,"AGENT");
+			$number_stock=mysql_result($result_portfolio,$i,"NUMBER_STOCK");
+			$cash=mysql_result($result_portfolio,$i,"CASH");
+			$wealth = $cash + $number_stock*$LastPx;
+			
+			$tot_number_stock = $tot_number_stock + $number_stock;
+			$tot_cash = $tot_cash + $cash;
+			$tot_wealth = $tot_wealth + $wealth;
+			
+			$wealth = sprintf('%0.2f', $wealth);
+			$cash = sprintf('%0.2f', $cash);
+			echo "<tr><td>$agent</td><td>$number_stock</td><td>$cash</td><td>$wealth</td></tr>";
+			
+
+			$i++;
+		}
+		echo "<tbody align='center' style='font-size: 12pt'>";
+		$tot_cash = sprintf('%0.2f', $tot_cash);
+		$tot_wealth = sprintf('%0.2f', $tot_wealth);
+		echo "<tr><td><b>TOTAL:</b></td><td><b>$tot_number_stock</b></td><td><b>$tot_cash</b></td><td><b>$tot_wealth</b></td></tr>";
+		echo "</table>";
+		?>
+		</div>
+	</td>
+ </tr>
+</table>
 
 </body>
+
 </html>
 
 <script type="text/javascript">
