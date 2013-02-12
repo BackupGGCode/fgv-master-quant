@@ -12,19 +12,9 @@ float roundASM(float x) { return floorf(x * 100 + 0.5) / 100; }
 Strategy::Strategy() {
 }
 
-Strategy::Strategy(std::string file) {
+Strategy::Strategy(const std::string strats) {
 	libconfig::Config cfg;
-
-	try{
-		cfg.readFile(file.c_str());
-	  }catch(const libconfig::FileIOException &fioex){
-	    std::cerr << "I/O error while reading file." << std::endl;
-	    exit(1);
-	  }catch(const libconfig::ParseException &pex){
-	    std::cerr << "Parse error at " << pex.getFile() << ":" << pex.getLine()
-	              << " - " << pex.getError() << std::endl;
-	    exit(1);
-	  }
+	cfg.readString(strats);
 
 	  if(cfg.lookupValue("TICKER", ticker)
 	   && cfg.lookupValue("REFERENCE_STOCK_PRICE", referenceStockPrice)

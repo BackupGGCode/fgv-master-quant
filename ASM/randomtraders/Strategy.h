@@ -14,6 +14,9 @@
 #include "SimpleOrder.h"
 #include <math.h>
 #include "IDGenerator.h"
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 class Strategy {
 
@@ -28,7 +31,7 @@ public:
 	FIX42::Quote lastQuote;
 
 	Strategy();
-	Strategy(std::string file);
+	Strategy(const std::string strats);
 	virtual ~Strategy();
 	void preTrade(FIX42::Quote message);
 	SimpleOrder trade();

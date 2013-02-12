@@ -4,39 +4,45 @@
 #include "quickfix/SessionSettings.h"
 #include "Application.h"
 #include "Strategy.h"
+#include "AgentControl.h"
 #include <string>
-#include <iostream>
-#include <fstream>
+#include <sstream>
 
 
 int main( int argc, char** argv )
 {
-  if ( argc != 3 )
+ if ( argc != 2 )
   {
-    std::cout << "usage: " << argv[ 0 ]
-    << " FILE." << std::endl;
+    std::cout << std::endl << "usage: " << argv[ 0 ]
+    << " AGENT_ID" << std::endl;
     return 0;
   }
-  std::string file_FIX = argv[ 1 ];
-  std::string file_strategy = argv[ 2 ];
-  //std::string file_profile = argv[ 3 ];
+  std::string AGENT_ID = argv[ 1 ];
 
-  try
-  {
-    FIX::SessionSettings settings( file_FIX );
 
-    Application application;
-    FIX::MySQLStoreFactory  m_settings( settings );
-    FIX::SocketInitiator initiator( application, m_settings, settings );
+  try{
 
-    initiator.start();
 
-    Strategy strategy(file_strategy);
-    application.setStrategy(strategy);
+	  AgentControl agentControl;
+	  std::stringstream fix(agentControl.getFixConfiguration(AGENT_ID));
 
-    application.run();
-    //application.runBOT();
-    initiator.stop();
+	  FIX::SessionSettings settings( fix );
+
+	  Strategy strategy(agentControl.getStrategyConfiguration(AGENT_ID));
+
+	  Application application;
+	  application.setStrategy(strategy);
+
+	  FIX::MySQLStoreFactory  m_settings( settings );
+	  FIX::SocketInitiator initiator( application, m_settings, settings );
+
+	  initiator.start();
+
+
+
+	  application.run();
+
+	  initiator.stop();
 
     return 0;
   }
