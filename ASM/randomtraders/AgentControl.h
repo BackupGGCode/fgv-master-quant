@@ -31,8 +31,6 @@
 
 #include "mysql_connection.h"
 #include "mysql_driver.h"
-///#include <driver/mysql_public_iface.h>
-
 
 
 // Connection properties

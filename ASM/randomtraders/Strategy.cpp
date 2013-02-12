@@ -24,15 +24,15 @@ Strategy::Strategy(const std::string strats) {
 	   && cfg.lookupValue("PERCENTUAL_MAX_NEG", percentual_max_negs)
 	   && cfg.lookupValue("INITIAL_TIME", initialTime)
 	   && cfg.lookupValue("CYCLE_TIME", cycleTime)){
-		  std::cout << "ticker:" << ticker<< std::endl;
-		  std::cout << "referenceStockPrice:" << referenceStockPrice<< std::endl;
-		  std::cout << "cash:" << cash << std::endl;
-		  std::cout << "numberStock:" << numberStock << std::endl;
-		  std::cout << "percentual_max_negs:" << percentual_max_negs << std::endl;
-		  std::cout << "initialTime:" << initialTime << std::endl;
-		  std::cout << "cycleTime:" << cycleTime << std::endl;
+		 // std::cout << "ticker:" << ticker<< std::endl;
+		 // std::cout << "referenceStockPrice:" << referenceStockPrice<< std::endl;
+		 // std::cout << "cash:" << cash << std::endl;
+		 // std::cout << "numberStock:" << numberStock << std::endl;
+		 // std::cout << "percentual_max_negs:" << percentual_max_negs << std::endl;
+		 // std::cout << "initialTime:" << initialTime << std::endl;
+		 // std::cout << "cycleTime:" << cycleTime << std::endl;
 	  }else{
-		  std::cout << "configs vars not found" << std::endl;
+		  std::cout <<"[" << this->agentControl.agentID <<"] strategy configs vars not found" << std::endl;
 		  exit(1);
 	  }
 }
@@ -47,14 +47,14 @@ void Strategy::setAgentControl(AgentControl _agentControl){
 
 
 void Strategy::preTrade(FIX42::Quote message){
-	std::cout << "Strategy::PreTrade"<<std::endl;
-	this->printQuote(message);
+	//std::cout << "Strategy::PreTrade"<<std::endl;
+	//this->printQuote(message);
 	this->lastQuote = message;
 
 }
 
 SimpleOrder Strategy::trade(){
-	std::cout << "Strategy::Trade"<<std::endl;
+	//std::cout << "Strategy::Trade"<<std::endl;
 	SimpleOrder order;
 
 	FIX::Symbol symbol;
@@ -89,9 +89,9 @@ SimpleOrder Strategy::trade(){
 	this->referenceStockPrice *= volatility;
 	this->referenceStockPrice = roundASM(this->referenceStockPrice );
 
-	std::cout<<  "referenceStockPrice:" << this->referenceStockPrice << std::endl;
-	std::cout<<  "cash:" << this->cash << std::endl;
-	std::cout<<  "numberStock:" << this->numberStock << std::endl;
+	//std::cout<<  "referenceStockPrice:" << this->referenceStockPrice << std::endl;
+	//std::cout<<  "cash:" << this->cash << std::endl;
+	//std::cout<<  "numberStock:" << this->numberStock << std::endl;
 
 	srand(time(0));
 	int rand_decision = rand()%100;
@@ -101,7 +101,7 @@ SimpleOrder Strategy::trade(){
 
 	// [DECISAO-01] Possui acao no inventario?
 	if(this->numberStock > 0.0){
-		std::cout<<  "[DECISAO-01] Possui acao no inventario" << std::endl;
+		//std::cout<<  "[DECISAO-01] Possui acao no inventario" << std::endl;
 
 		// [DECISAO-01] SIM
 		int qty = (int)(this->cash/this->referenceStockPrice );
@@ -109,10 +109,10 @@ SimpleOrder Strategy::trade(){
 
 		// [DECISAO-02] Possui saldo em dinheiro superior ao preco de pelo menos uma acao (ASK)?
 		if(qty >= 1 ){
-			std::cout<<  "[DECISAO-02] Possui saldo em dinheiro superior ao preco de pelo menos uma acao (ASK)" << std::endl;
+			//std::cout<<  "[DECISAO-02] Possui saldo em dinheiro superior ao preco de pelo menos uma acao (ASK)" << std::endl;
 			// [DECISAO-02] SIM => [ACAO 01] Não Operar, Comprar ou Vender acoes
 			if(rand_decision < 33 ){
-				std::cout<<  "[DECISAO-02] SIM => [ACAO 01] Comprar acoes" << std::endl;
+				//std::cout<<  "[DECISAO-02] SIM => [ACAO 01] Comprar acoes" << std::endl;
 				order.side = FIX::Side_BUY;
 
 				qty=(int)qty*rand_amount;
@@ -122,14 +122,14 @@ SimpleOrder Strategy::trade(){
 
 			}else{
 				if(rand_decision >= 67 ){
-					std::cout<<  "[DECISAO-02] SIM => [ACAO 01] Vender acoes" << std::endl;
+					//std::cout<<  "[DECISAO-02] SIM => [ACAO 01] Vender acoes" << std::endl;
 					order.side = FIX::Side_SELL;
 					qty=(int)this->numberStock*rand_amount;
 					qty=(qty > 1 ? qty: 1);
 					order.orderQty =qty;
 				}else{
 					// Não Operar
-					std::cout<<  "[DECISAO-02] SIM => [ACAO 01]  Não Operar" << std::endl;
+					//std::cout<<  "[DECISAO-02] SIM => [ACAO 01]  Não Operar" << std::endl;
 					order.side ='0';
 					order.orderQty = 0;
 					order.price = 0;
@@ -139,7 +139,7 @@ SimpleOrder Strategy::trade(){
 		}else{
 			// [DECISAO-02] NAO => [ACAO 02] Não Operar ou Vender acoes
 			if(rand_decision > 50 ){
-			std::cout<<  "[DECISAO-02] NAO => [ACAO 02] Vender acoes" << std::endl;
+			//std::cout<<  "[DECISAO-02] NAO => [ACAO 02] Vender acoes" << std::endl;
 			order.side = FIX::Side_SELL;
 			qty=(int)this->numberStock*rand_amount;
 			qty=(qty > 1 ? qty: 1);
@@ -147,7 +147,7 @@ SimpleOrder Strategy::trade(){
 
 			}else{
 				// Não Operar
-				std::cout<<  "[DECISAO-02] NAO => [ACAO 02] Não Operar" << std::endl;
+				//std::cout<<  "[DECISAO-02] NAO => [ACAO 02] Não Operar" << std::endl;
 				order.side ='0';
 				order.orderQty = 0;
 				order.price = 0;
@@ -155,7 +155,7 @@ SimpleOrder Strategy::trade(){
 		}
 	}else{
 		// [DECISAO-01] NAO
-		std::cout<<  "[DECISAO-01] NAO possui acao no inventario" << std::endl;
+		//std::cout<<  "[DECISAO-01] NAO possui acao no inventario" << std::endl;
 
 		int qty = (this->cash/this->referenceStockPrice );
 		order.price = this->referenceStockPrice;
@@ -163,7 +163,7 @@ SimpleOrder Strategy::trade(){
 		if(qty >= 1 ){
 			// [DECISAO-04] SIM => [ACAO 04] Não Operar ou Comprar acoes
 			if(rand_decision < 50 ){
-				std::cout<<  "[DECISAO-04] SIM => [ACAO 04] Comprar acoes" << std::endl;
+				//std::cout<<  "[DECISAO-04] SIM => [ACAO 04] Comprar acoes" << std::endl;
 				order.side = FIX::Side_BUY;
 				qty=(int)qty*rand_amount;
 				qty=(qty > 1 ? qty: 1);
@@ -171,7 +171,7 @@ SimpleOrder Strategy::trade(){
 				order.orderQty = qty;
 			}else{
 				// Não Operar
-				std::cout<<  "[DECISAO-04] SIM => [ACAO 04] Não Operar" << std::endl;
+				//std::cout<<  "[DECISAO-04] SIM => [ACAO 04] Não Operar" << std::endl;
 				order.side ='0';
 				order.orderQty = 0;
 				order.price = 0;
@@ -181,7 +181,7 @@ SimpleOrder Strategy::trade(){
 			// [DECISAO-03] NAO => [ACAO 03] VALIDO!
 
 			// Não Operar
-			std::cout<<  "[DECISAO-03] NAO => [ACAO 03] VALIDO!" << std::endl;
+			//std::cout<<  "[DECISAO-03] NAO => [ACAO 03] VALIDO!" << std::endl;
 			exit(1);
 			order.side ='0';
 			order.orderQty = 0;
@@ -189,24 +189,27 @@ SimpleOrder Strategy::trade(){
 		}
 	}
 
-	order.print();
+	//order.print();
 	return order;
 }
 
 void Strategy::postTrade(FIX42::ExecutionReport ereport){
-	std::cout << "Strategy::PostTrade"<<std::endl;
-	this->printExecutionReport(ereport);
+	//std::cout << "Strategy::PostTrade"<<std::endl;
+	//this->printExecutionReport(ereport);
 
-	FIX::CumQty cumQty;
-	FIX::AvgPx avgPx;
+	//FIX::CumQty cumQty;
+	FIX::LastShares lastShares;
+	//FIX::AvgPx avgPx;
+	FIX::LastPx lastPx;
 	FIX::Side side;
 
-	ereport.get(cumQty);
-	ereport.get(avgPx);
+	//ereport.get(cumQty);
+	ereport.get(lastShares);
+	ereport.get(lastPx);
 	ereport.get(side);
 
-	this->numberStock += ( side == FIX::Side_SELL ? -cumQty : +cumQty );
-	this->cash += ( side == FIX::Side_SELL ? +cumQty*avgPx : -cumQty*avgPx );
+	this->numberStock += ( side == FIX::Side_SELL ? -lastShares : +lastShares );
+	this->cash += ( side == FIX::Side_SELL ? +lastShares*lastPx : -lastShares*lastPx );
 
 	this->agentControl.setPortfolio(this->cash, this->numberStock);
 

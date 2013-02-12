@@ -41,7 +41,7 @@ std::string AgentControl::getFixConfiguration(){
 
 		config_str.replace(config_str.find(user),user.length(), this->agentID );
 		boost::replace_all(config_str, "\\n", "\n");
-		std::cout<<std::endl << "CONFIG = " << config_str <<std::endl;
+		//std::cout<<std::endl << "CONFIG = " << config_str <<std::endl;
 
 		/* Clean up */
 		stmt.reset(NULL); /* free the object inside  */
@@ -184,6 +184,7 @@ void AgentControl::setPortfolio(float cash, float  number_stock){
 
 	std::stringstream insert;
 	std::stringstream update;
+	std::stringstream replace;
 	std::stringstream msg;
 	int affected_rows = 0;
 
@@ -195,14 +196,17 @@ void AgentControl::setPortfolio(float cash, float  number_stock){
 		std::auto_ptr< sql::Statement > stmt(con->createStatement());
 
 		/* Usage of UPDATE */
+
+		replace << "REPLACE INTO quickfix.portfolio (id_agent, number_stock, cash) VALUES ('"<< this->agentID <<"',"<< number_stock << ","<< cash <<")";
+		affected_rows = stmt->execute(replace.str());
+/*
 		update << "UPDATE quickfix.portfolio SET number_stock =" <<number_stock<<", cash="<< cash <<" WHERE id_agent = '"<< this->agentID << "'";
 		affected_rows = stmt->executeUpdate(update.str());
-
 		if (affected_rows != 1) {
 			insert << "INSERT INTO quickfix.portfolio (id_agent, number_stock, cash) VALUES ('"<< this->agentID <<"',"<< number_stock << ","<< cash <<")";
 			stmt->execute(insert.str());
 		}
-
+*/
 		/* Clean up */
 		stmt.reset(NULL); /* free the object inside  */
 

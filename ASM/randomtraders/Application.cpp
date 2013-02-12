@@ -113,7 +113,7 @@ void Application::waitGetCancelConfirmationResponse() {
 
 void Application::run()
 {
-	sleep(rand()%6+2);
+	sleep(5);
   while (true){
 
     try{
@@ -131,7 +131,7 @@ void Application::run()
     		this->resetFlags();
 
     	}else{
-    		std::cout << "[QUOTE] timeout!" << std::endl;
+    		//std::cout << "[QUOTE] timeout!" << std::endl;
     	}
 
     }
@@ -160,7 +160,7 @@ void Application::sendOrder(SimpleOrder order){
 	  setHeader( newOrderSingle.getHeader() );
 	  FIX::Session::sendToTarget( newOrderSingle );
   }else{
-	std::cout << "[Application::sendOrder] NOT SENT!!!"<<std::endl;
+	//std::cout << "[Application::sendOrder] NOT SENT!!!"<<std::endl;
   	 }
 
 
@@ -186,10 +186,11 @@ void Application::cancelOrder(SimpleOrder order){
 	  setHeader( orderCancelRequest.getHeader() );
 
 	  FIX::Session::sendToTarget( orderCancelRequest );
+	  //sleep(strategy.initialTime);
 	  this->waitGetCancelConfirmationResponse();
 
 	}else{
-		std::cout << "[Application::cancelOrder] NOT CANCELED!!!"<<std::endl;
+		//std::cout << "[Application::cancelOrder] NOT CANCELED!!!"<<std::endl;
 	}
 }
 

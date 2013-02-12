@@ -248,20 +248,14 @@ void Application::sendQuoteMessage(FIX::Symbol symbol,FIX::SenderCompID targetCo
 	  FIX42::Quote resp;
 
 	  if(m_orderMatcher.isThereLastMarketData(symbol)){ // tem pelo menos 1 bid ou 1 ask
+		  	FIX::QuoteID quoteID( m_generator.genQuoteID());
 
-		  FIX::QuoteID quoteID( m_generator.genQuoteID());
+			FIX::BidPx bidPx(m_orderMatcher.getLastMarketData(symbol,Order::buy).getPrice());
+			FIX::BidSize bidSize(bidPx > 0.0 ? m_orderMatcher.getLastMarketData(symbol,Order::buy).getOpenQuantity(): 0);
 
-		  //try{
-			  FIX::BidPx bidPx(m_orderMatcher.getLastMarketData(symbol,Order::buy).getPrice());
-			 FIX::BidSize bidSize(m_orderMatcher.getLastMarketData(symbol,Order::buy).getOpenQuantity());
 
-		 // }catch ( std::exception & e ){}
-
-		 // try{
-			 FIX::OfferPx offerPx(m_orderMatcher.getLastMarketData(symbol,Order::sell).getPrice());
-			  FIX::OfferSize offerSize(m_orderMatcher.getLastMarketData(symbol,Order::sell).getOpenQuantity());
-
-		  //}catch ( std::exception & e ){}
+			FIX::OfferPx offerPx(m_orderMatcher.getLastMarketData(symbol,Order::sell).getPrice());
+			FIX::OfferSize offerSize(offerPx > 0.0 ? m_orderMatcher.getLastMarketData(symbol,Order::sell).getOpenQuantity(): 0);
 
 		  resp.setField(quoteID);
 		  resp.setField(symbol);
@@ -327,7 +321,7 @@ void Application::updateOrder( const Order& order, char status )
   try
   {
     FIX::Session::sendToTarget( fixOrder, senderCompID, targetCompID );
-    this->sendQuoteMessage(order.getSymbol(), FIX::SenderCompID("FEEDER"));
+    //this->sendQuoteMessage(order.getSymbol(), FIX::SenderCompID("FEEDER"));
   }
   catch ( FIX::SessionNotFound& ) {}}
 
