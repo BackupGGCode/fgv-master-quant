@@ -32,7 +32,7 @@ Strategy::Strategy(const std::string strats) {
 		 // std::cout << "initialTime:" << initialTime << std::endl;
 		 // std::cout << "cycleTime:" << cycleTime << std::endl;
 	  }else{
-		  std::cout <<"[" << this->agentControl.agentID <<"] strategy configs vars not found" << std::endl;
+		  //std::cout <<"[" << this->agentControl.agentID <<"] strategy configs vars not found" << std::endl;
 		  exit(1);
 	  }
 }

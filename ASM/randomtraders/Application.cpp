@@ -4,7 +4,7 @@
 
 void Application::onLogon( const FIX::SessionID& sessionID )
 {
-  std::cout << std::endl << "Logon - " << sessionID << std::endl;
+  //std::cout << std::endl << "Logon - " << sessionID << std::endl;
   this->senderCompID = sessionID.getSenderCompID();
   this->targetCompID = sessionID.getTargetCompID();
   this->resetFlags();
@@ -20,7 +20,7 @@ void Application::resetFlags(){
 
 void Application::onLogout( const FIX::SessionID& sessionID )
 {
-  std::cout << std::endl << "Logout - " << sessionID << std::endl;
+  //std::cout << std::endl << "Logout - " << sessionID << std::endl;
 }
 
 void Application::fromApp( const FIX::Message& message, const FIX::SessionID& sessionID )
@@ -137,7 +137,7 @@ void Application::run()
     }
     catch ( std::exception & e )
     {
-      std::cout << "Problem! " << e.what() <<std::endl;
+      //std::cout << "Problem! " << e.what() <<std::endl;
     }
   }
 }
