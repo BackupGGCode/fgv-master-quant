@@ -8,8 +8,8 @@ randomtraders_SOURCES = \
 	Strategy.cpp \
 	SimpleOrder.h \
 	SimpleOrder.cpp \
-	AgentControl.h \
-	AgentControl.cpp
+	../utils/AgentControl.h \
+	../utils/AgentControl.cpp
 
 randomtraders_LDADD = $(top_builddir)/src/C++/libquickfix.la 
 
@@ -17,4 +17,3 @@ INCLUDES = -I$(top_builddir)/include -I..
 
 all-local:
 	rm -f ../../bin/randomtraders
-	ln -s ../examples/ordermatch/randomtraders ../../bin/randomtraders

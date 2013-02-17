@@ -10,12 +10,13 @@ ordermatch_SOURCES = \
 	Market.h \
 	Market.cpp \
 	Order.h \
-	OrderMatcher.h
+	OrderMatcher.h \
+	../utils/AgentControl.h \
+	../utils/AgentControl.cpp
 
 ordermatch_LDADD = $(top_builddir)/src/C++/libquickfix.la 
 
-INCLUDES = -I$(top_builddir)/include
+INCLUDES = -I$(top_builddir)/include -I../utils
 
 all-local:
 	rm -f ../../bin/ordermatch
-	ln -s ../examples/ordermatch/ordermatch ../../bin/ordermatch

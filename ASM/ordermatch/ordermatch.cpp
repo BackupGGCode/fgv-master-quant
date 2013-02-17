@@ -5,6 +5,7 @@
 #endif
 
 //#include "quickfix/FileStore.h"
+#include "../utils/AgentControl.h"
 #include "quickfix/MySQLStore.h"
 #include "quickfix/SocketAcceptor.h"
 #include "quickfix/SessionSettings.h"
@@ -13,26 +14,36 @@
 #include <iostream>
 #include <fstream>
 
+
 int main( int argc, char** argv )
 {
-  if ( argc != 2 )
+
+ if ( argc != 2 )
   {
-    std::cout << "usage: " << argv[ 0 ]
-    << " FILE." << std::endl;
-    return 0;
+	std::cout << std::endl << "usage: " << argv[ 0 ]
+	<< " AGENT_ID" << std::endl;
+	return 0;
   }
-  std::string file = argv[ 1 ];
+  std::string AGENT_ID = argv[ 1 ];
 
   try
   {
-    FIX::SessionSettings settings( file );
+
+   AgentControl agentControl(AGENT_ID);
+   std::stringstream fix(agentControl.getFixConfiguration() + agentControl.getSessionConfiguration());
+
+
+
+
+    FIX::SessionSettings settings( fix );
 
     Application application;
-    //FIX::FileStoreFactory storeFactory( settings );
     FIX::MySQLStoreFactory  m_settings( settings );
     FIX::ScreenLogFactory logFactory( settings );
-    //FIX::SocketAcceptor acceptor( application, storeFactory, settings, logFactory );
     FIX::SocketAcceptor acceptor( application, m_settings, settings, logFactory );
+
+    FIX::TransactTime start_time;
+    agentControl.updateRatesTimes(start_time.getString());
 
     acceptor.start();
     while ( true )
@@ -51,6 +62,7 @@ int main( int argc, char** argv )
       std::cout << std::endl;
     }
     acceptor.stop();
+
     return 0;
   }
   catch ( std::exception & e )
