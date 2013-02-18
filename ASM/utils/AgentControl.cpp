@@ -38,6 +38,8 @@ std::string AgentControl::getFixConfiguration(){
 			config_str = res->getString("config");
 			row++;
 		}
+
+		config_str.replace(config_str.find(user),user.length(), this->agentID );
 		boost::replace_all(config_str, "\\n", "\n");
 
 
@@ -237,6 +239,7 @@ std::string AgentControl::getStrategyConfiguration(){
 	float percentual_max_neg;
 	float cycle_time;
 	float initial_time;
+	float reference_rate;
 
 	const std::string host = HOST;
 	std::stringstream strategy_config;
@@ -248,7 +251,7 @@ std::string AgentControl::getStrategyConfiguration(){
 		std::auto_ptr< sql::Statement > stmt(con->createStatement());
 
 		std::string statement;
-		statement = "SELECT ticker, reference_stock_price, cash, number_stock, percentual_max_neg, cycle_time, initial_time FROM quickfix.strategy s inner join quickfix.agents a on s.id_strategy = a.id_strategy where id_agent='#USER#'";
+		statement = "SELECT ticker, reference_stock_price, cash, number_stock, percentual_max_neg, cycle_time, initial_time, reference_rate  FROM quickfix.strategy s inner join quickfix.agents a on s.id_strategy = a.id_strategy where id_agent='#USER#'";
 		std::string user("#USER#");
 		statement.replace(statement.find(user),user.length(), this->agentID );
 
@@ -262,6 +265,7 @@ std::string AgentControl::getStrategyConfiguration(){
 			percentual_max_neg = res->getDouble("percentual_max_neg");
 			cycle_time = res->getDouble("cycle_time");
 			initial_time = res->getDouble("initial_time");
+			reference_rate = res->getDouble("reference_rate");
 			row++;
 		}
 
@@ -271,7 +275,8 @@ std::string AgentControl::getStrategyConfiguration(){
 		strategy_config << "TICKER = \"" << ticker << "\";\nREFERENCE_STOCK_PRICE = "<<reference_stock_price
 						<<";\nCASH = "<<cash<<";\nNUMBER_STOCK = "<<number_stock<<";\nPERCENTUAL_MAX_NEG = "
 						<<percentual_max_neg<<";\nCYCLE_TIME = "<<cycle_time
-						<<";\nINITIAL_TIME = "<<initial_time<<";";
+						<<";\nINITIAL_TIME = "<<initial_time
+						<<";\nREFERENCE_RATE = "<<reference_rate<<";";
 
 		/* Clean up */
 		stmt.reset(NULL); /* free the object inside  */

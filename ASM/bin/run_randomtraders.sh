@@ -1,11 +1,22 @@
 #!/bin/sh
 if [ "$1" == "start" ]
 then
-	./randomtraders cfg/randomtraders01.fixcfg cfg/randomtraders01.stycfg &
-	./randomtraders cfg/randomtraders02.fixcfg cfg/randomtraders02.stycfg &
-	./randomtraders cfg/randomtraders03.fixcfg cfg/randomtraders03.stycfg &
-	./randomtraders cfg/randomtraders04.fixcfg cfg/randomtraders04.stycfg &
-	./randomtraders cfg/randomtraders05.fixcfg cfg/randomtraders05.stycfg &
+	./randomtraders RANDTRADER01 &
+	./randomtraders RANDTRADER02 &
+	./randomtraders RANDTRADER03 &
+	./randomtraders RANDTRADER04 &
+	./randomtraders RANDTRADER05 &
+	./randomtraders RANDTRADER06 &
+	./randomtraders RANDTRADER07 &
+	./randomtraders RANDTRADER08 &
+	./randomtraders RANDTRADER09 &
+	./randomtraders RANDTRADER10 &
+	./randomtraders RANDTRADER11 &
+	./randomtraders RANDTRADER12 &
+	./randomtraders RANDTRADER13 &
+	./randomtraders RANDTRADER14 &
+	./randomtraders RANDTRADER15 &
+
 fi
 
 if [ "$1" == "stop" ]

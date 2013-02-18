@@ -13,7 +13,7 @@ randomtraders_SOURCES = \
 
 randomtraders_LDADD = $(top_builddir)/src/C++/libquickfix.la 
 
-INCLUDES = -I$(top_builddir)/include -I.. 
+INCLUDES = -I$(top_builddir)/include -I.. -I../utils
 
 all-local:
 	rm -f ../../bin/randomtraders
