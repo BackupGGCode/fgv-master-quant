@@ -30,10 +30,8 @@ int main( int argc, char** argv )
   {
 
    AgentControl agentControl(AGENT_ID);
+
    std::stringstream fix(agentControl.getFixConfiguration() + agentControl.getSessionConfiguration());
-
-
-
 
     FIX::SessionSettings settings( fix );
 
@@ -43,7 +41,11 @@ int main( int argc, char** argv )
     FIX::SocketAcceptor acceptor( application, m_settings, settings, logFactory );
 
     FIX::TransactTime start_time;
+
     agentControl.updateRatesTimes(start_time.getString());
+    agentControl.setupPrices(start_time.getString());
+
+    application.setAgentControl(agentControl);
 
     acceptor.start();
     while ( true )

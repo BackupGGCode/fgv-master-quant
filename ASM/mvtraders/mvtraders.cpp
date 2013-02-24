@@ -4,7 +4,7 @@
 #include "quickfix/SessionSettings.h"
 #include "Application.h"
 #include "Strategy.h"
-#include "AgentControl.h"
+#include "../utils/AgentControl.h"
 #include <string>
 #include <sstream>
 

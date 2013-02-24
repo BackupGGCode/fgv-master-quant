@@ -11,7 +11,6 @@ void Application::onLogon( const FIX::SessionID& sessionID )
 }
 
 void Application::resetFlags(){
-	  getQuote = false;
 	  getConfirmationTrade =false;
 	  getConfirmationPartialExecutionTrade = false;
 	  getConfirmationExecutionTrade = false;
@@ -87,19 +86,6 @@ void Application::onMessage
 ( const FIX42::MarketDataSnapshotFullRefresh&, const FIX::SessionID& ) {}
 
 void Application::onMessage( const FIX42::Quote& message, const FIX::SessionID& ) {
-	this->strategy.preTrade(message);
-	getQuote=true;
-}
-
-void Application::waitGetQuoteResponse() {
-	waitQuoteTimeOut=false;
-	int i=0;
-	 while ( !getQuote || i < 10){
-		 i++;
-		 sleep(strategy.initialTime/10);
-	}
-	 if(i<10)waitQuoteTimeOut=true;
-	 getQuote=false;
 
 }
 
@@ -117,27 +103,21 @@ void Application::run()
   while (true){
 
     try{
-    	this->queryQuoteRequest(FIX::Symbol(strategy.ticker));
-    	this->waitGetQuoteResponse();
+    	this->strategy.preTrade();
 
-    	if(!waitQuoteTimeOut){
+		//SimpleOrder order = this->strategy.trade();
+		//this->sendOrder(order);
 
-    		SimpleOrder order = this->strategy.trade();
-    		this->sendOrder(order);
+		sleep(strategy.cycleTime);
 
-			sleep(strategy.cycleTime);
+		//this->cancelOrder(order);
+		this->resetFlags();
 
-    		this->cancelOrder(order);
-    		this->resetFlags();
-
-    	}else{
-    		//std::cout << "[QUOTE] timeout!" << std::endl;
-    	}
 
     }
     catch ( std::exception & e )
     {
-      //std::cout << "Problem! " << e.what() <<std::endl;
+      std::cout << "Problem! " << e.what() <<std::endl;
     }
   }
 }
@@ -227,24 +207,6 @@ void Application::queryMarketDataRequest()
   FIX::Session::sendToTarget( message );
 }
 
-void Application::queryQuoteRequest(FIX::Symbol symbol)
-{
-  getQuote=false;
-  FIX42::QuoteRequest message;
-
-  FIX::QuoteReqID genQuoteReqID;
-  genQuoteReqID = m_generator.genOrderID();
-  message.set(genQuoteReqID);
-
-  FIX42::QuoteRequest::NoRelatedSym symbolGroup;
-  symbolGroup.set( symbol );
-
-  message.addGroup(symbolGroup);
-
-  setHeader( message.getHeader() );
-
-  FIX::Session::sendToTarget( message );
-}
 
 void Application::setHeader( FIX::Header& header ){
   header.setField(this->senderCompID);

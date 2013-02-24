@@ -12,7 +12,7 @@
 #include "quickfix/fix42/Quote.h"
 #include "quickfix/fix42/ExecutionReport.h"
 #include "SimpleOrder.h"
-#include "AgentControl.h"
+#include "../utils/AgentControl.h"
 #include <math.h>
 #include "IDGenerator.h"
 #include <iostream>

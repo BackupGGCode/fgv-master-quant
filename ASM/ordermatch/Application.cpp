@@ -25,6 +25,11 @@ throw( FIX::FieldNotFound, FIX::IncorrectDataFormat, FIX::IncorrectTagValue, FIX
   crack( message, sessionID );
 }
 
+void Application::setAgentControl(AgentControl _agentControl){
+	this->agentControl = _agentControl;
+}
+
+
 void Application::onMessage( const FIX42::NewOrderSingle& message, const FIX::SessionID& )
 {
 
@@ -316,6 +321,9 @@ void Application::updateOrder( const Order& order, char status )
   {
     fixOrder.set( FIX::LastShares( order.getLastExecutedQuantity() ) );
     fixOrder.set( FIX::LastPx( order.getLastExecutedPrice() ) );
+
+    FIX::TransactTime time;
+    agentControl.updatePrices(time.getString(),order.getLastExecutedPrice(),order.getLastExecutedQuantity());
   }
 
   try

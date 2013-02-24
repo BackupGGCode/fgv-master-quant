@@ -7,6 +7,8 @@
 #include <queue>
 #include <iostream>
 
+#include "../utils/AgentControl.h"
+
 #include "quickfix/Application.h"
 #include "quickfix/MessageCracker.h"
 #include "quickfix/Values.h"
@@ -70,6 +72,9 @@ class Application
                     const FIX::ClOrdID& clOrdID, const FIX::Symbol& symbol,
                     const FIX::Side& side, const std::string& message );
 
+
+
+
   // Type conversions
   Order::Side convert( const FIX::Side& );
   Order::Type convert( const FIX::OrdType& );
@@ -80,8 +85,11 @@ class Application
   IDGenerator m_generator;
   FIX::SenderCompID _senderCompID;
 
+  AgentControl agentControl;
+
 public:
   const OrderMatcher& orderMatcher() { return m_orderMatcher; }
+  void setAgentControl(AgentControl agentControl);
 };
 
 #endif

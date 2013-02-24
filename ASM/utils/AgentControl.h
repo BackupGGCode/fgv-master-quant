@@ -53,10 +53,14 @@ public:
 	std::string getFixConfiguration();
 	std::string getSessionConfiguration();
 	std::string getStrategyConfiguration();
+
+	void setupPrices(std::string time);
 	void updateRatesTimes(std::string start_time);
+	void updatePrices(std::string start_time, float price, float quantity);
 	void setPortfolio(	float cash, float  number_stock);
 	float getRate(std::string time);
-
+	float* getPrices(std::string time1, std::string time2, int& tam);
+	float* getRates(std::string time1, std::string time2, int& tam);
 
 
 	int run();

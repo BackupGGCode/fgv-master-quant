@@ -66,7 +66,7 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
 am_ordermatch_OBJECTS = ordermatch.$(OBJEXT) Application.$(OBJEXT) \
-	Market.$(OBJEXT)
+	Market.$(OBJEXT) AgentControl.$(OBJEXT)
 ordermatch_OBJECTS = $(am_ordermatch_OBJECTS)
 ordermatch_DEPENDENCIES = $(top_builddir)/src/C++/libquickfix.la
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
@@ -256,10 +256,12 @@ ordermatch_SOURCES = \
 	Market.h \
 	Market.cpp \
 	Order.h \
-	OrderMatcher.h
+	OrderMatcher.h \
+	../utils/AgentControl.h \
+	../utils/AgentControl.cpp
 
 ordermatch_LDADD = $(top_builddir)/src/C++/libquickfix.la 
-INCLUDES = -I$(top_builddir)/include
+INCLUDES = -I$(top_builddir)/include -I../utils
 all: all-am
 
 .SUFFIXES:
@@ -313,6 +315,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AgentControl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Application.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Market.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ordermatch.Po@am__quote@
@@ -337,6 +340,20 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
+
+AgentControl.o: ../utils/AgentControl.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT AgentControl.o -MD -MP -MF $(DEPDIR)/AgentControl.Tpo -c -o AgentControl.o `test -f '../utils/AgentControl.cpp' || echo '$(srcdir)/'`../utils/AgentControl.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/AgentControl.Tpo $(DEPDIR)/AgentControl.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../utils/AgentControl.cpp' object='AgentControl.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o AgentControl.o `test -f '../utils/AgentControl.cpp' || echo '$(srcdir)/'`../utils/AgentControl.cpp
+
+AgentControl.obj: ../utils/AgentControl.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT AgentControl.obj -MD -MP -MF $(DEPDIR)/AgentControl.Tpo -c -o AgentControl.obj `if test -f '../utils/AgentControl.cpp'; then $(CYGPATH_W) '../utils/AgentControl.cpp'; else $(CYGPATH_W) '$(srcdir)/../utils/AgentControl.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/AgentControl.Tpo $(DEPDIR)/AgentControl.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../utils/AgentControl.cpp' object='AgentControl.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o AgentControl.obj `if test -f '../utils/AgentControl.cpp'; then $(CYGPATH_W) '../utils/AgentControl.cpp'; else $(CYGPATH_W) '$(srcdir)/../utils/AgentControl.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -564,7 +581,6 @@ uninstall-am:
 
 all-local:
 	rm -f ../../bin/ordermatch
-	ln -s ../examples/ordermatch/ordermatch ../../bin/ordermatch
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

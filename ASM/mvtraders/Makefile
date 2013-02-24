@@ -227,7 +227,7 @@ htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
 install_sh = ${SHELL} /storage/data/projetos/artificial-market/quickfix-1.13.3/config/install-sh
-jarlib = 
+jarlib = ${exec_prefix}/lib
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -259,7 +259,7 @@ mvtraders_SOURCES = \
 	../utils/AgentControl.cpp
 
 mvtraders_LDADD = $(top_builddir)/src/C++/libquickfix.la 
-INCLUDES = -I$(top_builddir)/include -I.. 
+INCLUDES = -I$(top_builddir)/include -I.. -I../utils
 all: all-am
 
 .SUFFIXES:

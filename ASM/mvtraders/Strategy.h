@@ -12,7 +12,7 @@
 #include "quickfix/fix42/Quote.h"
 #include "quickfix/fix42/ExecutionReport.h"
 #include "SimpleOrder.h"
-#include "AgentControl.h"
+#include "../utils/AgentControl.h"
 #include <math.h>
 #include "IDGenerator.h"
 #include <iostream>
@@ -23,21 +23,32 @@ class Strategy {
 
 public:
 	std::string	ticker;
+
+    FIX::TransactTime time1;
+    FIX::TransactTime time2;
+
+
+
 	float referenceStockPrice;
 	float previousStockPrice;
 
 	float referenceRate;
 	float previousRate;
 
-	float cash;
+	float expectedReturnStock;
+	float expectedReturnBank;
 
+	float standardDeviationStock;
+	float standardDeviationBank;
+
+	float referenceCov;
+
+	float cash;
 
 	float numberStock;
 
-
 	float cycleTime;
 	float initialTime;
-
 
 	AgentControl agentControl;
 
@@ -45,7 +56,7 @@ public:
 	Strategy(const std::string strats);
 	void setAgentControl(AgentControl agentControl);
 	virtual ~Strategy();
-	void preTrade(FIX42::Quote message);
+	void preTrade();
 	SimpleOrder trade();
 	void postTrade(FIX42::ExecutionReport ereport);
 	void printQuote( const FIX42::Quote message );

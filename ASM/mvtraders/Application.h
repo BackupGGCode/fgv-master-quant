@@ -30,8 +30,7 @@ private:
   Strategy strategy;
   FIX::SenderCompID senderCompID;
   FIX::TargetCompID targetCompID;
-  bool getQuote;
-  bool waitQuoteTimeOut;
+
   bool getConfirmationTrade;
   bool getConfirmationExecutionTrade;
   bool getConfirmationPartialExecutionTrade;
@@ -60,12 +59,12 @@ private:
 
   void sendOrder(SimpleOrder order);
   void cancelOrder(SimpleOrder order);
-  void waitGetQuoteResponse();
+
   void waitGetCancelConfirmationResponse();
 
 
   void queryMarketDataRequest();
-  void queryQuoteRequest(FIX::Symbol symbol);
+
 
   void setHeader( FIX::Header& header );
 

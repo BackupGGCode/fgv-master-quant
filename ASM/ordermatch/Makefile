@@ -66,7 +66,7 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
 am_ordermatch_OBJECTS = ordermatch.$(OBJEXT) Application.$(OBJEXT) \
-	Market.$(OBJEXT)
+	Market.$(OBJEXT) AgentControl.$(OBJEXT)
 ordermatch_OBJECTS = $(am_ordermatch_OBJECTS)
 ordermatch_DEPENDENCIES = $(top_builddir)/src/C++/libquickfix.la
 DEFAULT_INCLUDES = -I. -I$(top_builddir)
@@ -110,7 +110,7 @@ AUTOHEADER = ${SHELL} /storage/data/projetos/artificial-market/quickfix-1.13.3/c
 AUTOMAKE = ${SHELL} /storage/data/projetos/artificial-market/quickfix-1.13.3/config/missing --run automake-1.12
 AWK = gawk
 BOOST_CFLAGS = 
-BOOST_PREFIX = 
+BOOST_PREFIX = /usr/include/boost
 CC = gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2 -Wall -ansi -Wpointer-arith -Wwrite-strings   -I/usr/include/mysql -I/usr/include/cppconn  -I/usr/include/libxml2   
@@ -146,9 +146,9 @@ LEXLIB =
 LEX_OUTPUT_ROOT = 
 LIBCONFIG_LIBS = -lconfig++
 LIBMYSQLCONN_CFLAGS = -I/usr/include/cppconn
-LIBMYSQLCONN_LIBS = -lmysqlcppconn -lboost_system
+LIBMYSQLCONN_LIBS = -lmysqlcppconn -lboost_system  -lboost_date_time
 LIBOBJS = 
-LIBS = -lpthread  -lxml2 -lz -lm -ldl -L/usr/lib64/mysql -lmysqlclient -lmysqlcppconn -lboost_system -lconfig++  
+LIBS = -lpthread  -lxml2 -lz -lm -ldl -L/usr/lib64/mysql -lmysqlclient -lmysqlcppconn -lboost_system  -lboost_date_time -lconfig++  
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = 
 LN_S = ln -s
@@ -256,10 +256,12 @@ ordermatch_SOURCES = \
 	Market.h \
 	Market.cpp \
 	Order.h \
-	OrderMatcher.h
+	OrderMatcher.h \
+	../utils/AgentControl.h \
+	../utils/AgentControl.cpp
 
 ordermatch_LDADD = $(top_builddir)/src/C++/libquickfix.la 
-INCLUDES = -I$(top_builddir)/include
+INCLUDES = -I$(top_builddir)/include -I../utils
 all: all-am
 
 .SUFFIXES:
@@ -313,6 +315,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+include ./$(DEPDIR)/AgentControl.Po
 include ./$(DEPDIR)/Application.Po
 include ./$(DEPDIR)/Market.Po
 include ./$(DEPDIR)/ordermatch.Po
@@ -337,6 +340,20 @@ include ./$(DEPDIR)/ordermatch.Po
 #	source='$<' object='$@' libtool=yes \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(LTCXXCOMPILE) -c -o $@ $<
+
+AgentControl.o: ../utils/AgentControl.cpp
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT AgentControl.o -MD -MP -MF $(DEPDIR)/AgentControl.Tpo -c -o AgentControl.o `test -f '../utils/AgentControl.cpp' || echo '$(srcdir)/'`../utils/AgentControl.cpp
+	$(am__mv) $(DEPDIR)/AgentControl.Tpo $(DEPDIR)/AgentControl.Po
+#	source='../utils/AgentControl.cpp' object='AgentControl.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o AgentControl.o `test -f '../utils/AgentControl.cpp' || echo '$(srcdir)/'`../utils/AgentControl.cpp
+
+AgentControl.obj: ../utils/AgentControl.cpp
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT AgentControl.obj -MD -MP -MF $(DEPDIR)/AgentControl.Tpo -c -o AgentControl.obj `if test -f '../utils/AgentControl.cpp'; then $(CYGPATH_W) '../utils/AgentControl.cpp'; else $(CYGPATH_W) '$(srcdir)/../utils/AgentControl.cpp'; fi`
+	$(am__mv) $(DEPDIR)/AgentControl.Tpo $(DEPDIR)/AgentControl.Po
+#	source='../utils/AgentControl.cpp' object='AgentControl.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o AgentControl.obj `if test -f '../utils/AgentControl.cpp'; then $(CYGPATH_W) '../utils/AgentControl.cpp'; else $(CYGPATH_W) '$(srcdir)/../utils/AgentControl.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -564,7 +581,6 @@ uninstall-am:
 
 all-local:
 	rm -f ../../bin/ordermatch
-	ln -s ../examples/ordermatch/ordermatch ../../bin/ordermatch
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
