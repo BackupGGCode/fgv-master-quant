@@ -8,10 +8,10 @@ DELTA_TEMPO <- seq(TEMPO_INICIO , TEMPO_FIM , by = times("00:00:01"));
 TEMPO_TOTAL <- length(DELTA_TEMPO);
 NUM_PONTOS <-length(DELTA_TEMPO);
 
-MEDIA_GLOBAL=8;
+MEDIA_GLOBAL=0.01;
 LAMBDA=0.001;
-SIGMA=0.001;
-MEDIA_INICIAL=8;
+SIGMA=0.0002;
+MEDIA_INICIAL=0.01;
 
 
 # connecting to DB ...
@@ -23,7 +23,8 @@ ornstein_uhlenbeck <- function(T,n,nu,lambda,sigma,x0){
   dt  <- T/n
   x <- c(x0)
   for (i in 2:(n+1)) {
-    x[i]  <-  x[i-1] + lambda*(nu-x[i-1])*dt + sigma*dw[i-1]
+    x[i]  <-  x[i-1] + lambda*(nu-x[i-1])*dt + sigma*dw[i-1];
+    if(x[i] < 0)x[i] <-0;
   }
   return(x);
 }
