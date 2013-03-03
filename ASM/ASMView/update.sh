@@ -6,3 +6,4 @@ cp *.php $DESTINATION
 cp -r spec $DESTINATION
 rm -rf $DESTINATION/scripts
 cp -r scripts $DESTINATION
+
