@@ -113,7 +113,7 @@ void Application::waitGetCancelConfirmationResponse() {
 
 void Application::run()
 {
-	sleep(5);
+	//sleep(5);
   while (true){
 
     try{
@@ -170,7 +170,7 @@ void Application::cancelOrder(SimpleOrder order){
 
 	if( order.orderQty >  0.0
 	 && order.price >  0.0
-	 && getConfirmationTrade == true
+	 //&& getConfirmationTrade == true
 	 && getConfirmationExecutionTrade == false){
 
 	  FIX42::OrderCancelRequest orderCancelRequest;

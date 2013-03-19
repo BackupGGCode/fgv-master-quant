@@ -76,15 +76,20 @@ SimpleOrder Strategy::trade(){
 	if(offerPx > 0.0 && bidPx > 0.0){
 		this->referenceStockPrice = 0.5*(offerPx+bidPx);
 	}else{
-		if(offerPx > 0.0){
-			this->referenceStockPrice = offerPx;
-		}else{
-			if(bidPx > 0.0){
-				this->referenceStockPrice = bidPx;
-			}else{
-				// nothing => keep previous
-			}
-		}
+
+		this->referenceStockPrice = this->agentControl.getLastPrice();
+
+//		if(offerPx > 0.0){
+//			this->referenceStockPrice = offerPx;
+//		}else{
+//			if(bidPx > 0.0){
+//				this->referenceStockPrice = bidPx;
+//			}else{
+//				 nothing => keep previous
+//			}
+//		}
+
+
 	}
 
 	this->referenceStockPrice *= volatility;
@@ -96,7 +101,8 @@ SimpleOrder Strategy::trade(){
 
 	srand(time(0));
 	int rand_decision = rand()%100;
-	float rand_amount =(rand()%100)/100.0;
+	srand(time(0));
+	float rand_amount =(rand()%101)/100.0;
 
 
 
@@ -214,8 +220,8 @@ void Strategy::postTrade(FIX42::ExecutionReport ereport){
 
 	this->agentControl.setPortfolio(this->cash, this->numberStock);
 
-	if(this->cash <= 0.0 && this->numberStock <= 0.0)
-		exit(1);
+	//if(this->cash <= 0.0 && this->numberStock <= 0.0)
+	//	exit(1);
 
 }
 

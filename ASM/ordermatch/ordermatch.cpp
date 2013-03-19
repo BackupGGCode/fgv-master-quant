@@ -42,7 +42,7 @@ int main( int argc, char** argv )
 
     FIX::TransactTime start_time;
 
-    agentControl.updateRatesTimes(start_time.getString());
+    agentControl.updateExogenousTimes(start_time.getString());
     agentControl.setupPrices(start_time.getString());
 
     application.setAgentControl(agentControl);

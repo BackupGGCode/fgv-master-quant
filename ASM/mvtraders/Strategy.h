@@ -28,12 +28,12 @@ public:
     FIX::TransactTime time2;
 
 
-
+    bool validMinVarPortWeight;
 	float referenceStockPrice;
 	float previousStockPrice;
 
-	float referenceRate;
-	float previousRate;
+	float referenceExogenous;
+	float previousExogenous;
 
 	float expectedReturnStock;
 	float expectedReturnExogenous;

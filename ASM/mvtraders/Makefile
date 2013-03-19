@@ -253,8 +253,8 @@ mvtraders_SOURCES = \
 	Application.cpp \
 	Strategy.h \
 	Strategy.cpp \
-	SimpleOrder.h \
-	SimpleOrder.cpp \
+	../utils/SimpleOrder.h \
+	../utils/SimpleOrder.cpp \
 	../utils/AgentControl.h \
 	../utils/AgentControl.cpp
 
@@ -339,6 +339,20 @@ include ./$(DEPDIR)/mvtraders.Po
 #	source='$<' object='$@' libtool=yes \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(LTCXXCOMPILE) -c -o $@ $<
+
+SimpleOrder.o: ../utils/SimpleOrder.cpp
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SimpleOrder.o -MD -MP -MF $(DEPDIR)/SimpleOrder.Tpo -c -o SimpleOrder.o `test -f '../utils/SimpleOrder.cpp' || echo '$(srcdir)/'`../utils/SimpleOrder.cpp
+	$(am__mv) $(DEPDIR)/SimpleOrder.Tpo $(DEPDIR)/SimpleOrder.Po
+#	source='../utils/SimpleOrder.cpp' object='SimpleOrder.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SimpleOrder.o `test -f '../utils/SimpleOrder.cpp' || echo '$(srcdir)/'`../utils/SimpleOrder.cpp
+
+SimpleOrder.obj: ../utils/SimpleOrder.cpp
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SimpleOrder.obj -MD -MP -MF $(DEPDIR)/SimpleOrder.Tpo -c -o SimpleOrder.obj `if test -f '../utils/SimpleOrder.cpp'; then $(CYGPATH_W) '../utils/SimpleOrder.cpp'; else $(CYGPATH_W) '$(srcdir)/../utils/SimpleOrder.cpp'; fi`
+	$(am__mv) $(DEPDIR)/SimpleOrder.Tpo $(DEPDIR)/SimpleOrder.Po
+#	source='../utils/SimpleOrder.cpp' object='SimpleOrder.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SimpleOrder.obj `if test -f '../utils/SimpleOrder.cpp'; then $(CYGPATH_W) '../utils/SimpleOrder.cpp'; else $(CYGPATH_W) '$(srcdir)/../utils/SimpleOrder.cpp'; fi`
 
 AgentControl.o: ../utils/AgentControl.cpp
 	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT AgentControl.o -MD -MP -MF $(DEPDIR)/AgentControl.Tpo -c -o AgentControl.o `test -f '../utils/AgentControl.cpp' || echo '$(srcdir)/'`../utils/AgentControl.cpp

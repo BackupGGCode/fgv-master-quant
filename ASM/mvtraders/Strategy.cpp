@@ -19,18 +19,18 @@ Strategy::Strategy(const std::string strats) {
 
 	  if(cfg.lookupValue("TICKER", ticker)
 	   && cfg.lookupValue("REFERENCE_STOCK_PRICE", referenceStockPrice)
-	   && cfg.lookupValue("REFERENCE_RATE", referenceRate)
+	   && cfg.lookupValue("REFERENCE_EXOGENOUS", referenceExogenous)
 	   && cfg.lookupValue("REFERENCE_COV", referenceCov)
 	   && cfg.lookupValue("CASH", cash)
 	   && cfg.lookupValue("NUMBER_STOCK", numberStock)
 	   && cfg.lookupValue("INITIAL_TIME", initialTime)
 	   && cfg.lookupValue("CYCLE_TIME", cycleTime)){
 		  this->previousStockPrice = this->referenceStockPrice;
-		  this->previousRate = this->referenceRate;
+		  this->previousExogenous = this->referenceExogenous;
 
 		  std::cout << "ticker:" << ticker<< std::endl;
 		  std::cout << "referenceStockPrice:" << referenceStockPrice<< std::endl;
-		  std::cout << "referenceRate:" << referenceRate << std::endl;
+		  std::cout << "referenceExogenous:" << referenceExogenous << std::endl;
 		  std::cout << "referenceCov:" << referenceCov << std::endl;
 		  std::cout << "cash:" << cash << std::endl;
 		  std::cout << "numberStock:" << numberStock << std::endl;
@@ -53,7 +53,7 @@ void Strategy::setAgentControl(AgentControl _agentControl){
 	this->agentControl.setPortfolio(this->cash, this->numberStock);
 }
 
-float* returnStock(float* array, int& tam){
+float* returnPrice(float* array, int& tam){
 	float* res;
 	if (tam <= 1){
 		res = new float[1];
@@ -96,30 +96,31 @@ void Strategy::preTrade(){
 	this->weightStock=0;
 	this->weightExogenousAsset=0;
 
-    int tam_rates = 0;
-    float* rates = agentControl.getRates(this->time1.getString(), this->time2.getString(), tam_rates);
+    int tam_exo = 0;
+    float* exogenous_prices = agentControl.getExogenousValues(this->time1.getString(), this->time2.getString(), tam_exo);
 
     int tam_prices = 0;
     float* prices = agentControl.getPrices(this->time1.getString(), this->time2.getString(), tam_prices);
 
-    float* returnPrices = returnStock(prices,tam_prices);
+    float* returnExoPrices = returnPrice(exogenous_prices,tam_exo);
+    float* returnPrices = returnPrice(prices,tam_prices);
 
 	this->expectedReturnStock= avg(returnPrices, tam_prices);
-	this->expectedReturnExogenous = avg(rates, tam_rates);
+	this->expectedReturnExogenous = avg(returnExoPrices, tam_exo);
 
-	for(int i=0;i<tam_rates;i++)
-		std::cout << "exo[" << i <<"]=" <<rates[i] << std::endl;
-	std::cout << "avg: " << this->expectedReturnExogenous << std::endl;
+//	for(int i=0;i<tam_exo;i++)
+//		std::cout << "exo[" << i <<"]=" <<returnExoPrices[i] << std::endl;
+//	std::cout << "avg: " << this->expectedReturnExogenous << std::endl;
 
-	for(int i=0;i<tam_prices;i++)
-		std::cout<< "Prices[" << i <<"]=" <<prices[i] << "\treturnPrices[" << i <<"]=" <<returnPrices[i] << std::endl;
-	std::cout << "avg: " << this->expectedReturnStock << std::endl;
+//	for(int i=0;i<tam_prices;i++)
+//		std::cout<< "Prices[" << i <<"]=" <<prices[i] << "\treturnPrices[" << i <<"]=" <<returnPrices[i] << std::endl;
+//	std::cout << "avg: " << this->expectedReturnStock << std::endl;
 
-	this->standardDeviationExogenous = stdDev(rates,tam_rates, this->expectedReturnExogenous);
+	this->standardDeviationExogenous = stdDev(returnExoPrices,tam_exo, this->expectedReturnExogenous);
 	this->standardDeviationStock = stdDev(returnPrices,tam_prices, this->expectedReturnStock);
 
-	float r_stock= this->expectedReturnStock-0.01;
-	float r_exo = this->expectedReturnExogenous -0.01;
+	float r_stock= this->expectedReturnStock;
+	float r_exo = this->expectedReturnExogenous;
 
 	float exo_var = pow(this->standardDeviationExogenous, 2);
 	float stock_var = pow(this->standardDeviationStock, 2);
@@ -130,161 +131,24 @@ void Strategy::preTrade(){
 
 	///Minimum Variance Portfolio Weight
 
-	//if(w_stock > 0 && w_stock < 1 && w_bank > 0 && w_bank < 1 )
+	if(this->weightStock > 0 && this->weightStock < 1
+			&& this->weightExogenousAsset > 0 && this->weightExogenousAsset < 1 ){
+		this->validMinVarPortWeight = true;
+
 		std::cout << "[Strategy::PreTrade]" <<std::endl
-			<< "\tE[Stock]:"<< this->expectedReturnStock<<"\t sd[Stock]:"<< this->standardDeviationStock << std::endl
-	        << "\tE[Exo]:" << this->expectedReturnExogenous <<"\t sd[Exo]:" << this->standardDeviationExogenous  << std::endl
-			<< "\tW[Exo]:" << this->weightExogenousAsset <<"\t W[Stock]:" << this->weightStock  << std::endl;
+			<< "\t\tSTOCK\t\tEXOGENOUS"<< std::endl
+			<< "\t E[.]\t"<< this->expectedReturnStock<<"\t"<< this->expectedReturnExogenous << std::endl
+			<< "\tSD[.]\t" << this->standardDeviationStock <<"\t" << this->standardDeviationExogenous  << std::endl
+			<< "\t W[.]\t" << this->weightStock <<"\t" << this->weightExogenousAsset  << std::endl;
 
 
-
-
-
+	}else{
+		this->validMinVarPortWeight = false;
+	}
 
 
 }
 
-SimpleOrder Strategy::trade(){
-	//	http://xa.yimg.com/kq/groups/18315139/411279682/name/Aula+14.pdf
-	//std::cout << "Strategy::Trade"<<std::endl;
-	SimpleOrder order;
-
-	FIX::Symbol symbol;
-	FIX::BidPx bidPx;
-	FIX::OfferPx offerPx;
-	this->lastQuote.get(symbol);
-	this->lastQuote.get(bidPx);
-	this->lastQuote.get(offerPx);
-
-
-	order.symbol = symbol;
-	order.clOrdID = m_generator.genOrderID();
-
-	//float volatility = 1.0+(rand()%20 - 10)/100.0;
-	float volatility = 1.0+(rand()%11 - 5)/100.0;
-
-	// Implementacao do Fluxo de decisao do agente aleatorio ...
-
-	if(offerPx > 0.0 && bidPx > 0.0){
-		this->referenceStockPrice = 0.5*(offerPx+bidPx);
-	}else{
-		if(offerPx > 0.0){
-			this->referenceStockPrice = offerPx;
-		}else{
-			if(bidPx > 0.0){
-				this->referenceStockPrice = bidPx;
-			}else{
-				// nothing => keep previous
-			}
-		}
-	}
-
-	this->referenceStockPrice *= volatility;
-	this->referenceStockPrice = roundASM(this->referenceStockPrice );
-
-	//std::cout<<  "referenceStockPrice:" << this->referenceStockPrice << std::endl;
-	//std::cout<<  "cash:" << this->cash << std::endl;
-	//std::cout<<  "numberStock:" << this->numberStock << std::endl;
-
-	srand(time(0));
-	int rand_decision = rand()%100;
-	float rand_amount =(rand()%100)/100.0;
-
-
-
-	// [DECISAO-01] Possui acao no inventario?
-	if(this->numberStock > 0.0){
-		//std::cout<<  "[DECISAO-01] Possui acao no inventario" << std::endl;
-
-		// [DECISAO-01] SIM
-		int qty = (int)(this->cash/this->referenceStockPrice );
-		order.price = this->referenceStockPrice;
-
-		// [DECISAO-02] Possui saldo em dinheiro superior ao preco de pelo menos uma acao (ASK)?
-		if(qty >= 1 ){
-			//std::cout<<  "[DECISAO-02] Possui saldo em dinheiro superior ao preco de pelo menos uma acao (ASK)" << std::endl;
-			// [DECISAO-02] SIM => [ACAO 01] Não Operar, Comprar ou Vender acoes
-			if(rand_decision < 33 ){
-				//std::cout<<  "[DECISAO-02] SIM => [ACAO 01] Comprar acoes" << std::endl;
-				order.side = FIX::Side_BUY;
-
-				qty=(int)qty*rand_amount;
-				qty=(qty > 1 ? qty: 1);
-
-				order.orderQty = qty ;
-
-			}else{
-				if(rand_decision >= 67 ){
-					//std::cout<<  "[DECISAO-02] SIM => [ACAO 01] Vender acoes" << std::endl;
-					order.side = FIX::Side_SELL;
-					qty=(int)this->numberStock*rand_amount;
-					qty=(qty > 1 ? qty: 1);
-					order.orderQty =qty;
-				}else{
-					// Não Operar
-					//std::cout<<  "[DECISAO-02] SIM => [ACAO 01]  Não Operar" << std::endl;
-					order.side ='0';
-					order.orderQty = 0;
-					order.price = 0;
-				}
-			}
-
-		}else{
-			// [DECISAO-02] NAO => [ACAO 02] Não Operar ou Vender acoes
-			if(rand_decision > 50 ){
-			//std::cout<<  "[DECISAO-02] NAO => [ACAO 02] Vender acoes" << std::endl;
-			order.side = FIX::Side_SELL;
-			qty=(int)this->numberStock*rand_amount;
-			qty=(qty > 1 ? qty: 1);
-			order.orderQty = qty;
-
-			}else{
-				// Não Operar
-				//std::cout<<  "[DECISAO-02] NAO => [ACAO 02] Não Operar" << std::endl;
-				order.side ='0';
-				order.orderQty = 0;
-				order.price = 0;
-			}
-		}
-	}else{
-		// [DECISAO-01] NAO
-		//std::cout<<  "[DECISAO-01] NAO possui acao no inventario" << std::endl;
-
-		int qty = (this->cash/this->referenceStockPrice );
-		order.price = this->referenceStockPrice;
-
-		if(qty >= 1 ){
-			// [DECISAO-04] SIM => [ACAO 04] Não Operar ou Comprar acoes
-			if(rand_decision < 50 ){
-				//std::cout<<  "[DECISAO-04] SIM => [ACAO 04] Comprar acoes" << std::endl;
-				order.side = FIX::Side_BUY;
-				qty=(int)qty*rand_amount;
-				qty=(qty > 1 ? qty: 1);
-
-				order.orderQty = qty;
-			}else{
-				// Não Operar
-				//std::cout<<  "[DECISAO-04] SIM => [ACAO 04] Não Operar" << std::endl;
-				order.side ='0';
-				order.orderQty = 0;
-				order.price = 0;
-			}
-
-		}else{
-			// [DECISAO-03] NAO => [ACAO 03] VALIDO!
-
-			// Não Operar
-			//std::cout<<  "[DECISAO-03] NAO => [ACAO 03] VALIDO!" << std::endl;
-			exit(1);
-			order.side ='0';
-			order.orderQty = 0;
-			order.price = 0;
-		}
-	}
-
-	//order.print();
-	return order;
-}
 
 void Strategy::postTrade(FIX42::ExecutionReport ereport){
 	//std::cout << "Strategy::PostTrade"<<std::endl;

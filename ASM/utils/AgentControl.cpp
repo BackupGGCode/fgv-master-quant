@@ -249,7 +249,7 @@ std::string AgentControl::getStrategyConfiguration(){
 	float percentual_max_neg;
 	float cycle_time;
 	float initial_time;
-	float reference_rate;
+	float reference_exogenous;
 	float reference_cov;
 
 	const std::string host = HOST;
@@ -262,7 +262,7 @@ std::string AgentControl::getStrategyConfiguration(){
 		std::auto_ptr< sql::Statement > stmt(con->createStatement());
 
 		std::string statement;
-		statement = "SELECT ticker, reference_stock_price, cash, number_stock, percentual_max_neg, cycle_time, initial_time, reference_rate, reference_cov  FROM quickfix.strategy s inner join quickfix.agents a on s.id_strategy = a.id_strategy where id_agent='#USER#'";
+		statement = "SELECT ticker, reference_stock_price, cash, number_stock, percentual_max_neg, cycle_time, initial_time, reference_exogenous, reference_cov  FROM quickfix.strategy s inner join quickfix.agents a on s.id_strategy = a.id_strategy where id_agent='#USER#'";
 		std::string user("#USER#");
 		statement.replace(statement.find(user),user.length(), this->agentID );
 
@@ -276,7 +276,7 @@ std::string AgentControl::getStrategyConfiguration(){
 			percentual_max_neg = res->getDouble("percentual_max_neg");
 			cycle_time = res->getDouble("cycle_time");
 			initial_time = res->getDouble("initial_time");
-			reference_rate = res->getDouble("reference_rate");
+			reference_exogenous = res->getDouble("reference_exogenous");
 			reference_cov = res->getDouble("reference_cov");
 			row++;
 		}
@@ -288,7 +288,7 @@ std::string AgentControl::getStrategyConfiguration(){
 						<<";\nCASH = "<<cash<<";\nNUMBER_STOCK = "<<number_stock<<";\nPERCENTUAL_MAX_NEG = "
 						<<percentual_max_neg<<";\nCYCLE_TIME = "<<cycle_time
 						<<";\nINITIAL_TIME = "<<initial_time
-						<<";\nREFERENCE_RATE = "<<reference_rate
+						<<";\nREFERENCE_EXOGENOUS = "<<reference_exogenous
 						<<";\nREFERENCE_COV = "<<reference_cov<<";";
 
 		/* Clean up */
@@ -412,7 +412,7 @@ void AgentControl::setPortfolio(float cash, float  number_stock){
 
 
 
-void AgentControl::updateRatesTimes(std::string start_time){
+void AgentControl::updateExogenousTimes(std::string start_time){
 
 	std::stringstream insert;
 
@@ -442,7 +442,7 @@ void AgentControl::updateRatesTimes(std::string start_time){
 	    //TARGET:: 0000-00-00 00:00:00
 	    //TERMINAL :: 20130217-15:20:55
 
-	    select << "SELECT time FROM quickfix.rates";
+	    select << "SELECT time FROM quickfix.exogenous";
 
 
 
@@ -450,7 +450,7 @@ void AgentControl::updateRatesTimes(std::string start_time){
 		std::auto_ptr< sql::ResultSet > res(stmt->executeQuery(select.str()));
 
 		std::stringstream update;
-		update << "INSERT INTO quickfix.rates (simulation_time, time) VALUES ";
+		update << "INSERT INTO quickfix.exogenous (simulation_time, time) VALUES ";
 
 		while (res->next()) {
 
@@ -667,6 +667,73 @@ void AgentControl::setupPrices(std::string time){
 
 
 
+float AgentControl::getLastPrice(void){
+
+
+	std::stringstream select;
+	float price = 0;
+	const std::string host = HOST;
+
+	try {
+		sql::Driver * driver = sql::mysql::get_driver_instance();
+		std::auto_ptr< sql::Connection > con(driver->connect(host, USER, PASS));
+		std::auto_ptr< sql::Statement > stmt(con->createStatement());
+
+		select << "SELECT p.price FROM quickfix.prices p ORDER BY p.time DESC LIMIT 1";
+
+		std::auto_ptr< sql::ResultSet > res(stmt->executeQuery(select.str()));
+
+		while (res->next()) {
+			price = res->getDouble("price");
+		}
+
+		std::cout << std::endl << "[AgentControl::getLastPrice] :"<< price << std::endl;
+
+		/* Clean up */
+		stmt.reset(NULL); /* free the object inside  */
+
+		try {
+			/*s This will implicitly assume that the host is 'localhost' */
+			con.reset(driver->connect(host, USER, PASS));
+		} catch (sql::SQLException &e) {
+			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
+			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		}
+
+		try {
+			con.reset(driver->connect(host, USER, PASS));
+		} catch (sql::SQLException &e) {
+			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
+			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		}
+
+		try {
+			con.reset(driver->connect(host, USER, PASS));
+		} catch (sql::SQLException &e) {
+			std::cout << "#\t\t tcp://hostname_or_ip[:port] caused expected exception" << std::endl;
+			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
+			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		}
+
+	} catch (sql::SQLException &e) {
+		std::cout << "# ERR: SQLException in " << __FILE__;
+		std::cout << "# ERR: " << e.what();
+		std::cout << " (MySQL error code: " << e.getErrorCode();
+		std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+
+	} catch (std::runtime_error &e) {
+
+		std::cout << "# ERR: runtime_error in " << __FILE__;
+		std::cout << "# ERR: " << e.what() << std::endl;
+
+	}
+
+	return price;
+
+}
+
+
+
 float* AgentControl::getPrices(std::string time1, std::string time2, int& tam){
 
 	size_t row;
@@ -771,7 +838,7 @@ float* AgentControl::getPrices(std::string time1, std::string time2, int& tam){
 }
 
 
-float* AgentControl::getRates(std::string time1, std::string time2, int& tam){
+float* AgentControl::getExogenousValues(std::string time1, std::string time2, int& tam){
 
 	size_t row;
 	std::stringstream select;
@@ -796,7 +863,7 @@ float* AgentControl::getRates(std::string time1, std::string time2, int& tam){
 	    ss2.imbue(std::locale(ss2.getloc(), &facet));
 	    ss2 >> ptime2;
 
-		select << "SELECT rate FROM quickfix.rates WHERE simulation_time >= '"<< boost::posix_time::to_iso_string(ptime1) <<"' AND simulation_time<='"<<boost::posix_time::to_iso_string(ptime2)<<"'";
+		select << "SELECT value FROM quickfix.exogenous WHERE simulation_time >= '"<< boost::posix_time::to_iso_string(ptime1) <<"' AND simulation_time<='"<<boost::posix_time::to_iso_string(ptime2)<<"'";
 
 		//std::cout << std::endl << select.str() << std::endl;
 
@@ -808,7 +875,7 @@ float* AgentControl::getRates(std::string time1, std::string time2, int& tam){
 
 		row = 0;
 		while (res->next()) {
-			array[row] = res->getDouble("rate");
+			array[row] = res->getDouble("value");
 			row++;
 		}
 

@@ -8,7 +8,6 @@ DELETE FROM rates WHERE time >= '00:00:00';
 
 SELECT rate FROM quickfix.rates WHERE simulation_time >= '20130224T095347' AND simulation_time<='20130224T095347';
 
-
 SELECT price FROM prices ORDER BY time DESC LIMIT 1;
 SELECT * FROM prices;
 SELECT count(price) FROM prices;
