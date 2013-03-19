@@ -11,7 +11,7 @@
 #include <libconfig.h++>
 #include "quickfix/fix42/Quote.h"
 #include "quickfix/fix42/ExecutionReport.h"
-#include "SimpleOrder.h"
+#include "../utils/SimpleOrder.h"
 #include "../utils/AgentControl.h"
 #include <math.h>
 #include "IDGenerator.h"
@@ -36,16 +36,21 @@ public:
 	float previousRate;
 
 	float expectedReturnStock;
-	float expectedReturnBank;
+	float expectedReturnExogenous;
 
 	float standardDeviationStock;
-	float standardDeviationBank;
+	float standardDeviationExogenous;
 
 	float referenceCov;
 
 	float cash;
 
 	float numberStock;
+	float numberExogenousAsset;
+
+
+	float weightStock;
+	float weightExogenousAsset;
 
 	float cycleTime;
 	float initialTime;

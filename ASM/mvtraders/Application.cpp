@@ -99,6 +99,8 @@ void Application::waitGetCancelConfirmationResponse() {
 
 void Application::run()
 {
+
+	std::cout << "Application::run()! " <<std::endl;
 	sleep(5);
   while (true){
 

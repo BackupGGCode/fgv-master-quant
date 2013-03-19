@@ -21,7 +21,7 @@ Strategy::Strategy(const std::string strats) {
 	   && cfg.lookupValue("REFERENCE_STOCK_PRICE", referenceStockPrice)
 	   && cfg.lookupValue("CASH", cash)
 	   && cfg.lookupValue("NUMBER_STOCK", numberStock)
-	   && cfg.lookupValue("PERCENTUAL_MAX_NEG", percentual_max_negs)
+	  // && cfg.lookupValue("PERCENTUAL_MAX_NEG", percentual_max_negs)
 	   && cfg.lookupValue("INITIAL_TIME", initialTime)
 	   && cfg.lookupValue("CYCLE_TIME", cycleTime)){
 		 // std::cout << "ticker:" << ticker<< std::endl;
@@ -68,7 +68,8 @@ SimpleOrder Strategy::trade(){
 	order.symbol = symbol;
 	order.clOrdID = m_generator.genOrderID();
 
-	float volatility = 1.0+(rand()%20 - 10)/100.0;
+	//float volatility = 1.0+(rand()%20 - 10)/100.0;
+	float volatility = 1.0+(rand()%11 - 5)/100.0;
 
 	// Implementacao do Fluxo de decisao do agente aleatorio ...
 

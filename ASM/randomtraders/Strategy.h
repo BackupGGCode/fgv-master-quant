@@ -11,7 +11,7 @@
 #include <libconfig.h++>
 #include "quickfix/fix42/Quote.h"
 #include "quickfix/fix42/ExecutionReport.h"
-#include "SimpleOrder.h"
+#include "../utils/SimpleOrder.h"
 #include "../utils/AgentControl.h"
 #include <math.h>
 #include "IDGenerator.h"

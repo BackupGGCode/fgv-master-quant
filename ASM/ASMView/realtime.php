@@ -1,6 +1,6 @@
 <?php
 
-header('Refresh: 2');
+header('Refresh: 3');
 
 $username="quickfix";
 $password="quickfix";
@@ -35,7 +35,7 @@ $num_portfolio=mysql_num_rows($result_portfolio);
 
 mysql_close();
 
-echo "<b><center>BrASM Monitor</center></b><br>";
+echo "<b><center>BrASM Monitor</center></b>";
 
 $quote_bid_array = array();
 $quote_ask_array = array();
@@ -139,9 +139,11 @@ echo "<script type='text/javascript'> var ask_array = ".json_encode($quote_ask_a
 
 <table>
   <tr>
+  
 	<td>
-		<div id="chart1" style="height:500px; width:700px; font-size:10pt;"></div>
+		<div id="chart1" style="height:500px; width:600px; font-size:8pt;"></div>
 	</td>
+
 	<td>
 		<div>
 		<?php 
@@ -157,16 +159,16 @@ echo "<script type='text/javascript'> var ask_array = ".json_encode($quote_ask_a
 			$arrow="&ndash;";
 		}
 		$LastPx = sprintf('%0.2f', $LastPx);
-		echo "<table border='0' cellpadding='6' cellspacing='6' width='400'>";
-		echo "<tbody align='center' style='font-family:verdana; color:red ; font-size: 16pt'>";
-		echo "<tr><td>Stock price: <b>$$LastPx  $arrow</b></td></tr>";
+		echo "<table border='0' cellpadding='3' cellspacing='3' width='350'>";
+		echo "<tbody align='center' style='font-family:verdana; color:red ; font-size: 12pt'>";
+		echo "<tr><td>Stock price: <b>$$LastPx  $arrow</b></td><td>External rate: <b>$LastPx%  $arrow</b></td></tr>";
 		echo "</table>";
 		
 		
-		echo "<table border='1' cellpadding='3' cellspacing='0' width='400'>";
-		echo "<tbody align='center' style='font-family:verdana; color:black; background-color:yellow ; font-size: 12pt'>";
+		echo "<table border='1' cellpadding='3' cellspacing='0' width='350'>";
+		echo "<tbody align='center' style='font-family:verdana; color:black; background-color:yellow ; font-size: 10pt'>";
 		echo "<tr><td><b>Agent</b></td><td><b>Stock (#)</b></td><td><b>Cash ($)</b></td><td><b>Wealth ($)</b></td></tr>";
-		echo "<tbody align='center' style='font-family:verdana; font-size: 10pt'>";
+		echo "<tbody align='center' style='font-family:verdana; font-size: 8pt'>";
 		
 		$tot_number_stock = 0;
 		$tot_cash= 0;
@@ -190,7 +192,7 @@ echo "<script type='text/javascript'> var ask_array = ".json_encode($quote_ask_a
 
 			$i++;
 		}
-		echo "<tbody align='center' style='font-size: 12pt'>";
+		echo "<tbody align='center' style='font-size: 10pt'>";
 		$tot_cash = sprintf('%0.2f', $tot_cash);
 		$tot_wealth = sprintf('%0.2f', $tot_wealth);
 		echo "<tr><td><b>TOTAL:</b></td><td><b>$tot_number_stock</b></td><td><b>$tot_cash</b></td><td><b>$tot_wealth</b></td></tr>";

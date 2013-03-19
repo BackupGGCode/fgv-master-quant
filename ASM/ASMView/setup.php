@@ -2,6 +2,23 @@
 <html>
 <head>
 <b><center>BrASM Agent Setup</center></b>
+<script type="text/javascript">
+function SetAllCheckBoxes(FormName, FieldName, CheckValue){
+	if(!document.forms[FormName])
+		return;
+	var objCheckBoxes = document.forms[FormName].elements[FieldName];
+	if(!objCheckBoxes)
+		return;
+	var countCheckBoxes = objCheckBoxes.length;
+	if(!countCheckBoxes)
+		objCheckBoxes.checked = CheckValue;
+	else
+		// set the check value for all check boxes
+		for(var i = 0; i < countCheckBoxes; i++)
+			objCheckBoxes[i].checked = CheckValue;
+}
+
+</script>
 </head>
 <body>
 <?php
@@ -26,7 +43,7 @@ if(isset($_POST['agent'])) {
 	
 	
 	echo "<div align='left' style='font-size:14pt;'>";
-	echo "<form method='POST' action='setup.php'>";
+	echo "<form name ='agent2dieForm' method='POST' action='setup.php'>";
 	echo "<p>";
 	
 	foreach($cbarray as $agent2exec){
@@ -34,6 +51,10 @@ if(isset($_POST['agent'])) {
 		exec("$command > /dev/null &");
 		echo " <input type='checkbox' name='agents2die[]' value='$agent2exec'>$agent2exec<br>";
 	}
+	echo "<br>";
+	echo "<input type='button' onclick=\"SetAllCheckBoxes('agent2dieForm','agents2die[]',true)\" value='Selecionar Tudo'>";
+	echo "<input type='button' onclick=\"SetAllCheckBoxes('agent2dieForm','agents2die[]',false)\" value='Limpar Seleção'>";
+	echo "<br>";
 	echo "<br>";
 	echo "<input type='submit' value='Parar Simulação'>";
 	echo "</p>";
@@ -44,14 +65,6 @@ if(isset($_POST['agent'])) {
 	//echo "<form action='setup.php' method='post'>";
 	//echo "<input type='submit' name='stop' value='Parar Simulação' />";
 	//echo "</form>";
-	
-
-
-	
-	
-	
-	
-	
 	
 
 }
@@ -81,9 +94,8 @@ else{
 	
 	mysql_close();
 	echo "<div align='left' style='font-size:14pt;'>";
-	echo "<form method='POST' action='setup.php'>";
+	echo "<form name ='agentForm' method='POST' action='setup.php'>";
 	echo "<p>";
-	;
 	while ($i < $num) {
 		$agent=mysql_result($result,$i,"id_agent");
 		echo " <input type='checkbox' name='agent[]' value='$agent'>$agent<br>";
@@ -91,7 +103,12 @@ else{
 		
 	}
 	echo "<br>";
-	echo "<input type='submit' value='Simular'>";
+	echo "<input type='button' onclick=\"SetAllCheckBoxes('agentForm','agent[]',true)\" value='Selecionar Tudo'>";
+	echo "<input type='button' onclick=\"SetAllCheckBoxes('agentForm','agent[]',false)\" value='Limpar Seleção'>";
+	echo "<br>";
+	echo "<br>";
+	echo "<input type='submit' value='Simular'> ";
+	
 	echo "</p>";
 	echo "</form>";
 	echo "</div>";

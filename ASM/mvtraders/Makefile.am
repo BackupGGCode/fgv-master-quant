@@ -6,8 +6,8 @@ mvtraders_SOURCES = \
 	Application.cpp \
 	Strategy.h \
 	Strategy.cpp \
-	SimpleOrder.h \
-	SimpleOrder.cpp \
+	../utils/SimpleOrder.h \
+	../utils/SimpleOrder.cpp \
 	../utils/AgentControl.h \
 	../utils/AgentControl.cpp
 

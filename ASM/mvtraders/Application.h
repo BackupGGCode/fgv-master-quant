@@ -15,7 +15,7 @@
 #include "quickfix/fix42/Quote.h"
 #include "quickfix/fix42/Message.h"
 #include "Strategy.h"
-#include "SimpleOrder.h"
+#include "../utils/SimpleOrder.h"
 
 class Application :
       public FIX::Application,

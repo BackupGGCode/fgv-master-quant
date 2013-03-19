@@ -11,6 +11,7 @@ SELECT rate FROM quickfix.rates WHERE simulation_time >= '20130224T095347' AND s
 
 SELECT price FROM prices ORDER BY time DESC LIMIT 1;
 SELECT * FROM prices;
+SELECT count(price) FROM prices;
 
 SELECT AVG(price) as mean,STDDEV(price) as sd  FROM prices;
 DELETE FROM quickfix.prices WHERE time <> '';
