@@ -337,7 +337,7 @@ std::string AgentControl::getStrategyConfiguration(){
 
 
 
-void AgentControl::setPortfolio(float cash, float  number_stock){
+void AgentControl::setPortfolio(float cash, float  number_stock, float  number_exogenous){
 
 	std::stringstream insert;
 	std::stringstream update;
@@ -354,7 +354,8 @@ void AgentControl::setPortfolio(float cash, float  number_stock){
 
 		/* Usage of UPDATE */
 
-		replace << "REPLACE INTO quickfix.portfolio (id_agent, number_stock, cash) VALUES ('"<< this->agentID <<"',"<< number_stock << ","<< cash <<")";
+		replace << "REPLACE INTO quickfix.portfolio (id_agent, number_stock, cash, number_exogenous) VALUES ('"<< this->agentID <<"',"<< number_stock << ","<< cash << ","<< number_exogenous <<")";
+		//std::cout << replace.str();
 		affected_rows = stmt->execute(replace.str());
 /*
 		update << "UPDATE quickfix.portfolio SET number_stock =" <<number_stock<<", cash="<< cash <<" WHERE id_agent = '"<< this->agentID << "'";

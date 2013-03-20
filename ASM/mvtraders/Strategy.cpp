@@ -18,24 +18,25 @@ Strategy::Strategy(const std::string strats) {
 	cfg.readString(strats);
 
 	  if(cfg.lookupValue("TICKER", ticker)
-	   && cfg.lookupValue("REFERENCE_STOCK_PRICE", referenceStockPrice)
-	   && cfg.lookupValue("REFERENCE_EXOGENOUS", referenceExogenous)
+	  // && cfg.lookupValue("REFERENCE_STOCK_PRICE", referenceStockPrice)
+	  // && cfg.lookupValue("REFERENCE_EXOGENOUS", referenceExogenous)
 	   && cfg.lookupValue("REFERENCE_COV", referenceCov)
 	   && cfg.lookupValue("CASH", cash)
 	   && cfg.lookupValue("NUMBER_STOCK", numberStock)
 	   && cfg.lookupValue("INITIAL_TIME", initialTime)
 	   && cfg.lookupValue("CYCLE_TIME", cycleTime)){
-		  this->previousStockPrice = this->referenceStockPrice;
-		  this->previousExogenous = this->referenceExogenous;
 
-		  std::cout << "ticker:" << ticker<< std::endl;
-		  std::cout << "referenceStockPrice:" << referenceStockPrice<< std::endl;
-		  std::cout << "referenceExogenous:" << referenceExogenous << std::endl;
-		  std::cout << "referenceCov:" << referenceCov << std::endl;
-		  std::cout << "cash:" << cash << std::endl;
-		  std::cout << "numberStock:" << numberStock << std::endl;
-		  std::cout << "initialTime:" << initialTime << std::endl;
-		  std::cout << "cycleTime:" << cycleTime << std::endl;
+		 // this->previousStockPrice = this->referenceStockPrice;
+		 // this->previousExogenous = this->referenceExogenous;
+		  this->numberExogenous = 0;
+		  //std::cout << "ticker:" << ticker<< std::endl;
+		 // std::cout << "referenceStockPrice:" << referenceStockPrice<< std::endl;
+		 // std::cout << "referenceExogenous:" << referenceExogenous << std::endl;
+		 // std::cout << "referenceCov:" << referenceCov << std::endl;
+		 // std::cout << "cash:" << cash << std::endl;
+		 // std::cout << "numberStock:" << numberStock << std::endl;
+		 // std::cout << "initialTime:" << initialTime << std::endl;
+		 // std::cout << "cycleTime:" << cycleTime << std::endl;
 
 	  }else{
 		  std::cout <<"[" << this->agentControl.agentID <<"] strategy configs vars not found" << std::endl;
@@ -50,7 +51,7 @@ Strategy::Strategy(const std::string strats) {
 
 void Strategy::setAgentControl(AgentControl _agentControl){
 	this->agentControl = _agentControl;
-	this->agentControl.setPortfolio(this->cash, this->numberStock);
+	this->agentControl.setPortfolio(this->cash, this->numberStock, this->numberExogenous);
 }
 
 float* returnPrice(float* array, int& tam){
@@ -88,13 +89,17 @@ float stdDev(float* array, int tam, float mean){
 
 void Strategy::preTrade(){
 
+	this->validMinVarPortWeight = false;
+
 	this->time1 = this->time2;
-	//sleep(this->initialTime);
     FIX::TransactTime now;
     this->time2 = now;
 
 	this->weightStock=0;
-	this->weightExogenousAsset=0;
+	this->weightExogenous=0;
+
+	this->diffNumberStock=0;
+	this->diffNumberExogenous=0;
 
     int tam_exo = 0;
     float* exogenous_prices = agentControl.getExogenousValues(this->time1.getString(), this->time2.getString(), tam_exo);
@@ -102,19 +107,24 @@ void Strategy::preTrade(){
     int tam_prices = 0;
     float* prices = agentControl.getPrices(this->time1.getString(), this->time2.getString(), tam_prices);
 
+
+	this->lastPriceExogenous =exogenous_prices[tam_exo-1] ;
+	this->lastPriceStock = prices[tam_prices-1];
+
+
+
     float* returnExoPrices = returnPrice(exogenous_prices,tam_exo);
     float* returnPrices = returnPrice(prices,tam_prices);
 
 	this->expectedReturnStock= avg(returnPrices, tam_prices);
 	this->expectedReturnExogenous = avg(returnExoPrices, tam_exo);
 
-//	for(int i=0;i<tam_exo;i++)
-//		std::cout << "exo[" << i <<"]=" <<returnExoPrices[i] << std::endl;
-//	std::cout << "avg: " << this->expectedReturnExogenous << std::endl;
+/*	for(int i=0;i<tam_exo;i++)
+		std::cout << "Ep[" << i <<"]=" <<returnExoPrices[i] << std::endl;
 
-//	for(int i=0;i<tam_prices;i++)
-//		std::cout<< "Prices[" << i <<"]=" <<prices[i] << "\treturnPrices[" << i <<"]=" <<returnPrices[i] << std::endl;
-//	std::cout << "avg: " << this->expectedReturnStock << std::endl;
+	for(int i=0;i<tam_prices;i++)
+		std::cout<< "Sp[" << i <<"]=" <<prices[i] << "\treturnPrices[" << i <<"]=" <<returnPrices[i] << std::endl;
+*/
 
 	this->standardDeviationExogenous = stdDev(returnExoPrices,tam_exo, this->expectedReturnExogenous);
 	this->standardDeviationStock = stdDev(returnPrices,tam_prices, this->expectedReturnStock);
@@ -127,27 +137,121 @@ void Strategy::preTrade(){
 	float cov_stk_exo = this->referenceCov*this->standardDeviationStock*this->standardDeviationExogenous;
 
 	this->weightStock = (exo_var*r_stock - cov_stk_exo*r_exo )/(exo_var*r_stock + stock_var*r_exo - cov_stk_exo*(r_stock+r_exo));
-	this->weightExogenousAsset = 1 - this->weightStock;
+	this->weightExogenous = 1 - this->weightStock;
+
+	this->lastPriceStock =roundASM(this->lastPriceStock) ;
+	this->lastPriceExogenous = roundASM(this->lastPriceExogenous);
 
 	///Minimum Variance Portfolio Weight
 
-	if(this->weightStock > 0 && this->weightStock < 1
-			&& this->weightExogenousAsset > 0 && this->weightExogenousAsset < 1 ){
+	if(this->weightStock >= 0 && this->weightStock <= 1
+			&& this->weightExogenous >= 0 && this->weightExogenous <= 1 ){
 		this->validMinVarPortWeight = true;
+
+		float wealthOfExogenous = this->lastPriceExogenous*this->numberExogenous;
+		float wealthOfStock = this->lastPriceStock*this->numberStock;
+
+		float totalWealth=wealthOfExogenous+wealthOfStock+this->cash;
+
+		float wealth4Exogenous = this->weightExogenous*totalWealth;
+		float wealth4Stock = this->weightStock*totalWealth;
+
+		this->diffNumberExogenous =(int) (wealth4Exogenous/this->lastPriceExogenous) - this->numberExogenous;
+		this->diffNumberStock =(int) (wealth4Stock/this->lastPriceStock) - this->numberStock;
 
 		std::cout << "[Strategy::PreTrade]" <<std::endl
 			<< "\t\tSTOCK\t\tEXOGENOUS"<< std::endl
-			<< "\t E[.]\t"<< this->expectedReturnStock<<"\t"<< this->expectedReturnExogenous << std::endl
-			<< "\tSD[.]\t" << this->standardDeviationStock <<"\t" << this->standardDeviationExogenous  << std::endl
-			<< "\t W[.]\t" << this->weightStock <<"\t" << this->weightExogenousAsset  << std::endl;
-
+			<< "\t   E[.]\t"<< this->expectedReturnStock<<"\t"<< this->expectedReturnExogenous << std::endl
+			<< "\t  SD[.]\t" << this->standardDeviationStock <<"\t" << this->standardDeviationExogenous  << std::endl
+			<< "\t   W[.]\t" << this->weightStock <<"\t" << this->weightExogenous  << std::endl
+			<< "\t   P[.]\t" << this->lastPriceStock <<"\t\t" << this->lastPriceExogenous  << std::endl
+			<< "\tdiff[.]\t" << this->diffNumberStock <<"\t\t" << this->diffNumberExogenous  << std::endl;
 
 	}else{
 		this->validMinVarPortWeight = false;
 	}
 
-
 }
+
+SimpleOrder Strategy::tradeUmountPosition(){
+	std::cout << "Strategy::tradeUmountPosition()"<<std::endl;
+
+	SimpleOrder order;
+
+	order.symbol = this->ticker;
+	order.clOrdID = m_generator.genOrderID();
+	order.side = FIX::Side_SELL;
+	order.orderQty = 0;
+	order.price = 0;
+
+	if(validMinVarPortWeight){
+
+		if(this->diffNumberExogenous < 0 ){
+			//vender Exogenous
+			FIX::Symbol symbol("Exogenous");
+			order.symbol = symbol;
+			order.orderQty = (-1)*this->diffNumberExogenous;
+			order.price = this->lastPriceExogenous;
+			this->numberExogenous += this->diffNumberExogenous;
+			this->cash += (-1/*trocar sinal*/)*this->diffNumberExogenous*this->lastPriceExogenous;
+			order.print();
+		}
+
+		if(this->diffNumberStock < 0 ){
+			//vender Ações
+			order.symbol = this->ticker;
+			order.orderQty = (-1)*this->diffNumberStock;
+			order.price = this->lastPriceStock;
+			order.print();
+		}
+	}
+
+	this->agentControl.setPortfolio(this->cash, this->numberStock, this->numberExogenous);
+	return order;
+}
+
+
+SimpleOrder Strategy::tradeMountPosition(){
+	std::cout << "Strategy::tradeMountPosition()"<<std::endl;
+
+	SimpleOrder order;
+
+	order.symbol = this->ticker;
+	order.clOrdID = m_generator.genOrderID();
+	order.side = FIX::Side_BUY;
+	order.orderQty = 0;
+	order.price = 0;
+
+	if(validMinVarPortWeight){
+
+
+		if(this->diffNumberExogenous > 0 ){
+			//comprar Exogenous
+			FIX::Symbol symbol("Exogenous");
+			order.symbol = symbol;
+			order.orderQty = this->diffNumberExogenous;
+			order.price = this->lastPriceExogenous;
+
+			this->numberExogenous += this->diffNumberExogenous;
+			this->cash -= this->diffNumberExogenous*this->lastPriceExogenous;
+			order.print();
+		}
+
+		if(this->diffNumberStock > 0 ){
+			//comprar Ações
+			order.symbol = this->ticker;
+			order.orderQty = this->diffNumberStock;
+			order.price = this->lastPriceStock;
+			order.print();
+		}
+	}
+	this->agentControl.setPortfolio(this->cash, this->numberStock, this->numberExogenous);
+
+	return order;
+}
+
+
+
 
 
 void Strategy::postTrade(FIX42::ExecutionReport ereport){
@@ -166,7 +270,7 @@ void Strategy::postTrade(FIX42::ExecutionReport ereport){
 	this->numberStock += ( side == FIX::Side_SELL ? -lastShares : +lastShares );
 	this->cash += ( side == FIX::Side_SELL ? +lastShares*lastPx : -lastShares*lastPx );
 
-	this->agentControl.setPortfolio(this->cash, this->numberStock);
+	this->agentControl.setPortfolio(this->cash, this->numberStock, this->numberExogenous);
 
 	if(this->cash <= 0.0 && this->numberStock <= 0.0)
 		exit(1);

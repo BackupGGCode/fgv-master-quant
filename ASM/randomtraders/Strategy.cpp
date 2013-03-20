@@ -13,7 +13,8 @@ Strategy::Strategy() {
 }
 
 Strategy::Strategy(const std::string strats) {
-
+	this->myRand = time(0);
+	srand(this->myRand );
 	libconfig::Config cfg;
 	cfg.readString(strats);
 
@@ -40,7 +41,7 @@ Strategy::Strategy(const std::string strats) {
 
 void Strategy::setAgentControl(AgentControl _agentControl){
 	this->agentControl = _agentControl;
-	this->agentControl.setPortfolio(this->cash, this->numberStock);
+	this->agentControl.setPortfolio(this->cash, this->numberStock, 0.0);
 }
 
 
@@ -50,10 +51,124 @@ void Strategy::preTrade(FIX42::Quote message){
 	//std::cout << "Strategy::PreTrade"<<std::endl;
 	//this->printQuote(message);
 	this->lastQuote = message;
-
+	this->myRand = rand();
 }
 
+
+
+
+
 SimpleOrder Strategy::trade(){
+	//std::cout << "Strategy::Trade"<<std::endl;
+
+	SimpleOrder order;
+
+	FIX::Symbol symbol;
+	FIX::BidPx bidPx;
+	FIX::OfferPx offerPx;
+	this->lastQuote.get(symbol);
+	this->lastQuote.get(bidPx);
+	this->lastQuote.get(offerPx);
+
+
+	order.symbol = symbol;
+	order.clOrdID = m_generator.genOrderID();
+
+	//float volatility = 1.0+(rand()%20 - 10)/100.0;
+	float volatility = 1.0+(this->myRand%21 - 10)/100.0;
+
+	// Implementacao do Fluxo de decisao do agente aleatorio ...
+
+	if(offerPx > 0.0 && bidPx > 0.0){
+		this->referenceStockPrice = 0.5*(offerPx+bidPx);
+	}else{
+
+		this->referenceStockPrice = this->agentControl.getLastPrice();
+
+	}
+
+	this->referenceStockPrice *= volatility;
+	this->referenceStockPrice = roundASM(this->referenceStockPrice );
+
+	srand(this->myRand );
+	this->myRand = rand();
+	int rand_decision = this->myRand%100;
+	srand(this->myRand );
+	this->myRand = rand();
+	float rand_amount =(this->myRand%101)/100.0;
+	srand(this->myRand );
+
+
+	// [DECISAO-01] Possui acao no inventario?
+	if(this->numberStock > 0.0){
+		//std::cout<<  "[DECISAO-01] Possui acao no inventario" << std::endl;
+		// [DECISAO-01] SIM
+		int qty = (int)(this->cash/this->referenceStockPrice );
+		order.price = this->referenceStockPrice;
+
+		// [DECISAO-02] Possui saldo em dinheiro superior ao preco de pelo menos uma acao (ASK)?
+		if(qty >= 1 ){
+			//std::cout<<  "[DECISAO-02] Possui saldo em dinheiro superior ao preco de pelo menos uma acao (ASK)" << std::endl;
+			// [DECISAO-02] SIM => [ACAO 01] Não Operar, Comprar ou Vender acoes
+			if(rand_decision < 50 ){
+				//std::cout<<  "[DECISAO-02] SIM => [ACAO 01] Comprar acoes" << std::endl;
+				order.side = FIX::Side_BUY;
+
+				qty=(int)qty*rand_amount;
+				qty=(qty > 1 ? qty: 1);
+
+				order.orderQty = qty ;
+
+			}else{
+				//std::cout<<  "[DECISAO-02] SIM => [ACAO 01] Vender acoes" << std::endl;
+				order.side = FIX::Side_SELL;
+				qty=(int)this->numberStock*rand_amount;
+				qty=(qty > 1 ? qty: 1);
+				order.orderQty =qty;
+			}
+
+		}else{
+			// [DECISAO-02] NAO => [ACAO 02] Não Operar ou Vender acoes
+			//std::cout<<  "[DECISAO-02] NAO => [ACAO 02] Vender acoes" << std::endl;
+			order.side = FIX::Side_SELL;
+			qty=(int)this->numberStock*rand_amount;
+			qty=(qty > 1 ? qty: 1);
+			order.orderQty = qty;
+		}
+	}else{
+		// [DECISAO-01] NAO
+		//std::cout<<  "[DECISAO-01] NAO possui acao no inventario" << std::endl;
+
+		int qty = (this->cash/this->referenceStockPrice );
+		order.price = this->referenceStockPrice;
+
+		if(qty >= 1 ){
+			// [DECISAO-04] SIM => [ACAO 04] Não Operar ou Comprar acoes
+			//std::cout<<  "[DECISAO-04] SIM => [ACAO 04] Comprar acoes" << std::endl;
+			order.side = FIX::Side_BUY;
+			qty=(int)qty*rand_amount;
+			qty=(qty > 1 ? qty: 1);
+
+			order.orderQty = qty;
+
+		}else{
+			// [DECISAO-03] NAO => [ACAO 03] VALIDO!
+
+			// Não Operar
+			//std::cout<<  "[DECISAO-03] NAO => [ACAO 03] VALIDO!" << std::endl;
+			//exit(1);
+			order.side ='0';
+			order.orderQty = 0;
+			order.price = 0;
+		}
+	}
+
+	//order.print();
+	return order;
+}
+
+
+SimpleOrder Strategy::trade2(){
 	//std::cout << "Strategy::Trade"<<std::endl;
 	SimpleOrder order;
 
@@ -218,7 +333,7 @@ void Strategy::postTrade(FIX42::ExecutionReport ereport){
 	this->numberStock += ( side == FIX::Side_SELL ? -lastShares : +lastShares );
 	this->cash += ( side == FIX::Side_SELL ? +lastShares*lastPx : -lastShares*lastPx );
 
-	this->agentControl.setPortfolio(this->cash, this->numberStock);
+	this->agentControl.setPortfolio(this->cash, this->numberStock, 0.0);
 
 	//if(this->cash <= 0.0 && this->numberStock <= 0.0)
 	//	exit(1);

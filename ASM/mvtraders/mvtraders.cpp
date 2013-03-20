@@ -26,7 +26,11 @@ int main( int argc, char** argv )
 	  AgentControl agentControl(AGENT_ID);
 	  std::stringstream fix(agentControl.getFixConfiguration());
 
+	  //std::cout << std::endl << "FIX:" <<fix.str() << std::endl ;
+
 	  FIX::SessionSettings settings( fix );
+
+	 // std::cout << std::endl << "STRATEGY:" <<agentControl.getStrategyConfiguration() << std::endl ;
 
 	  Strategy strategy(agentControl.getStrategyConfiguration());
 	  strategy.setAgentControl(agentControl);

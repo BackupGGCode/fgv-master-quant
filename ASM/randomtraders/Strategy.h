@@ -39,12 +39,14 @@ public:
 	virtual ~Strategy();
 	void preTrade(FIX42::Quote message);
 	SimpleOrder trade();
+	SimpleOrder trade2();
 	void postTrade(FIX42::ExecutionReport ereport);
 	void printQuote( const FIX42::Quote message );
 	void printExecutionReport( const FIX42::ExecutionReport ereport );
 
 private:
 	  IDGenerator m_generator;
+	  int myRand;
 };
 
 #endif /* STRATEGY_H_ */

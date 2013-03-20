@@ -98,20 +98,26 @@ void Application::waitGetCancelConfirmationResponse() {
 
 
 void Application::run(){
-	sleep(5);
+	//sleep(5);
   while (true){
 
     try{
+    	sleep(strategy.initialTime);
     	this->strategy.preTrade();
 
-		//SimpleOrder order = this->strategy.trade();
-		//this->sendOrder(order);
+    	if(this->strategy.validMinVarPortWeight){
 
-		sleep(strategy.cycleTime);
+			SimpleOrder order1 = this->strategy.tradeUmountPosition();
+			this->sendOrder(order1);
+			SimpleOrder order2 = this->strategy.tradeMountPosition();
+			this->sendOrder(order2);
 
-		//this->cancelOrder(order);
-		this->resetFlags();
+			sleep(strategy.cycleTime);
 
+			this->cancelOrder(order1);
+			this->cancelOrder(order2);
+			this->resetFlags();
+    	}
 
     }
     catch ( std::exception & e )
@@ -125,7 +131,7 @@ void Application::run(){
 void Application::sendOrder(SimpleOrder order){
 
 
-  if(order.orderQty >  0.0 && order.price >  0.0){
+  if(order.orderQty >  0.0 && order.price >  0.0 && order.symbol == this->strategy.ticker){
 	  FIX42::NewOrderSingle newOrderSingle;
 	  newOrderSingle.set( order.clOrdID );
 	  newOrderSingle.set(FIX::HandlInst( '1' ));
@@ -139,7 +145,7 @@ void Application::sendOrder(SimpleOrder order){
 	  setHeader( newOrderSingle.getHeader() );
 	  FIX::Session::sendToTarget( newOrderSingle );
   }else{
-	//std::cout << "[Application::sendOrder] NOT SENT!!!"<<std::endl;
+	std::cout << "[Application::sendOrder] NOT SENT!!!"<<std::endl;
   	 }
 
 
@@ -149,6 +155,7 @@ void Application::cancelOrder(SimpleOrder order){
 
 	if( order.orderQty >  0.0
 	 && order.price >  0.0
+	 && order.symbol == this->strategy.ticker
 	 && getConfirmationTrade == true
 	 && getConfirmationExecutionTrade == false){
 

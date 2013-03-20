@@ -29,14 +29,17 @@ public:
 
 
     bool validMinVarPortWeight;
-	float referenceStockPrice;
-	float previousStockPrice;
+	//float referenceStockPrice;
+	//float previousStockPrice;
 
-	float referenceExogenous;
-	float previousExogenous;
+	//float referenceExogenous;
+	//float previousExogenous;
 
 	float expectedReturnStock;
 	float expectedReturnExogenous;
+
+	float lastPriceStock;
+	float lastPriceExogenous;
 
 	float standardDeviationStock;
 	float standardDeviationExogenous;
@@ -46,11 +49,15 @@ public:
 	float cash;
 
 	float numberStock;
-	float numberExogenousAsset;
+	float numberExogenous;
+
+	int diffNumberStock;
+	int diffNumberExogenous;
+
 
 
 	float weightStock;
-	float weightExogenousAsset;
+	float weightExogenous;
 
 	float cycleTime;
 	float initialTime;
@@ -62,7 +69,8 @@ public:
 	void setAgentControl(AgentControl agentControl);
 	virtual ~Strategy();
 	void preTrade();
-	SimpleOrder trade();
+	SimpleOrder tradeUmountPosition();
+	SimpleOrder tradeMountPosition();
 	void postTrade(FIX42::ExecutionReport ereport);
 	void printQuote( const FIX42::Quote message );
 	void printExecutionReport( const FIX42::ExecutionReport ereport );
