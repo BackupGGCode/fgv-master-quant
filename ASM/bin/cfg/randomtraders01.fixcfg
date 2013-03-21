@@ -7,7 +7,6 @@ UseDataDictionary=Y
 PersistMessages=Y
 HeartBtInt=30
 DataDictionary=../spec/FIX42.xml
-#HttpAcceptPort=9911
 
 MySQLStoreDatabase=quickfix
 MySQLStoreUser=quickfix
