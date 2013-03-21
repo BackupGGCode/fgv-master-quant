@@ -109,7 +109,8 @@ void Strategy::preTrade(){
 
 
 	this->lastPriceExogenous =exogenous_prices[tam_exo-1] ;
-	this->lastPriceStock = prices[tam_prices-1];
+	//this->lastPriceStock = prices[tam_prices-1];
+	this->lastPriceStock = avg(prices, tam_prices);
 
 
 
@@ -229,7 +230,13 @@ SimpleOrder Strategy::tradeMountPosition(){
 			//comprar Exogenous
 			FIX::Symbol symbol("Exogenous");
 			order.symbol = symbol;
-			order.orderQty = this->diffNumberExogenous;
+
+
+
+			float alternativeDiffNumberExogenous =(int) (this->cash/this->lastPriceExogenous) - this->numberExogenous;
+
+
+			order.orderQty = (alternativeDiffNumberExogenous >=  this->diffNumberExogenous? this->diffNumberExogenous:alternativeDiffNumberExogenous );
 			order.price = this->lastPriceExogenous;
 
 			this->numberExogenous += this->diffNumberExogenous;

@@ -98,7 +98,7 @@ void Application::waitGetCancelConfirmationResponse() {
 
 
 void Application::run(){
-	//sleep(5);
+	sleep(2);
   while (true){
 
     try{
@@ -109,15 +109,21 @@ void Application::run(){
 
 			SimpleOrder order1 = this->strategy.tradeUmountPosition();
 			this->sendOrder(order1);
-			SimpleOrder order2 = this->strategy.tradeMountPosition();
-			this->sendOrder(order2);
 
-			sleep(strategy.cycleTime);
+			if(order1.symbol==this->strategy.ticker)sleep(strategy.cycleTime);
+
+			if(getConfirmationPartialExecutionTrade || order1.symbol != this->strategy.ticker ){
+				SimpleOrder order2 = this->strategy.tradeMountPosition();
+				this->sendOrder(order2);
+				sleep(strategy.cycleTime);
+				this->cancelOrder(order2);
+			}
 
 			this->cancelOrder(order1);
-			this->cancelOrder(order2);
-			this->resetFlags();
+
+
     	}
+    	this->resetFlags();
 
     }
     catch ( std::exception & e )
