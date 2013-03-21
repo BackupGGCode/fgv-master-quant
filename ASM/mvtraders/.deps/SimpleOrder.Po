@@ -1,4 +1,4 @@
-SimpleOrder.o: SimpleOrder.cpp SimpleOrder.h \
+SimpleOrder.o: ../utils/SimpleOrder.cpp ../utils/SimpleOrder.h \
  ../../include/quickfix/Message.h ../../include/quickfix/FieldMap.h \
  ../../include/quickfix/Field.h \
  /usr/lib/gcc/x86_64-redhat-linux/4.7.2/../../../../include/c++/4.7.2/sstream \
@@ -483,7 +483,7 @@ SimpleOrder.o: SimpleOrder.cpp SimpleOrder.h \
  /usr/lib/gcc/x86_64-redhat-linux/4.7.2/../../../../include/c++/4.7.2/bits/stl_multiset.h \
  ../../include/quickfix/Values.h ../../include/quickfix/FixValues.h
 
-SimpleOrder.h:
+../utils/SimpleOrder.h:
 
 ../../include/quickfix/Message.h:
 
