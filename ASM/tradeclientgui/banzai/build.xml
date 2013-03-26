@@ -1,7 +1,8 @@
 <project name="banzai" default="all">
     <property name="src" value="src"/>
     <property name="build" value="build"/>
-    <property name="dist" value="../../../lib/jar"/>
+    <!--<property name="dist" value="../../../lib/jar"/> -->
+	<property name="dist" value="../jar"/> 
     <property name="test" value="test"/>
     <property name="lib" value="../../../lib/jar"/>
 

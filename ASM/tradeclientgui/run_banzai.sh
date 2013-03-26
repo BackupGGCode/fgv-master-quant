@@ -1,19 +1,8 @@
 #!/bin/bash
-
-usage() {
-  echo "usage: $(basename $0) CONFIG_FILE"
-  exit 1
-}
-
-CFG_FILE=""
-LIB_DIR="../../lib"
-CP="$LIB_DIR/quickfix.jar:$LIB_DIR/junit.jar:$LIB_DIR/log4j.jar:banzai/build:."
+rm -rf store/FIX.4.2-CLIENT*
+CFG_FILE="banzai.cfg"
+LIB_DIR="./jar"
+CP="$LIB_DIR/quickfixj-all-1.4.0.jar:$LIB_DIR/junit.jar:$LIB_DIR/log4j.jar:$LIB_DIR/banzai.jar:$LIB_DIR/slf4j-api-1.5.3.jar:$LIB_DIR/slf4j-jdk14-1.5.3.jar:$LIB_DIR/mina-core-1.0.3.jar:$LIB_DIR/backport-util-concurrent-3.0.jar:."
 APP="Banzai"
-
-if [ $1 ]; then
-  CFG_FILE="$1"
-else
-  usage
-fi
-
+ 
 java -Djava.library.path=$LIB_DIR -classpath "$CP" "$APP" "$CFG_FILE"

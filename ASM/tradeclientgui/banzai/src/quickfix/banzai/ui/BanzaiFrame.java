@@ -43,7 +43,7 @@ public class BanzaiFrame extends JFrame {
                        ExecutionTableModel executionTableModel,
                        BanzaiApplication application) {
         super();
-        setTitle("Banzai!");
+        setTitle("BrASM");
         setSize(600, 400);
         getContentPane().add(new BanzaiPanel(orderTableModel,
                                              executionTableModel,

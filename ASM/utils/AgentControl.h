@@ -60,6 +60,7 @@ public:
 	void setPortfolio(	float cash, float  number_stock, float  number_exogenous);
 	float getRate(std::string time);
 	float getLastPrice(void);
+	float* getLastNPrices(int N, int& tam);
 	float* getPrices(std::string time1, std::string time2, int& tam);
 	float* getExogenousValues(std::string time1, std::string time2, int& tam);
 

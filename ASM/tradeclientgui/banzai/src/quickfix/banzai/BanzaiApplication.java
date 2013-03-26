@@ -318,7 +318,9 @@ public class BanzaiApplication implements Application {
     (Order order, quickfix.Message newOrderSingle) {
 
         OrderType type = order.getType();
-
+        newOrderSingle.setField(new Price(order.getLimit().doubleValue()));
+        
+        /*
         if(type == OrderType.LIMIT)
             newOrderSingle.setField(new Price(order.getLimit().doubleValue()));
         else if(type == OrderType.STOP)
@@ -327,6 +329,7 @@ public class BanzaiApplication implements Application {
             newOrderSingle.setField(new Price(order.getLimit().doubleValue()));
             newOrderSingle.setField(new StopPx(order.getStop().doubleValue()));
         }
+        */
 
         newOrderSingle.setField(tifToFIXTif(order.getTIF()))
         ;
@@ -623,14 +626,17 @@ public class BanzaiApplication implements Application {
     static {
         sideMap.put(OrderSide.BUY, new Side(Side.BUY));
         sideMap.put(OrderSide.SELL, new Side(Side.SELL));
+      /*  
         sideMap.put(OrderSide.SHORT_SELL, new Side(Side.SELL_SHORT));
         sideMap.put(OrderSide.SHORT_SELL_EXEMPT,
                     new Side(Side.SELL_SHORT_EXEMPT));
         sideMap.put(OrderSide.CROSS, new Side(Side.CROSS));
         sideMap.put(OrderSide.CROSS_SHORT, new Side(Side.CROSS_SHORT));
+      */
 
-        typeMap.put(OrderType.MARKET, new OrdType(OrdType.MARKET));
         typeMap.put(OrderType.LIMIT, new OrdType(OrdType.LIMIT));
+       /*
+        typeMap.put(OrderType.MARKET, new OrdType(OrdType.MARKET));
         typeMap.put(OrderType.STOP, new OrdType(OrdType.STOP));
         typeMap.put(OrderType.STOP_LIMIT, new OrdType(OrdType.STOP_LIMIT));
 
@@ -642,6 +648,7 @@ public class BanzaiApplication implements Application {
                    new TimeInForce(TimeInForce.GOOD_TILL_CANCEL));
         tifMap.put(OrderTIF.GTX,
                    new TimeInForce(TimeInForce.GOOD_TILL_CROSSING));
+       */
 
     }
 }

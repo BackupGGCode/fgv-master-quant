@@ -159,7 +159,6 @@ std::string AgentControl::getSessionConfiguration(){
 
 float AgentControl::getRate(std::string time){
 
-	size_t row;
 	float rate = 0;
 	std::string datetime;
 
@@ -186,7 +185,8 @@ float AgentControl::getRate(std::string time){
 		statement.replace(statement.find(time_tag),time_tag.length(), boost::posix_time::to_iso_string(ptime));
 
 		std::auto_ptr< sql::ResultSet > res(stmt->executeQuery(statement));
-		row = 0;
+
+
 		while (res->next()) {
 			rate = res->getDouble("rate");
 			datetime = res->getString("simulation_time");
@@ -732,6 +732,90 @@ float AgentControl::getLastPrice(void){
 	return price;
 
 }
+
+
+
+
+float* AgentControl::getLastNPrices(int N, int& tam){
+
+	size_t row;
+	std::stringstream select;
+	float* array;
+	const std::string host = HOST;
+
+	try {
+		sql::Driver * driver = sql::mysql::get_driver_instance();
+		std::auto_ptr< sql::Connection > con(driver->connect(host, USER, PASS));
+		std::auto_ptr< sql::Statement > stmt(con->createStatement());
+
+
+		//SELECT g.price FROM (SELECT p.time, p.price FROM prices p ORDER BY p.time DESC LIMIT 7) g ORDER BY g.time ASC
+		select << "SELECT g.price FROM (SELECT p.time, p.price FROM quickfix.prices p ORDER BY p.time DESC LIMIT "<< N <<" ) g ORDER BY g.time ASC";
+		//select << "SELECT p.price FROM quickfix.prices p ORDER BY p.time DESC LIMIT " << N;
+
+		//std::cout << std::endl  << "[AgentControl::getLastNPrices] SQL:" << select.str() << std::endl;
+
+		std::auto_ptr< sql::ResultSet > res(stmt->executeQuery(select.str()));
+
+		int size = res->rowsCount();
+
+		if(size > 0 ){
+			array = new float[size];
+			row = 0;
+			while (res->next()) {
+				array[row] = res->getDouble("price");
+				row++;
+			}
+			tam=row;
+			//std::cout << std::endl << "[AgentControl::getLastNPrices] tam:"<< tam <<" size:"<< size << std::endl;
+
+		}
+
+		/* Clean up */
+		stmt.reset(NULL); /* free the object inside  */
+
+		try {
+			/*s This will implicitly assume that the host is 'localhost' */
+			con.reset(driver->connect(host, USER, PASS));
+		} catch (sql::SQLException &e) {
+			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
+			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		}
+
+		try {
+			con.reset(driver->connect(host, USER, PASS));
+		} catch (sql::SQLException &e) {
+			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
+			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		}
+
+		try {
+			con.reset(driver->connect(host, USER, PASS));
+		} catch (sql::SQLException &e) {
+			std::cout << "#\t\t tcp://hostname_or_ip[:port] caused expected exception" << std::endl;
+			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
+			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		}
+
+		 return array;
+
+	} catch (sql::SQLException &e) {
+		std::cout << "# ERR: SQLException in " << __FILE__;
+		std::cout << "# ERR: " << e.what();
+		std::cout << " (MySQL error code: " << e.getErrorCode();
+		std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+
+	} catch (std::runtime_error &e) {
+
+		std::cout << "# ERR: runtime_error in " << __FILE__;
+		std::cout << "# ERR: " << e.what() << std::endl;
+
+	}
+
+
+
+}
+
 
 
 
