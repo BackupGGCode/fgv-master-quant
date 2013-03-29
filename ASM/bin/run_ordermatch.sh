@@ -1,3 +1,3 @@
 #!/bin/sh
 #./ordermatch cfg/ordermatch.cfg
-./ordermatch ORDERMATCH
+../ordermatch/ordermatch ORDERMATCH

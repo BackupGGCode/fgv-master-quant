@@ -43,15 +43,17 @@ Strategy::Strategy(const std::string strats) {
 		  exit(1);
 	  }
 
-	   // FIX::TransactTime now;
-	  //  this->time1 = now;
-	  //  this->time2 = now;
+	    FIX::TransactTime now;
+	    this->time1 = now;
+	    this->time2 = now;
 }
 
 
 void Strategy::setAgentControl(AgentControl _agentControl){
 	this->agentControl = _agentControl;
-	this->agentControl.setPortfolio(this->cash, this->numberStock, this->numberExogenous);
+    FIX::TransactTime now;
+
+	this->agentControl.setPortfolio(now.getString(),this->cash, this->numberStock, this->numberExogenous);
 }
 
 float* returnPrice(float* array, int& tam){
@@ -107,12 +109,8 @@ void Strategy::preTrade(){
     int tam_prices = 0;
     float* prices = agentControl.getPrices(this->time1.getString(), this->time2.getString(), tam_prices);
 
-
-	this->lastPriceExogenous =exogenous_prices[tam_exo-1] ;
-	//this->lastPriceStock = prices[tam_prices-1];
-	this->lastPriceStock = avg(prices, tam_prices);
-
-
+	this->lastPriceStock =roundASM(prices[tam_prices-1]) ;
+	this->lastPriceExogenous = roundASM(exogenous_prices[tam_exo-1]);
 
     float* returnExoPrices = returnPrice(exogenous_prices,tam_exo);
     float* returnPrices = returnPrice(prices,tam_prices);
@@ -140,8 +138,6 @@ void Strategy::preTrade(){
 	this->weightStock = (exo_var*r_stock - cov_stk_exo*r_exo )/(exo_var*r_stock + stock_var*r_exo - cov_stk_exo*(r_stock+r_exo));
 	this->weightExogenous = 1 - this->weightStock;
 
-	this->lastPriceStock =roundASM(this->lastPriceStock) ;
-	this->lastPriceExogenous = roundASM(this->lastPriceExogenous);
 
 	///Minimum Variance Portfolio Weight
 
@@ -157,8 +153,8 @@ void Strategy::preTrade(){
 		float wealth4Exogenous = this->weightExogenous*totalWealth;
 		float wealth4Stock = this->weightStock*totalWealth;
 
-		this->diffNumberExogenous =(int) (wealth4Exogenous/this->lastPriceExogenous) - this->numberExogenous;
-		this->diffNumberStock =(int) (wealth4Stock/this->lastPriceStock) - this->numberStock;
+		this->diffNumberExogenous =(int) ((wealth4Exogenous/this->lastPriceExogenous) - this->numberExogenous);
+		this->diffNumberStock =(int) ((wealth4Stock/this->lastPriceStock) - this->numberStock);
 
 		std::cout << "[Strategy::PreTrade]" <<std::endl
 			<< "\t\tSTOCK\t\tEXOGENOUS"<< std::endl
@@ -187,6 +183,7 @@ SimpleOrder Strategy::tradeUmountPosition(){
 
 	if(validMinVarPortWeight){
 
+
 		if(this->diffNumberExogenous < 0 ){
 			//vender Exogenous
 			FIX::Symbol symbol("Exogenous");
@@ -205,9 +202,11 @@ SimpleOrder Strategy::tradeUmountPosition(){
 			order.price = this->lastPriceStock;
 			order.print();
 		}
-	}
 
-	this->agentControl.setPortfolio(this->cash, this->numberStock, this->numberExogenous);
+	}
+    FIX::TransactTime now;
+
+	this->agentControl.setPortfolio( now.getString(),this->cash, this->numberStock, this->numberExogenous);
 	return order;
 }
 
@@ -231,10 +230,7 @@ SimpleOrder Strategy::tradeMountPosition(){
 			FIX::Symbol symbol("Exogenous");
 			order.symbol = symbol;
 
-
-
-			float alternativeDiffNumberExogenous =(int) (this->cash/this->lastPriceExogenous) - this->numberExogenous;
-
+			float alternativeDiffNumberExogenous =(int) ((this->cash/this->lastPriceExogenous) - this->numberExogenous);
 
 			order.orderQty = (alternativeDiffNumberExogenous >=  this->diffNumberExogenous? this->diffNumberExogenous:alternativeDiffNumberExogenous );
 			order.price = this->lastPriceExogenous;
@@ -252,7 +248,9 @@ SimpleOrder Strategy::tradeMountPosition(){
 			order.print();
 		}
 	}
-	this->agentControl.setPortfolio(this->cash, this->numberStock, this->numberExogenous);
+    FIX::TransactTime now;
+
+	this->agentControl.setPortfolio(now.getString(),this->cash, this->numberStock, this->numberExogenous);
 
 	return order;
 }
@@ -277,7 +275,9 @@ void Strategy::postTrade(FIX42::ExecutionReport ereport){
 	this->numberStock += ( side == FIX::Side_SELL ? -lastShares : +lastShares );
 	this->cash += ( side == FIX::Side_SELL ? +lastShares*lastPx : -lastShares*lastPx );
 
-	this->agentControl.setPortfolio(this->cash, this->numberStock, this->numberExogenous);
+    FIX::TransactTime now;
+
+	this->agentControl.setPortfolio(now.getString(),this->cash, this->numberStock, this->numberExogenous);
 
 	if(this->cash <= 0.0 && this->numberStock <= 0.0)
 		exit(1);

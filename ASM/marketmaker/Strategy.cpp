@@ -40,7 +40,9 @@ Strategy::Strategy(const std::string strats) {
 
 void Strategy::setAgentControl(AgentControl _agentControl){
 	this->agentControl = _agentControl;
-	this->agentControl.setPortfolio(this->cash, this->numberStock, 0.0);
+    FIX::TransactTime now;
+
+	this->agentControl.setPortfolio(now.getString(),this->cash, this->numberStock, 0.0);
 }
 
 
@@ -57,6 +59,11 @@ void Strategy::preTrade(FIX42::Quote message){
 	this->lastQuote.get(bidPx);
 	this->lastQuote.get(offerPx);
 
+
+	this->referenceStockPrice = this->agentControl.getLastPrice();
+	this->quoteDistance = 5;
+
+	/*
 	if(offerPx > 0.0 && bidPx > 0.0){
 		this->referenceStockPrice = 0.5*(offerPx+bidPx);
 		this->quoteDistance = 0.5*(offerPx-bidPx);
@@ -68,7 +75,7 @@ void Strategy::preTrade(FIX42::Quote message){
 
 	this->referenceStockPrice = roundASM(this->referenceStockPrice );
 	this->quoteDistance = roundASM(this->quoteDistance );
-
+	 */
 }
 
 
@@ -80,7 +87,7 @@ SimpleOrder Strategy::tradeASK(){
 	order.side = FIX::Side_SELL;
 
 	order.price = this->referenceStockPrice+this->quoteDistance;
-	order.orderQty = (int) (0.5*this->cash*this->percentual_max_negs/order.price);
+	order.orderQty = (int) (this->numberStock*this->percentual_max_negs);
 
 	order.print();
 	return order;
@@ -94,7 +101,7 @@ SimpleOrder Strategy::tradeBID(){
 	order.side = FIX::Side_BUY;
 
 	order.price = this->referenceStockPrice-this->quoteDistance;
-	order.orderQty = (int) (0.5*this->cash*this->percentual_max_negs/order.price);
+	order.orderQty = (int) (this->cash*this->percentual_max_negs/order.price);
 
 	order.print();
 	return order;
@@ -115,7 +122,10 @@ void Strategy::postTrade(FIX42::ExecutionReport ereport){
 	this->numberStock += ( side == FIX::Side_SELL ? -lastShares : +lastShares );
 	this->cash += ( side == FIX::Side_SELL ? +lastShares*lastPx : -lastShares*lastPx );
 
-	this->agentControl.setPortfolio(this->cash, this->numberStock, 0.0);
+
+    FIX::TransactTime now;
+
+	this->agentControl.setPortfolio(now.getString(),this->cash, this->numberStock, 0.0);
 
 	//if(this->cash <= 0.0 && this->numberStock <= 0.0)
 	//	exit(1);

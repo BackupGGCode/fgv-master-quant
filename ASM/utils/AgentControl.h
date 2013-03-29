@@ -54,10 +54,12 @@ public:
 	std::string getSessionConfiguration();
 	std::string getStrategyConfiguration();
 
+
+	void setupPorfolio(void);
 	void setupPrices(std::string time);
 	void updateExogenousTimes(std::string start_time);
 	void updatePrices(std::string start_time, float price, float quantity);
-	void setPortfolio(	float cash, float  number_stock, float  number_exogenous);
+	void setPortfolio(std::string time, float cash, float  number_stock, float  number_exogenous);
 	float getRate(std::string time);
 	float getLastPrice(void);
 	float* getLastNPrices(int N, int& tam);

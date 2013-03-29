@@ -21,4 +21,53 @@ SELECT reference_stock_price FROM quickfix.strategy s inner join quickfix.agents
 DELETE FROM prices WHERE time <> '000-00-00 00:00:00';
 
 
+SELECT (SELECT price FROM prices ORDER BY time DESC LIMIT 7) ORDER BY time ASC;
+SELECT price FROM prices ORDER BY time DESC LIMIT 7;
 
+DELETE FROM portfolio WHERE time <> '';
+
+SELECT * FROM quickfix.portfolio;
+
+
+SELECT g.price FROM (SELECT p.time, p.price FROM prices p ORDER BY p.time DESC LIMIT 7) g ORDER BY g.time ASC;
+
+
+
+
+
+SELECT p.id_agent as AGENT,p.number_stock as NUMBER_STOCK,	p.cash as CASH, p.number_exogenous as EXO FROM (SELECT pt1.id_agent, pt1.number_stock, pt1.cash, pt1.number_exogenous FROM quickfix.portfolio pt1 INNER JOIN (SELECT MAX(pt2.time) as maxtime, pt2.id_agent FROM quickfix.portfolio pt2 GROUP BY pt2.id_agent) pt3 ON pt1.id_agent = pt3.id_agent AND pt1.time = pt3.maxtime) p INNER JOIN quickfix.agents a ON p.id_agent = a.id_agent WHERE a.status='active';
+
+
+
+SELECT 
+	p.id_agent as AGENT,
+	p.number_stock as NUMBER_STOCK,
+	p.cash as CASH,
+	p.number_exogenous as EXO
+FROM 
+	(SELECT pt1.id_agent, pt1.number_stock, pt1.cash, pt1.number_exogenous FROM quickfix.portfolio pt1 INNER JOIN (SELECT MAX(pt2.time) as maxtime, pt2.id_agent FROM quickfix.portfolio pt2 GROUP BY pt2.id_agent) pt3 ON pt1.id_agent = pt3.id_agent AND pt1.time = pt3.maxtime) p
+INNER JOIN 
+	quickfix.agents a 
+	ON 
+		p.id_agent = a.id_agent 
+WHERE 
+	a.status='active';
+
+
+
+
+SELECT pt1.id_agent, pt1.number_stock, pt1.cash, pt1.number_exogenous FROM quickfix.portfolio pt1 INNER JOIN (SELECT MAX(pt2.time) as maxtime, pt2.id_agent FROM quickfix.portfolio pt2 GROUP BY pt2.id_agent) pt3 ON pt1.id_agent = pt3.id_agent AND pt1.time = pt3.maxtime;
+
+
+
+SELECT pt1.id_agent, pt1.number_stock, pt1.cash, pt1.number_exogenous 
+	FROM quickfix.portfolio pt1 
+INNER JOIN
+	(SELECT MAX(pt2.time) as maxtime, pt2.id_agent FROM quickfix.portfolio pt2 GROUP BY pt2.id_agent) pt3
+ON
+	pt1.id_agent = pt3.id_agent AND
+	pt1.time = pt3.maxtime;
+
+
+
+SELECT * FROM quickfix.portfolio WHERE id_agent = 'MARKETMAKER';

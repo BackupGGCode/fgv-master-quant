@@ -41,7 +41,8 @@ Strategy::Strategy(const std::string strats) {
 
 void Strategy::setAgentControl(AgentControl _agentControl){
 	this->agentControl = _agentControl;
-	this->agentControl.setPortfolio(this->cash, this->numberStock, 0.0);
+    FIX::TransactTime now;
+	this->agentControl.setPortfolio(now.getString(),this->cash, this->numberStock, 0.0);
 }
 
 
@@ -333,7 +334,8 @@ void Strategy::postTrade(FIX42::ExecutionReport ereport){
 	this->numberStock += ( side == FIX::Side_SELL ? -lastShares : +lastShares );
 	this->cash += ( side == FIX::Side_SELL ? +lastShares*lastPx : -lastShares*lastPx );
 
-	this->agentControl.setPortfolio(this->cash, this->numberStock, 0.0);
+    FIX::TransactTime now;
+	this->agentControl.setPortfolio(now.getString(), this->cash, this->numberStock, 0.0);
 
 	//if(this->cash <= 0.0 && this->numberStock <= 0.0)
 	//	exit(1);

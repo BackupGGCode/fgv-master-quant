@@ -98,11 +98,11 @@ void Application::waitGetCancelConfirmationResponse() {
 
 
 void Application::run(){
-	sleep(2);
+	sleep(5);
   while (true){
 
     try{
-    	sleep(strategy.initialTime);
+    	//sleep(strategy.initialTime);
     	this->strategy.preTrade();
 
     	if(this->strategy.validMinVarPortWeight){
@@ -113,14 +113,17 @@ void Application::run(){
 			if(order1.symbol==this->strategy.ticker)sleep(strategy.cycleTime);
 
 			if(getConfirmationPartialExecutionTrade || order1.symbol != this->strategy.ticker ){
+				this->cancelOrder(order1);
+
 				SimpleOrder order2 = this->strategy.tradeMountPosition();
 				this->sendOrder(order2);
 				sleep(strategy.cycleTime);
 				this->cancelOrder(order2);
+
+			}else{
+				this->cancelOrder(order1);
 			}
-
-			this->cancelOrder(order1);
-
+			sleep(4*strategy.cycleTime);
 
     	}
     	this->resetFlags();

@@ -27,7 +27,7 @@ $num=mysql_num_rows($result);
 
 
 #$query_portfolio="SELECT id_agent as AGENT, number_stock as NUMBER_STOCK, cash as CASH FROM portfolio";
-$query_portfolio="SELECT p.id_agent as AGENT, p.number_stock as NUMBER_STOCK, p.cash as CASH , p.number_exogenous as EXO FROM quickfix.portfolio p INNER JOIN quickfix.agents a ON p.id_agent = a.id_agent WHERE a.status='active'";
+$query_portfolio="SELECT p.id_agent as AGENT,p.number_stock as NUMBER_STOCK,	p.cash as CASH, p.number_exogenous as EXO FROM (SELECT pt1.id_agent, pt1.number_stock, pt1.cash, pt1.number_exogenous FROM quickfix.portfolio pt1 INNER JOIN (SELECT MAX(pt2.time) as maxtime, pt2.id_agent FROM quickfix.portfolio pt2 GROUP BY pt2.id_agent) pt3 ON pt1.id_agent = pt3.id_agent AND pt1.time = pt3.maxtime) p INNER JOIN quickfix.agents a ON p.id_agent = a.id_agent WHERE a.status='active'";
 $result_portfolio=mysql_query($query_portfolio);
 
 $num_portfolio=mysql_num_rows($result_portfolio);

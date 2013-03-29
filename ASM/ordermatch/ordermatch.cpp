@@ -43,6 +43,7 @@ int main( int argc, char** argv )
     FIX::TransactTime start_time;
 
     agentControl.updateExogenousTimes(start_time.getString());
+    agentControl.setupPorfolio();
     agentControl.setupPrices(start_time.getString());
 
     application.setAgentControl(agentControl);

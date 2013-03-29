@@ -113,7 +113,7 @@ void Application::waitGetCancelConfirmationResponse() {
 
 void Application::run()
 {
-	sleep(2);
+	//sleep(2);
   while (true){
 
     try{

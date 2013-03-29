@@ -337,7 +337,7 @@ std::string AgentControl::getStrategyConfiguration(){
 
 
 
-void AgentControl::setPortfolio(float cash, float  number_stock, float  number_exogenous){
+void AgentControl::setPortfolio(std::string time, float cash, float  number_stock, float  number_exogenous){
 
 	std::stringstream insert;
 	std::stringstream update;
@@ -352,9 +352,19 @@ void AgentControl::setPortfolio(float cash, float  number_stock, float  number_e
 		std::auto_ptr< sql::Connection > con(driver->connect(host, USER, PASS));
 		std::auto_ptr< sql::Statement > stmt(con->createStatement());
 
+
+	    std::string format = "%Y%m%d-%H:%M:%S";
+	    boost::posix_time::ptime ptime;
+	    boost::posix_time::time_input_facet facet(format, 1);
+	    std::stringstream ss1(time);
+	    ss1.imbue(std::locale(ss1.getloc(), &facet));
+	    ss1 >> ptime;
+
+
+
 		/* Usage of UPDATE */
 
-		replace << "REPLACE INTO quickfix.portfolio (id_agent, number_stock, cash, number_exogenous) VALUES ('"<< this->agentID <<"',"<< number_stock << ","<< cash << ","<< number_exogenous <<")";
+		replace << "REPLACE INTO quickfix.portfolio (time, id_agent, number_stock, cash, number_exogenous) VALUES ('"<< boost::posix_time::to_iso_string(ptime) <<"','"<< this->agentID <<"',"<< number_stock << ","<< cash << ","<< number_exogenous <<")";
 		//std::cout << replace.str();
 		affected_rows = stmt->execute(replace.str());
 /*
@@ -584,6 +594,69 @@ void AgentControl::updatePrices(std::string time, float price, float quantity){
 	}
 
 }
+
+
+
+void AgentControl::setupPorfolio(void){
+
+
+	std::stringstream del;
+
+	float price=0;
+	const std::string host = HOST;
+
+	try {
+		sql::Driver * driver = sql::mysql::get_driver_instance();
+		std::auto_ptr< sql::Connection > con(driver->connect(host, USER, PASS));
+		std::auto_ptr< sql::Statement > stmt(con->createStatement());
+
+	    del << "DELETE FROM quickfix.portfolio WHERE time <> ''";
+		stmt->execute(del.str());
+
+		/* Clean up */
+		stmt.reset(NULL); /* free the object inside  */
+
+		try {
+			/*s This will implicitly assume that the host is 'localhost' */
+			con.reset(driver->connect(host, USER, PASS));
+		} catch (sql::SQLException &e) {
+			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
+			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		}
+
+		try {
+			con.reset(driver->connect(host, USER, PASS));
+		} catch (sql::SQLException &e) {
+			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
+			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		}
+
+		try {
+			con.reset(driver->connect(host, USER, PASS));
+		} catch (sql::SQLException &e) {
+			std::cout << "#\t\t tcp://hostname_or_ip[:port] caused expected exception" << std::endl;
+			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
+			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		}
+
+	} catch (sql::SQLException &e) {
+		std::cout << "# ERR: SQLException in " << __FILE__;
+		/* Use what() (derived from std::runtime_error) to fetch the error message */
+		std::cout << "# ERR: " << e.what();
+		std::cout << " (MySQL error code: " << e.getErrorCode();
+		std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+		std::cout << "not ok 1 - examples/connect.php" << std::endl;
+
+	} catch (std::runtime_error &e) {
+
+		std::cout << "# ERR: runtime_error in " << __FILE__;
+		std::cout << "# ERR: " << e.what() << std::endl;
+		std::cout << "not ok 1 - examples/connect.php" << std::endl;
+
+	}
+
+}
+
 
 
 void AgentControl::setupPrices(std::string time){

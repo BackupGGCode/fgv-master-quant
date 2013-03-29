@@ -254,7 +254,7 @@ target_alias =
 top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
-SUBDIRS = executor ordermatch tradeclient tradeclientgui bulltraders beartraders randomtraders feeder mvtraders
+SUBDIRS = executor ordermatch tradeclient tradeclientgui bulltraders beartraders randomtraders feeder mvtraders bbandtraders marketmaker
 EXTRA_DIST = configure configure.in bootstrap Makefile.am
 all: all-recursive
 
