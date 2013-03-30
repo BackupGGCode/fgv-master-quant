@@ -1,22 +1,3 @@
-/****************************************************************************
-** Copyright (c) quickfixengine.org  All rights reserved.
-**
-** This file is part of the QuickFIX FIX Engine
-**
-** This file may be distributed under the terms of the quickfixengine.org
-** license as defined by quickfixengine.org and appearing in the file
-** LICENSE included in the packaging of this file.
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-**
-** See http://www.quickfixengine.org/LICENSE for licensing information.
-**
-** Contact ask@quickfixengine.org if any conditions of this licensing are
-** not clear to you.
-**
-****************************************************************************/
-
 package quickfix.banzai;
 
 import javax.swing.event.TableModelEvent;
@@ -33,11 +14,8 @@ public class OrderTableModel extends AbstractTableModel {
     private final static int OPEN = 2;
     private final static int EXECUTED = 3;
     private final static int SIDE = 4;
-    private final static int TYPE = 5;
-    private final static int LIMITPRICE = 6;
-    private final static int STOPPRICE = 7;
-    private final static int AVGPX = 8;
-    private final static int TARGET = 9;
+    private final static int LIMITPRICE = 5;
+    private final static int AVGPX = 6;
 
     private HashMap rowToOrder;
     private HashMap idToRow;
@@ -50,11 +28,7 @@ public class OrderTableModel extends AbstractTableModel {
         rowToOrder = new HashMap();
         idToRow = new HashMap();
         idToOrder = new HashMap();
-
-        headers = new String[]
-                  {"Symbol", "Quantity", "Open", "Executed",
-                   "Side", "Type", "Limit", "Stop", "AvgPx",
-                   "Target"};
+        headers = new String[] {"Ticker", "Quant.", "Open", "Exec.","Tipo", "Preço", "Média"};
     }
 
     public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -144,16 +118,10 @@ public class OrderTableModel extends AbstractTableModel {
             return new Integer(order.getExecuted());
         case SIDE:
             return order.getSide();
-        case TYPE:
-            return order.getType();
         case LIMITPRICE:
             return order.getLimit();
-        case STOPPRICE:
-            return order.getStop();
         case AVGPX:
             return new Double(order.getAvgPx());
-        case TARGET:
-            return order.getSessionID().getTargetCompID();
         }
         return new String();
     }

@@ -1,22 +1,3 @@
-/****************************************************************************
-** Copyright (c) quickfixengine.org  All rights reserved.
-**
-** This file is part of the QuickFIX FIX Engine
-**
-** This file may be distributed under the terms of the quickfixengine.org
-** license as defined by quickfixengine.org and appearing in the file
-** LICENSE included in the packaging of this file.
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-**
-** See http://www.quickfixengine.org/LICENSE for licensing information.
-**
-** Contact ask@quickfixengine.org if any conditions of this licensing are
-** not clear to you.
-**
-****************************************************************************/
-
 package quickfix.banzai;
 
 import quickfix.SessionID;
@@ -28,7 +9,7 @@ public class Order implements Cloneable {
     private int open = 0;
     private int executed = 0;
     private OrderSide side = OrderSide.BUY;
-    private OrderType type = OrderType.MARKET;
+    private OrderType type = OrderType.LIMIT;
     private OrderTIF tif = OrderTIF.DAY;
     private Double limit = null;
     private Double stop = null;

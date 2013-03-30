@@ -1,22 +1,3 @@
-/****************************************************************************
-** Copyright (c) quickfixengine.org  All rights reserved.
-**
-** This file is part of the QuickFIX FIX Engine
-**
-** This file may be distributed under the terms of the quickfixengine.org
-** license as defined by quickfixengine.org and appearing in the file
-** LICENSE included in the packaging of this file.
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-**
-** See http://www.quickfixengine.org/LICENSE for licensing information.
-**
-** Contact ask@quickfixengine.org if any conditions of this licensing are
-** not clear to you.
-**
-****************************************************************************/
-
 package quickfix.banzai.ui;
 
 import javax.swing.*;
@@ -25,14 +6,14 @@ import java.awt.event.*;
 import quickfix.banzai.*;
 
 public class CancelReplacePanel extends JPanel {
-    private JLabel quantityLabel = new JLabel("Quantity");
-    private JLabel limitPriceLabel = new JLabel("Limit");
+    private JLabel quantityLabel = new JLabel("Quantidade");
+    private JLabel limitPriceLabel = new JLabel("Preço");
     private IntegerNumberTextField  quantityTextField =
         new IntegerNumberTextField();
     private DoubleNumberTextField limitPriceTextField =
         new DoubleNumberTextField();
-    private JButton cancelButton = new JButton("Cancel");
-    private JButton replaceButton = new JButton("Replace");
+    private JButton cancelButton = new JButton("Cancelar");
+    private JButton replaceButton = new JButton("Trocar");
     private Order order = null;
 
     private GridBagConstraints constraints = new GridBagConstraints();

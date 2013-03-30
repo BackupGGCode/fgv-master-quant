@@ -1,22 +1,3 @@
-/****************************************************************************
-** Copyright (c) quickfixengine.org  All rights reserved.
-**
-** This file is part of the QuickFIX FIX Engine
-**
-** This file may be distributed under the terms of the quickfixengine.org
-** license as defined by quickfixengine.org and appearing in the file
-** LICENSE included in the packaging of this file.
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-**
-** See http://www.quickfixengine.org/LICENSE for licensing information.
-**
-** Contact ask@quickfixengine.org if any conditions of this licensing are
-** not clear to you.
-**
-****************************************************************************/
-
 import quickfix.banzai.ui.BanzaiFrame;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.Category;
@@ -41,7 +22,9 @@ public class Banzai {
     static {
         try {
             UIManager.setLookAndFeel
-            ("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+//            ("com.sun.java.swing.plaf.mac.maclookandfeel");
+            ("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+//            ("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
         } catch (Exception e) {
             log.info(e);
         }
@@ -49,24 +32,18 @@ public class Banzai {
 
     public Banzai() throws Exception {
         OrderTableModel orderTableModel = new OrderTableModel();
+
         ExecutionTableModel executionTableModel = new ExecutionTableModel();
 
-        BanzaiApplication application =
-            new BanzaiApplication(orderTableModel, executionTableModel);
-        SessionSettings settings =
-            new SessionSettings(new FileInputStream("banzai.cfg"));
-        MessageStoreFactory messageStoreFactory =
-            new FileStoreFactory(settings);
-        LogFactory logFactory =
-            new ScreenLogFactory(settings);
-        MessageFactory messageFactory =
-            new DefaultMessageFactory();
+        BanzaiApplication application = new BanzaiApplication(orderTableModel, executionTableModel);
+        SessionSettings settings = new SessionSettings(new FileInputStream("banzai.cfg"));
+        MessageStoreFactory messageStoreFactory = new FileStoreFactory(settings);
+        LogFactory logFactory = new ScreenLogFactory(settings);
+        MessageFactory messageFactory = new DefaultMessageFactory();
 
-        initiator = new SocketInitiator
-                    (application, messageStoreFactory, settings, logFactory, messageFactory);
+        initiator = new SocketInitiator(application, messageStoreFactory, settings, logFactory, messageFactory);
 
-        frame = new BanzaiFrame(orderTableModel, executionTableModel,
-                                application);
+        frame = new BanzaiFrame(orderTableModel, executionTableModel, application);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
