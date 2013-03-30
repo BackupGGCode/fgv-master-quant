@@ -38,10 +38,11 @@ public class Banzai {
         BanzaiApplication application = new BanzaiApplication(orderTableModel, executionTableModel);
         SessionSettings settings = new SessionSettings(new FileInputStream("banzai.cfg"));
         MessageStoreFactory messageStoreFactory = new FileStoreFactory(settings);
-        LogFactory logFactory = new ScreenLogFactory(settings);
+        //LogFactory logFactory = new ScreenLogFactory(settings);
         MessageFactory messageFactory = new DefaultMessageFactory();
 
-        initiator = new SocketInitiator(application, messageStoreFactory, settings, logFactory, messageFactory);
+        //initiator = new SocketInitiator(application, messageStoreFactory, settings, logFactory, messageFactory);
+        initiator = new SocketInitiator(application, messageStoreFactory, settings, null, messageFactory);
 
         frame = new BanzaiFrame(orderTableModel, executionTableModel, application);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
