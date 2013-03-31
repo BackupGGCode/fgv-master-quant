@@ -149,6 +149,7 @@ echo "<script type='text/javascript'> var price_array = ".json_encode($price_arr
 			
 			$wealth = sprintf('%0.2f', $wealth);
 			$cash = sprintf('%0.2f', $cash);
+			$number_exogenous = sprintf('%d', $number_exogenous);
 			echo "<tr><td>$agent</td><td>$number_stock</td><td>$number_exogenous</td><td>$cash</td><td>$wealth</td></tr>";
 			
 
@@ -157,6 +158,7 @@ echo "<script type='text/javascript'> var price_array = ".json_encode($price_arr
 		echo "<tbody align='center' style='font-size: 10pt'>";
 		$tot_cash = sprintf('%0.2f', $tot_cash);
 		$tot_wealth = sprintf('%0.2f', $tot_wealth);
+		$tot_number_exo = sprintf('%d', $tot_number_exo);
 		echo "<tr><td><b>TOTAL:</b></td><td><b>$tot_number_stock</b></td><td><b>$tot_number_exo</b></td><td><b>$tot_cash</b></td><td><b>$tot_wealth</b></td></tr>";
 		echo "</table>";
 		?>

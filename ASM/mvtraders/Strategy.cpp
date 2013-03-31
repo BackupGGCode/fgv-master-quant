@@ -26,26 +26,26 @@ Strategy::Strategy(const std::string strats) {
 	   && cfg.lookupValue("INITIAL_TIME", initialTime)
 	   && cfg.lookupValue("CYCLE_TIME", cycleTime)){
 
-		 // this->previousStockPrice = this->referenceStockPrice;
-		 // this->previousExogenous = this->referenceExogenous;
-		  this->numberExogenous = 0;
-		  //std::cout << "ticker:" << ticker<< std::endl;
-		 // std::cout << "referenceStockPrice:" << referenceStockPrice<< std::endl;
-		 // std::cout << "referenceExogenous:" << referenceExogenous << std::endl;
-		 // std::cout << "referenceCov:" << referenceCov << std::endl;
-		 // std::cout << "cash:" << cash << std::endl;
-		 // std::cout << "numberStock:" << numberStock << std::endl;
-		 // std::cout << "initialTime:" << initialTime << std::endl;
-		 // std::cout << "cycleTime:" << cycleTime << std::endl;
+		  if(false){
+				 // this->previousStockPrice = this->referenceStockPrice;
+				 // this->previousExogenous = this->referenceExogenous;
+			  this->numberExogenous = 0;
+			  std::cout << "ticker:" << ticker<< std::endl;
+			  std::cout << "referenceCov:" << referenceCov << std::endl;
+			  std::cout << "cash:" << cash << std::endl;
+			  std::cout << "numberStock:" << numberStock << std::endl;
+			  std::cout << "initialTime:" << initialTime << std::endl;
+			  std::cout << "cycleTime:" << cycleTime << std::endl;
+		  }
 
 	  }else{
 		  std::cout <<"[" << this->agentControl.agentID <<"] strategy configs vars not found" << std::endl;
 		  exit(1);
 	  }
 
-	    FIX::TransactTime now;
-	    this->time1 = now;
-	    this->time2 = now;
+	    //FIX::TransactTime now;
+	    //this->time1 = now;
+	    //this->time2 = now;
 }
 
 
@@ -118,12 +118,12 @@ void Strategy::preTrade(){
 	this->expectedReturnStock= avg(returnPrices, tam_prices);
 	this->expectedReturnExogenous = avg(returnExoPrices, tam_exo);
 
-/*	for(int i=0;i<tam_exo;i++)
+	for(int i=0;i<tam_exo;i++)
 		std::cout << "Ep[" << i <<"]=" <<returnExoPrices[i] << std::endl;
 
 	for(int i=0;i<tam_prices;i++)
 		std::cout<< "Sp[" << i <<"]=" <<prices[i] << "\treturnPrices[" << i <<"]=" <<returnPrices[i] << std::endl;
-*/
+
 
 	this->standardDeviationExogenous = stdDev(returnExoPrices,tam_exo, this->expectedReturnExogenous);
 	this->standardDeviationStock = stdDev(returnPrices,tam_prices, this->expectedReturnStock);

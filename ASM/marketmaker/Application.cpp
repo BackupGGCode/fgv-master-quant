@@ -140,7 +140,7 @@ void Application::run()
     }
     catch ( std::exception & e )
     {
-      std::cout << "Problem2! " << e.what() <<std::endl;
+      //std::cout << "Problem2! " << e.what() <<std::endl;
     }
   }
 }

@@ -29,6 +29,7 @@ public:
 	float percentual_max_negs;
 	float cycleTime;
 	float initialTime;
+	float volatility;
 	FIX42::Quote lastQuote;
 
 	AgentControl agentControl;

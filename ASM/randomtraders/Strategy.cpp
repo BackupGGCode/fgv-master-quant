@@ -22,16 +22,22 @@ Strategy::Strategy(const std::string strats) {
 	   && cfg.lookupValue("REFERENCE_STOCK_PRICE", referenceStockPrice)
 	   && cfg.lookupValue("CASH", cash)
 	   && cfg.lookupValue("NUMBER_STOCK", numberStock)
-	  // && cfg.lookupValue("PERCENTUAL_MAX_NEG", percentual_max_negs)
+	   && cfg.lookupValue("PERCENTUAL_MAX_NEG", percentual_max_negs)
 	   && cfg.lookupValue("INITIAL_TIME", initialTime)
+	   && cfg.lookupValue("VOLATILITY", volatility)
 	   && cfg.lookupValue("CYCLE_TIME", cycleTime)){
-		 // std::cout << "ticker:" << ticker<< std::endl;
-		 // std::cout << "referenceStockPrice:" << referenceStockPrice<< std::endl;
-		 // std::cout << "cash:" << cash << std::endl;
-		 // std::cout << "numberStock:" << numberStock << std::endl;
-		 // std::cout << "percentual_max_negs:" << percentual_max_negs << std::endl;
-		 // std::cout << "initialTime:" << initialTime << std::endl;
-		 // std::cout << "cycleTime:" << cycleTime << std::endl;
+
+		 if(false){
+			 this->volatility*=100;
+			 std::cout << "ticker:" << ticker<< std::endl;
+			 std::cout << "referenceStockPrice:" << referenceStockPrice<< std::endl;
+			 std::cout << "cash:" << cash << std::endl;
+			 std::cout << "numberStock:" << numberStock << std::endl;
+			 std::cout << "percentual_max_negs:" << percentual_max_negs << std::endl;
+			 std::cout << "initialTime:" << initialTime << std::endl;
+			 std::cout << "cycleTime:" << cycleTime << std::endl;
+			 std::cout << "volatility:" << volatility << std::endl;
+		 }
 	  }else{
 		  //std::cout <<"[" << this->agentControl.agentID <<"] strategy configs vars not found" << std::endl;
 		  exit(1);
@@ -76,7 +82,8 @@ SimpleOrder Strategy::trade(){
 	order.clOrdID = m_generator.genOrderID();
 
 	//float volatility = 1.0+(rand()%20 - 10)/100.0;
-	float volatility = 1.0+(this->myRand%21 - 10)/100.0;
+	int voltint = (int) this->volatility;
+	float volatility = 1.0+(this->myRand%(voltint*2) - voltint)/100.0;
 
 	// Implementacao do Fluxo de decisao do agente aleatorio ...
 
@@ -115,26 +122,26 @@ SimpleOrder Strategy::trade(){
 				//std::cout<<  "[DECISAO-02] SIM => [ACAO 01] Comprar acoes" << std::endl;
 				order.side = FIX::Side_BUY;
 
-				qty=(int)qty*rand_amount;
+				qty= (qty*rand_amount);
 				qty=(qty > 1 ? qty: 1);
 
-				order.orderQty = qty ;
+				order.orderQty = (int) (qty) ;
 
 			}else{
 				//std::cout<<  "[DECISAO-02] SIM => [ACAO 01] Vender acoes" << std::endl;
 				order.side = FIX::Side_SELL;
-				qty=(int)this->numberStock*rand_amount;
+				qty=this->numberStock*rand_amount;
 				qty=(qty > 1 ? qty: 1);
-				order.orderQty =qty;
+				order.orderQty = (int) (qty);
 			}
 
 		}else{
 			// [DECISAO-02] NAO => [ACAO 02] Não Operar ou Vender acoes
 			//std::cout<<  "[DECISAO-02] NAO => [ACAO 02] Vender acoes" << std::endl;
 			order.side = FIX::Side_SELL;
-			qty=(int)this->numberStock*rand_amount;
+			qty=this->numberStock*rand_amount;
 			qty=(qty > 1 ? qty: 1);
-			order.orderQty = qty;
+			order.orderQty = (int)(qty);
 		}
 	}else{
 		// [DECISAO-01] NAO
@@ -147,10 +154,10 @@ SimpleOrder Strategy::trade(){
 			// [DECISAO-04] SIM => [ACAO 04] Não Operar ou Comprar acoes
 			//std::cout<<  "[DECISAO-04] SIM => [ACAO 04] Comprar acoes" << std::endl;
 			order.side = FIX::Side_BUY;
-			qty=(int)qty*rand_amount;
+			qty=qty*rand_amount;
 			qty=(qty > 1 ? qty: 1);
 
-			order.orderQty = qty;
+			order.orderQty = (int)(qty);
 
 		}else{
 			// [DECISAO-03] NAO => [ACAO 03] VALIDO!
@@ -238,18 +245,18 @@ SimpleOrder Strategy::trade2(){
 				//std::cout<<  "[DECISAO-02] SIM => [ACAO 01] Comprar acoes" << std::endl;
 				order.side = FIX::Side_BUY;
 
-				qty=(int)qty*rand_amount;
+				qty=qty*rand_amount;
 				qty=(qty > 1 ? qty: 1);
 
-				order.orderQty = qty ;
+				order.orderQty = (int)(qty) ;
 
 			}else{
 				if(rand_decision >= 67 ){
 					//std::cout<<  "[DECISAO-02] SIM => [ACAO 01] Vender acoes" << std::endl;
 					order.side = FIX::Side_SELL;
-					qty=(int)this->numberStock*rand_amount;
+					qty=this->numberStock*rand_amount;
 					qty=(qty > 1 ? qty: 1);
-					order.orderQty =qty;
+					order.orderQty =(int) (qty);
 				}else{
 					// Não Operar
 					//std::cout<<  "[DECISAO-02] SIM => [ACAO 01]  Não Operar" << std::endl;
@@ -264,9 +271,9 @@ SimpleOrder Strategy::trade2(){
 			if(rand_decision > 50 ){
 			//std::cout<<  "[DECISAO-02] NAO => [ACAO 02] Vender acoes" << std::endl;
 			order.side = FIX::Side_SELL;
-			qty=(int)this->numberStock*rand_amount;
+			qty=this->numberStock*rand_amount;
 			qty=(qty > 1 ? qty: 1);
-			order.orderQty = qty;
+			order.orderQty = (int)(qty);
 
 			}else{
 				// Não Operar
@@ -288,10 +295,10 @@ SimpleOrder Strategy::trade2(){
 			if(rand_decision < 50 ){
 				//std::cout<<  "[DECISAO-04] SIM => [ACAO 04] Comprar acoes" << std::endl;
 				order.side = FIX::Side_BUY;
-				qty=(int)qty*rand_amount;
+				qty=qty*rand_amount;
 				qty=(qty > 1 ? qty: 1);
 
-				order.orderQty = qty;
+				order.orderQty =(int)(qty);
 			}else{
 				// Não Operar
 				//std::cout<<  "[DECISAO-04] SIM => [ACAO 04] Não Operar" << std::endl;

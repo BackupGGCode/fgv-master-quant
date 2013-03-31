@@ -102,7 +102,7 @@ void Application::run(){
   while (true){
 
     try{
-    	//sleep(strategy.initialTime);
+    	sleep(strategy.initialTime);
     	this->strategy.preTrade();
 
     	if(this->strategy.validMinVarPortWeight){

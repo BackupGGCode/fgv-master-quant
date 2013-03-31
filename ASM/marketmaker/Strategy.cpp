@@ -23,14 +23,21 @@ Strategy::Strategy(const std::string strats) {
 	   && cfg.lookupValue("NUMBER_STOCK", numberStock)
 	   && cfg.lookupValue("PERCENTUAL_MAX_NEG", percentual_max_negs)
 	   && cfg.lookupValue("INITIAL_TIME", initialTime)
+	   && cfg.lookupValue("SPREAD", quoteDistance)
 	   && cfg.lookupValue("CYCLE_TIME", cycleTime)){
-		  std::cout << "ticker:" << ticker<< std::endl;
-		  std::cout << "referenceStockPrice:" << referenceStockPrice<< std::endl;
-		  std::cout << "cash:" << cash << std::endl;
-		  std::cout << "numberStock:" << numberStock << std::endl;
-		  std::cout << "percentual_max_negs:" << percentual_max_negs << std::endl;
-		  std::cout << "initialTime:" << initialTime << std::endl;
-		  std::cout << "cycleTime:" << cycleTime << std::endl;
+
+
+		  if(false){
+			  std::cout << "ticker:" << ticker<< std::endl;
+			  std::cout << "referenceStockPrice:" << referenceStockPrice<< std::endl;
+			  std::cout << "cash:" << cash << std::endl;
+			  std::cout << "numberStock:" << numberStock << std::endl;
+			  std::cout << "percentual_max_negs:" << percentual_max_negs << std::endl;
+			  std::cout << "initialTime:" << initialTime << std::endl;
+			  std::cout << "quoteDistance:" << quoteDistance << std::endl;
+			  std::cout << "cycleTime:" << cycleTime << std::endl;
+
+		  }
 	  }else{
 		  std::cout <<"[" << this->agentControl.agentID <<"] strategy configs vars not found" << std::endl;
 		  exit(1);
@@ -61,7 +68,7 @@ void Strategy::preTrade(FIX42::Quote message){
 
 
 	this->referenceStockPrice = this->agentControl.getLastPrice();
-	this->quoteDistance = 5;
+	//this->quoteDistance = 5;
 
 	/*
 	if(offerPx > 0.0 && bidPx > 0.0){
