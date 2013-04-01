@@ -27,8 +27,8 @@ Strategy::Strategy(const std::string strats) {
 	   && cfg.lookupValue("VOLATILITY", volatility)
 	   && cfg.lookupValue("CYCLE_TIME", cycleTime)){
 
-		 if(false){
-			 this->volatility*=100;
+		 if(true){
+			 //this->volatility*=100;
 			 std::cout << "ticker:" << ticker<< std::endl;
 			 std::cout << "referenceStockPrice:" << referenceStockPrice<< std::endl;
 			 std::cout << "cash:" << cash << std::endl;
@@ -39,7 +39,7 @@ Strategy::Strategy(const std::string strats) {
 			 std::cout << "volatility:" << volatility << std::endl;
 		 }
 	  }else{
-		  //std::cout <<"[" << this->agentControl.agentID <<"] strategy configs vars not found" << std::endl;
+		  std::cout <<"[" << this->agentControl.agentID <<"] strategy configs vars not found" << std::endl;
 		  exit(1);
 	  }
 }
@@ -82,20 +82,17 @@ SimpleOrder Strategy::trade(){
 	order.clOrdID = m_generator.genOrderID();
 
 	//float volatility = 1.0+(rand()%20 - 10)/100.0;
-	int voltint = (int) this->volatility;
-	float volatility = 1.0+(this->myRand%(voltint*2) - voltint)/100.0;
+	float vol = 1.0+this->volatility*(2*(this->myRand%101)/100.0 - 1);
 
 	// Implementacao do Fluxo de decisao do agente aleatorio ...
 
 	if(offerPx > 0.0 && bidPx > 0.0){
 		this->referenceStockPrice = 0.5*(offerPx+bidPx);
 	}else{
-
 		this->referenceStockPrice = this->agentControl.getLastPrice();
-
 	}
 
-	this->referenceStockPrice *= volatility;
+	this->referenceStockPrice *= vol;
 	this->referenceStockPrice = roundASM(this->referenceStockPrice );
 
 	srand(this->myRand );
@@ -171,7 +168,7 @@ SimpleOrder Strategy::trade(){
 		}
 	}
 
-	//order.print();
+	order.print();
 	return order;
 }
 

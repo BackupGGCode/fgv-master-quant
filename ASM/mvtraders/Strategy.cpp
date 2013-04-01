@@ -23,17 +23,17 @@ Strategy::Strategy(const std::string strats) {
 	   && cfg.lookupValue("REFERENCE_COV", referenceCov)
 	   && cfg.lookupValue("CASH", cash)
 	   && cfg.lookupValue("NUMBER_STOCK", numberStock)
+	   && cfg.lookupValue("NUMBER_EXOGENOUS", numberExogenous)
 	   && cfg.lookupValue("INITIAL_TIME", initialTime)
 	   && cfg.lookupValue("CYCLE_TIME", cycleTime)){
-
 		  if(false){
 				 // this->previousStockPrice = this->referenceStockPrice;
 				 // this->previousExogenous = this->referenceExogenous;
-			  this->numberExogenous = 0;
 			  std::cout << "ticker:" << ticker<< std::endl;
 			  std::cout << "referenceCov:" << referenceCov << std::endl;
 			  std::cout << "cash:" << cash << std::endl;
 			  std::cout << "numberStock:" << numberStock << std::endl;
+			  std::cout << "numberExogenous:" << numberExogenous << std::endl;
 			  std::cout << "initialTime:" << initialTime << std::endl;
 			  std::cout << "cycleTime:" << cycleTime << std::endl;
 		  }
@@ -118,11 +118,11 @@ void Strategy::preTrade(){
 	this->expectedReturnStock= avg(returnPrices, tam_prices);
 	this->expectedReturnExogenous = avg(returnExoPrices, tam_exo);
 
-	for(int i=0;i<tam_exo;i++)
-		std::cout << "Ep[" << i <<"]=" <<returnExoPrices[i] << std::endl;
-
-	for(int i=0;i<tam_prices;i++)
-		std::cout<< "Sp[" << i <<"]=" <<prices[i] << "\treturnPrices[" << i <<"]=" <<returnPrices[i] << std::endl;
+//	for(int i=0;i<tam_exo;i++)
+//		std::cout << "Ep[" << i <<"]=" <<returnExoPrices[i] << std::endl;
+//
+//	for(int i=0;i<tam_prices;i++)
+//		std::cout<< "Sp[" << i <<"]=" <<prices[i] << "\treturnPrices[" << i <<"]=" <<returnPrices[i] << std::endl;
 
 
 	this->standardDeviationExogenous = stdDev(returnExoPrices,tam_exo, this->expectedReturnExogenous);
@@ -148,7 +148,7 @@ void Strategy::preTrade(){
 		float wealthOfExogenous = this->lastPriceExogenous*this->numberExogenous;
 		float wealthOfStock = this->lastPriceStock*this->numberStock;
 
-		float totalWealth=wealthOfExogenous+wealthOfStock+this->cash;
+		float totalWealth=wealthOfExogenous+wealthOfStock/*+this->cash*/;
 
 		float wealth4Exogenous = this->weightExogenous*totalWealth;
 		float wealth4Stock = this->weightStock*totalWealth;
@@ -166,6 +166,7 @@ void Strategy::preTrade(){
 
 	}else{
 		this->validMinVarPortWeight = false;
+		std::cout << "[Strategy::PreTrade] **** NOT VALID! *****" <<std::endl;
 	}
 
 }
@@ -224,29 +225,29 @@ SimpleOrder Strategy::tradeMountPosition(){
 
 	if(validMinVarPortWeight){
 
-
 		if(this->diffNumberExogenous > 0 ){
 			//comprar Exogenous
 			FIX::Symbol symbol("Exogenous");
 			order.symbol = symbol;
 
-			float alternativeDiffNumberExogenous =(int) ((this->cash/this->lastPriceExogenous) - this->numberExogenous);
+			//float alternativeDiffNumberExogenous =(int) ((this->cash/this->lastPriceExogenous) - this->numberExogenous);
 
-			order.orderQty = (alternativeDiffNumberExogenous >=  this->diffNumberExogenous? this->diffNumberExogenous:alternativeDiffNumberExogenous );
+//			order.orderQty = (int)(this->diffNumberExogenous );
+			order.orderQty = (int) (this->cash/this->lastPriceExogenous);
 			order.price = this->lastPriceExogenous;
+			this->numberExogenous += order.orderQty;
 
-			this->numberExogenous += this->diffNumberExogenous;
-			this->cash -= this->diffNumberExogenous*this->lastPriceExogenous;
+			this->cash -= order.orderQty*order.price;
 			order.print();
-		}
-
-		if(this->diffNumberStock > 0 ){
-			//comprar Ações
-			order.symbol = this->ticker;
-			order.orderQty = this->diffNumberStock;
-			order.price = this->lastPriceStock;
-			order.print();
-		}
+		}else
+			if(this->diffNumberStock > 0 ){
+				//comprar Ações
+				order.symbol = this->ticker;
+//				order.orderQty = (int) (this->diffNumberStock);
+				order.orderQty = (int) (this->cash/this->lastPriceStock);
+				order.price = this->lastPriceStock;
+				order.print();
+			}
 	}
     FIX::TransactTime now;
 

@@ -109,22 +109,15 @@ void Application::run(){
 
 			SimpleOrder order1 = this->strategy.tradeUmountPosition();
 			this->sendOrder(order1);
+			sleep(strategy.cycleTime);
+			this->cancelOrder(order1);
 
-			if(order1.symbol==this->strategy.ticker)sleep(strategy.cycleTime);
+			SimpleOrder order2 = this->strategy.tradeMountPosition();
+			this->sendOrder(order2);
+			sleep(strategy.cycleTime);
+			this->cancelOrder(order2);
 
-			if(getConfirmationPartialExecutionTrade || order1.symbol != this->strategy.ticker ){
-				this->cancelOrder(order1);
-
-				SimpleOrder order2 = this->strategy.tradeMountPosition();
-				this->sendOrder(order2);
-				sleep(strategy.cycleTime);
-				this->cancelOrder(order2);
-
-			}else{
-				this->cancelOrder(order1);
-			}
-			sleep(4*strategy.cycleTime);
-
+			sleep(2*strategy.cycleTime);
     	}
     	this->resetFlags();
 

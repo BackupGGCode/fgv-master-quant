@@ -20,11 +20,11 @@ std::string AgentControl::getFixConfiguration(){
 	std::stringstream msg;
 	std::string config_str;
 
-	const std::string host = HOST;
+	//const std::string host = HOST;
 
 	try {
 		sql::Driver * driver = sql::mysql::get_driver_instance();
-		std::auto_ptr< sql::Connection > con(driver->connect(host, USER, PASS));
+		std::auto_ptr< sql::Connection > con(driver->connect(HOST, USER, PASS));
 		std::auto_ptr< sql::Statement > stmt(con->createStatement());
 
 		std::string statement;
@@ -47,21 +47,21 @@ std::string AgentControl::getFixConfiguration(){
 
 		try {
 			/*s This will implicitly assume that the host is 'localhost' */
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
 			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 		}
 
 		try {
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
 			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 		}
 
 		try {
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout <<"AgentControl::getFixConfiguration\n" << "#\t\t tcp://hostname_or_ip[:port] caused expected exception" << std::endl;
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
@@ -93,11 +93,11 @@ std::string AgentControl::getSessionConfiguration(){
 	std::stringstream msg;
 	std::string config_str;
 
-	const std::string host = HOST;
+	//const std::string host = HOST;
 
 	try {
 		sql::Driver * driver = sql::mysql::get_driver_instance();
-		std::auto_ptr< sql::Connection > con(driver->connect(host, USER, PASS));
+		std::auto_ptr< sql::Connection > con(driver->connect(HOST, USER, PASS));
 		std::auto_ptr< sql::Statement > stmt(con->createStatement());
 
 		std::string statement;
@@ -117,21 +117,21 @@ std::string AgentControl::getSessionConfiguration(){
 
 		try {
 			/*s This will implicitly assume that the host is 'localhost' */
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
 			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 		}
 
 		try {
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout <<"AgentControl::getSessionConfiguration\n" << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
 			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 		}
 
 		try {
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout <<"AgentControl::getSessionConfiguration\n"<< "#\t\t tcp://hostname_or_ip[:port] caused expected exception" << std::endl;
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
@@ -162,11 +162,11 @@ float AgentControl::getRate(std::string time){
 	float rate = 0;
 	std::string datetime;
 
-	const std::string host = HOST;
+	//const std::string host = HOST;
 
 	try {
 		sql::Driver * driver = sql::mysql::get_driver_instance();
-		std::auto_ptr< sql::Connection > con(driver->connect(host, USER, PASS));
+		std::auto_ptr< sql::Connection > con(driver->connect(HOST, USER, PASS));
 		std::auto_ptr< sql::Statement > stmt(con->createStatement());
 
 
@@ -199,21 +199,21 @@ float AgentControl::getRate(std::string time){
 
 		try {
 			/*s This will implicitly assume that the host is 'localhost' */
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
 			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 		}
 
 		try {
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
 			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 		}
 
 		try {
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t tcp://hostname_or_ip[:port] caused expected exception" << std::endl;
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
@@ -253,18 +253,20 @@ std::string AgentControl::getStrategyConfiguration(){
 	float reference_cov;
 	float volatility;
 	float  spread;
+	float  number_exogenous;
+	float  random_type;
 
-	const std::string host = HOST;
+	//const std::string host = HOST;
 	std::stringstream strategy_config;
 
 
 	try {
 		sql::Driver * driver = sql::mysql::get_driver_instance();
-		std::auto_ptr< sql::Connection > con(driver->connect(host, USER, PASS));
+		std::auto_ptr< sql::Connection > con(driver->connect(HOST, USER, PASS));
 		std::auto_ptr< sql::Statement > stmt(con->createStatement());
 
 		std::string statement;
-		statement = "SELECT ticker, reference_stock_price, cash, number_stock, percentual_max_neg, cycle_time, initial_time, reference_exogenous, reference_cov, volatility, spread  FROM quickfix.strategy s inner join quickfix.agents a on s.id_strategy = a.id_strategy where id_agent='#USER#'";
+		statement = "SELECT ticker, reference_stock_price, cash, number_stock, percentual_max_neg, cycle_time, initial_time, reference_exogenous, reference_cov, volatility, spread, number_exogenous, random_type  FROM quickfix.strategy s inner join quickfix.agents a on s.id_strategy = a.id_strategy where id_agent='#USER#'";
 		std::string user("#USER#");
 		statement.replace(statement.find(user),user.length(), this->agentID );
 
@@ -282,41 +284,48 @@ std::string AgentControl::getStrategyConfiguration(){
 			reference_cov = res->getDouble("reference_cov");
 			volatility = res->getDouble("volatility");
 			spread = res->getDouble("spread");
+			number_exogenous = res->getDouble("number_exogenous");
+			random_type = res->getDouble("random_type");
 			row++;
 		}
 
 		strategy_config << std::fixed;
 		strategy_config.precision(2);
 
-		strategy_config << "TICKER = \"" << ticker << "\";\nREFERENCE_STOCK_PRICE = "<<reference_stock_price
-						<<";\nCASH = "<<cash<<";\nNUMBER_STOCK = "<<number_stock<<";\nPERCENTUAL_MAX_NEG = "
-						<<percentual_max_neg<<";\nCYCLE_TIME = "<<cycle_time
+		strategy_config << "TICKER = \"" << ticker << "\""
+						<<";\nREFERENCE_STOCK_PRICE = "<<reference_stock_price
+						<<";\nCASH = "<<cash
+						<<";\nNUMBER_STOCK = "<<number_stock
+						<<";\nPERCENTUAL_MAX_NEG = "<<percentual_max_neg
+						<<";\nCYCLE_TIME = "<<cycle_time
 						<<";\nINITIAL_TIME = "<<initial_time
 						<<";\nREFERENCE_EXOGENOUS = "<<reference_exogenous
 						<<";\nREFERENCE_COV = "<<reference_cov
 						<<";\nVOLATILITY = "<<volatility
-						<<";\nSPREAD = "<< spread <<";";
+						<<";\nSPREAD = "<< spread
+						<<";\nNUMBER_EXOGENOUS = " <<number_exogenous
+						<<";\nRANDOM_TYPE = "<< random_type <<";";
 
 		/* Clean up */
 		stmt.reset(NULL); /* free the object inside  */
 
 		try {
 			/*s This will implicitly assume that the host is 'localhost' */
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
 			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 		}
 
 		try {
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
 			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 		}
 
 		try {
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t tcp://hostname_or_ip[:port] caused expected exception" << std::endl;
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
@@ -349,13 +358,13 @@ void AgentControl::setPortfolio(std::string time, float cash, float  number_stoc
 	std::stringstream update;
 	std::stringstream replace;
 	std::stringstream msg;
-	int affected_rows = 0;
+	//int affected_rows = 0;
 
-	const std::string host = HOST;
+	//const std::string host = HOST;
 
 	try {
 		sql::Driver * driver = sql::mysql::get_driver_instance();
-		std::auto_ptr< sql::Connection > con(driver->connect(host, USER, PASS));
+		std::auto_ptr< sql::Connection > con(driver->connect(HOST, USER, PASS));
 		std::auto_ptr< sql::Statement > stmt(con->createStatement());
 
 
@@ -372,7 +381,7 @@ void AgentControl::setPortfolio(std::string time, float cash, float  number_stoc
 
 		replace << "REPLACE INTO quickfix.portfolio (time, id_agent, number_stock, cash, number_exogenous) VALUES ('"<< boost::posix_time::to_iso_string(ptime) <<"','"<< this->agentID <<"',"<< number_stock << ","<< cash << ","<< number_exogenous <<")";
 		//std::cout << replace.str();
-		affected_rows = stmt->execute(replace.str());
+		stmt->execute(replace.str());
 /*
 		update << "UPDATE quickfix.portfolio SET number_stock =" <<number_stock<<", cash="<< cash <<" WHERE id_agent = '"<< this->agentID << "'";
 		affected_rows = stmt->executeUpdate(update.str());
@@ -386,21 +395,21 @@ void AgentControl::setPortfolio(std::string time, float cash, float  number_stoc
 
 		try {
 			/*s This will implicitly assume that the host is 'localhost' */
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
 			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 		}
 
 		try {
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
 			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 		}
 
 		try {
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t tcp://hostname_or_ip[:port] caused expected exception" << std::endl;
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
@@ -437,11 +446,11 @@ void AgentControl::updateExogenousTimes(std::string start_time){
 	std::stringstream msg;
 	int rows = 0;
 
-	const std::string host = HOST;
+	//const std::string host = HOST;
 
 	try {
 		sql::Driver * driver = sql::mysql::get_driver_instance();
-		std::auto_ptr< sql::Connection > con(driver->connect(host, USER, PASS));
+		std::auto_ptr< sql::Connection > con(driver->connect(HOST, USER, PASS));
 		std::auto_ptr< sql::Statement > stmt(con->createStatement());
 
 	    std::string format = "%Y%m%d-%H:%M:%S";
@@ -494,21 +503,21 @@ void AgentControl::updateExogenousTimes(std::string start_time){
 
 		try {
 			/*s This will implicitly assume that the host is 'localhost' */
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
 			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 		}
 
 		try {
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
 			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 		}
 
 		try {
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t tcp://hostname_or_ip[:port] caused expected exception" << std::endl;
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
@@ -537,13 +546,13 @@ void AgentControl::updateExogenousTimes(std::string start_time){
 void AgentControl::updatePrices(std::string time, float price, float quantity){
 
 	std::stringstream insert;
-	int affected_rows = 0;
+	//int affected_rows = 0;
 
-	const std::string host = HOST;
+	//const std::string host = HOST;
 
 	try {
 		sql::Driver * driver = sql::mysql::get_driver_instance();
-		std::auto_ptr< sql::Connection > con(driver->connect(host, USER, PASS));
+		std::auto_ptr< sql::Connection > con(driver->connect(HOST, USER, PASS));
 		std::auto_ptr< sql::Statement > stmt(con->createStatement());
 
 	    std::string format = "%Y%m%d-%H:%M:%S";
@@ -555,28 +564,28 @@ void AgentControl::updatePrices(std::string time, float price, float quantity){
 
 
 		insert << "INSERT INTO quickfix.prices (time, volume, price) VALUES ('"<< boost::posix_time::to_iso_string(ptime) <<"',"<< quantity << ","<< price <<")";
-		affected_rows = stmt->execute(insert.str());
+		stmt->execute(insert.str());
 
 		/* Clean up */
 		stmt.reset(NULL); /* free the object inside  */
 
 		try {
 			/*s This will implicitly assume that the host is 'localhost' */
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
 			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 		}
 
 		try {
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
 			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 		}
 
 		try {
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t tcp://hostname_or_ip[:port] caused expected exception" << std::endl;
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
@@ -608,12 +617,12 @@ void AgentControl::setupPorfolio(void){
 
 	std::stringstream del;
 
-	float price=0;
-	const std::string host = HOST;
+	//float price=0;
+	//const std::string host = HOST;
 
 	try {
 		sql::Driver * driver = sql::mysql::get_driver_instance();
-		std::auto_ptr< sql::Connection > con(driver->connect(host, USER, PASS));
+		std::auto_ptr< sql::Connection > con(driver->connect(HOST, USER, PASS));
 		std::auto_ptr< sql::Statement > stmt(con->createStatement());
 
 	    del << "DELETE FROM quickfix.portfolio WHERE time <> ''";
@@ -624,21 +633,21 @@ void AgentControl::setupPorfolio(void){
 
 		try {
 			/*s This will implicitly assume that the host is 'localhost' */
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
 			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 		}
 
 		try {
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
 			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 		}
 
 		try {
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t tcp://hostname_or_ip[:port] caused expected exception" << std::endl;
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
@@ -673,11 +682,11 @@ void AgentControl::setupPrices(std::string time){
 	std::stringstream insert;
 
 	float price=0;
-	const std::string host = HOST;
+	//const std::string host = HOST;
 
 	try {
 		sql::Driver * driver = sql::mysql::get_driver_instance();
-		std::auto_ptr< sql::Connection > con(driver->connect(host, USER, PASS));
+		std::auto_ptr< sql::Connection > con(driver->connect(HOST, USER, PASS));
 		std::auto_ptr< sql::Statement > stmt(con->createStatement());
 
 	    std::string format = "%Y%m%d-%H:%M:%S";
@@ -706,21 +715,21 @@ void AgentControl::setupPrices(std::string time){
 
 		try {
 			/*s This will implicitly assume that the host is 'localhost' */
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
 			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 		}
 
 		try {
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
 			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 		}
 
 		try {
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t tcp://hostname_or_ip[:port] caused expected exception" << std::endl;
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
@@ -752,11 +761,11 @@ float AgentControl::getLastPrice(void){
 
 	std::stringstream select;
 	float price = 0;
-	const std::string host = HOST;
+	//const std::string host = HOST;
 
 	try {
 		sql::Driver * driver = sql::mysql::get_driver_instance();
-		std::auto_ptr< sql::Connection > con(driver->connect(host, USER, PASS));
+		std::auto_ptr< sql::Connection > con(driver->connect(HOST, USER, PASS));
 		std::auto_ptr< sql::Statement > stmt(con->createStatement());
 
 		select << "SELECT p.price FROM quickfix.prices p ORDER BY p.time DESC LIMIT 1";
@@ -767,28 +776,28 @@ float AgentControl::getLastPrice(void){
 			price = res->getDouble("price");
 		}
 
-		std::cout << std::endl << "[AgentControl::getLastPrice] :"<< price << std::endl;
+		//std::cout << std::endl << "[AgentControl::getLastPrice] :"<< price << std::endl;
 
 		/* Clean up */
 		stmt.reset(NULL); /* free the object inside  */
 
 		try {
 			/*s This will implicitly assume that the host is 'localhost' */
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
 			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 		}
 
 		try {
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
 			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 		}
 
 		try {
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t tcp://hostname_or_ip[:port] caused expected exception" << std::endl;
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
@@ -820,11 +829,11 @@ float* AgentControl::getLastNPrices(int N, int& tam){
 	size_t row;
 	std::stringstream select;
 	float* array;
-	const std::string host = HOST;
+	//const std::string host = HOST;
 
 	try {
 		sql::Driver * driver = sql::mysql::get_driver_instance();
-		std::auto_ptr< sql::Connection > con(driver->connect(host, USER, PASS));
+		std::auto_ptr< sql::Connection > con(driver->connect(HOST, USER, PASS));
 		std::auto_ptr< sql::Statement > stmt(con->createStatement());
 
 
@@ -837,9 +846,9 @@ float* AgentControl::getLastNPrices(int N, int& tam){
 		std::auto_ptr< sql::ResultSet > res(stmt->executeQuery(select.str()));
 
 		int size = res->rowsCount();
+		array = new float[size];
 
 		if(size > 0 ){
-			array = new float[size];
 			row = 0;
 			while (res->next()) {
 				array[row] = res->getDouble("price");
@@ -855,21 +864,21 @@ float* AgentControl::getLastNPrices(int N, int& tam){
 
 		try {
 			/*s This will implicitly assume that the host is 'localhost' */
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout <<"AgentControl::getLastNPrices\n"<< "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
 			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 		}
 
 		try {
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout <<"AgentControl::getLastNPrices\n"<< "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
 			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 		}
 
 		try {
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout <<"AgentControl::getLastNPrices\n" << "#\t\t tcp://hostname_or_ip[:port] caused expected exception" << std::endl;
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
@@ -891,8 +900,9 @@ float* AgentControl::getLastNPrices(int N, int& tam){
 
 	}
 
-
-
+	 array = new float[1];
+	 array[0] = -1;
+	 return array;
 }
 
 
@@ -903,11 +913,11 @@ float* AgentControl::getPrices(std::string time1, std::string time2, int& tam){
 	size_t row;
 	std::stringstream select;
 	float* array;
-	const std::string host = HOST;
+	//const std::string host = HOST;
 
 	try {
 		sql::Driver * driver = sql::mysql::get_driver_instance();
-		std::auto_ptr< sql::Connection > con(driver->connect(host, USER, PASS));
+		std::auto_ptr< sql::Connection > con(driver->connect(HOST, USER, PASS));
 		std::auto_ptr< sql::Statement > stmt(con->createStatement());
 
 
@@ -960,21 +970,21 @@ float* AgentControl::getPrices(std::string time1, std::string time2, int& tam){
 
 		try {
 			/*s This will implicitly assume that the host is 'localhost' */
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout <<"AgentControl::getPrices\n" <<"#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
 			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 		}
 
 		try {
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout <<"AgentControl::getPrices\n"<< "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
 			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 		}
 
 		try {
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout <<"AgentControl::getPrices\n"<< "#\t\t tcp://hostname_or_ip[:port] caused expected exception" << std::endl;
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
@@ -998,7 +1008,9 @@ float* AgentControl::getPrices(std::string time1, std::string time2, int& tam){
 
 	}
 
-
+	 array = new float[1];
+	 array[0] = -1;
+	 return array;
 
 }
 
@@ -1007,12 +1019,12 @@ float* AgentControl::getExogenousValues(std::string time1, std::string time2, in
 
 	size_t row;
 	std::stringstream select;
-
-	const std::string host = HOST;
+	float* array;
+	//const std::string host = HOST;
 
 	try {
 		sql::Driver * driver = sql::mysql::get_driver_instance();
-		std::auto_ptr< sql::Connection > con(driver->connect(host, USER, PASS));
+		std::auto_ptr< sql::Connection > con(driver->connect(HOST, USER, PASS));
 		std::auto_ptr< sql::Statement > stmt(con->createStatement());
 
 
@@ -1036,7 +1048,7 @@ float* AgentControl::getExogenousValues(std::string time1, std::string time2, in
 
 		int size = res->rowsCount();
 
-		float* array = new float[size];
+		array = new float[size];
 
 		row = 0;
 		while (res->next()) {
@@ -1052,21 +1064,21 @@ float* AgentControl::getExogenousValues(std::string time1, std::string time2, in
 
 		try {
 			/*s This will implicitly assume that the host is 'localhost' */
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout <<"AgentControl::getExogenousValues\n"<< "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
 			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 		}
 
 		try {
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout <<"AgentControl::getExogenousValues\n"<< "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
 			std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 		}
 
 		try {
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout <<"AgentControl::getExogenousValues\n"<< "#\t\t tcp://hostname_or_ip[:port] caused expected exception" << std::endl;
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
@@ -1090,7 +1102,9 @@ float* AgentControl::getExogenousValues(std::string time1, std::string time2, in
 
 	}
 
-
+	 array = new float[1];
+	 array[0] = -1;
+	 return array;
 }
 
 
@@ -1112,7 +1126,7 @@ int AgentControl::run(){
 	try {
 		sql::Driver * driver = sql::mysql::get_driver_instance();
 		/* Using the Driver to create a connection */
-		std::auto_ptr< sql::Connection > con(driver->connect(host, USER, PASS));
+		std::auto_ptr< sql::Connection > con(driver->connect(HOST, USER, PASS));
 
 		/* Creating a "simple" statement - "simple" = not a prepared statement */
 		std::auto_ptr< sql::Statement > stmt(con->createStatement());
@@ -1163,7 +1177,7 @@ int AgentControl::run(){
 		try {
 			/*s This will implicitly assume that the host is 'localhost' */
 			//host = "unix://path_to_mysql_socket.sock";
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t unix://path_to_mysql_socket.sock caused expected exception" << std::endl;
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
@@ -1172,7 +1186,7 @@ int AgentControl::run(){
 
 		try {
 			//host = "tcp://hostname_or_ip[:port]";
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t tcp://hostname_or_ip[:port] caused expected exception" << std::endl;
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
@@ -1186,7 +1200,7 @@ int AgentControl::run(){
 			tcp://localhost into tcp://127.0.0.1 and give you a TCP connection
 			host = "tcp://localhost[:port]";
 			*/
-			con.reset(driver->connect(host, USER, PASS));
+			con.reset(driver->connect(HOST, USER, PASS));
 		} catch (sql::SQLException &e) {
 			std::cout << "#\t\t tcp://hostname_or_ip[:port] caused expected exception" << std::endl;
 			std::cout << "#\t\t " << e.what() << " (MySQL error code: " << e.getErrorCode();
