@@ -23,6 +23,7 @@ class Strategy {
 
 public:
 	std::string	ticker;
+	float random_type;
 	float referenceStockPrice;
 	float cash;
 	float numberStock;

@@ -148,7 +148,7 @@ void Strategy::preTrade(){
 		float wealthOfExogenous = this->lastPriceExogenous*this->numberExogenous;
 		float wealthOfStock = this->lastPriceStock*this->numberStock;
 
-		float totalWealth=wealthOfExogenous+wealthOfStock/*+this->cash*/;
+		float totalWealth=wealthOfExogenous+wealthOfStock+(this->cash < 0 ? 0:this->cash);
 
 		float wealth4Exogenous = this->weightExogenous*totalWealth;
 		float wealth4Stock = this->weightStock*totalWealth;
@@ -162,7 +162,8 @@ void Strategy::preTrade(){
 			<< "\t  SD[.]\t" << this->standardDeviationStock <<"\t" << this->standardDeviationExogenous  << std::endl
 			<< "\t   W[.]\t" << this->weightStock <<"\t" << this->weightExogenous  << std::endl
 			<< "\t   P[.]\t" << this->lastPriceStock <<"\t\t" << this->lastPriceExogenous  << std::endl
-			<< "\tdiff[.]\t" << this->diffNumberStock <<"\t\t" << this->diffNumberExogenous  << std::endl;
+			<< "\tdiff[.]\t" << this->diffNumberStock <<"\t\t" << this->diffNumberExogenous  << std::endl
+			<< std::endl <<"\tPortfolio\tcash:" << this->cash <<"\t#stock:" << this->numberStock <<"\t#Exogenous:" << this->numberExogenous << std::endl;
 
 	}else{
 		this->validMinVarPortWeight = false;
@@ -223,7 +224,23 @@ SimpleOrder Strategy::tradeMountPosition(){
 	order.orderQty = 0;
 	order.price = 0;
 
+	float cashShare4Stock =1.0;
+	float cashShare4Exogenous =1.0;
+
 	if(validMinVarPortWeight){
+
+		if(this->diffNumberExogenous > 0 && this->diffNumberStock > 0 ){
+			// dividir o cash disponível ...
+
+
+			float wealth4Stock = this->diffNumberExogenous*this->lastPriceStock;
+			float wealth4Exogenous = this->diffNumberExogenous*this->lastPriceExogenous;
+
+			float totalExtraWealth = wealth4Stock+wealth4Exogenous;
+
+			cashShare4Stock = wealth4Stock/totalExtraWealth;
+			cashShare4Exogenous = wealth4Exogenous/totalExtraWealth;
+		}
 
 		if(this->diffNumberExogenous > 0 ){
 			//comprar Exogenous
@@ -233,21 +250,21 @@ SimpleOrder Strategy::tradeMountPosition(){
 			//float alternativeDiffNumberExogenous =(int) ((this->cash/this->lastPriceExogenous) - this->numberExogenous);
 
 //			order.orderQty = (int)(this->diffNumberExogenous );
-			order.orderQty = (int) (this->cash/this->lastPriceExogenous);
+			order.orderQty = (int) (this->cash*cashShare4Exogenous/this->lastPriceExogenous);
 			order.price = this->lastPriceExogenous;
 			this->numberExogenous += order.orderQty;
 
 			this->cash -= order.orderQty*order.price;
 			order.print();
-		}else
-			if(this->diffNumberStock > 0 ){
+		}else if(this->diffNumberStock > 0 ){
 				//comprar Ações
 				order.symbol = this->ticker;
 //				order.orderQty = (int) (this->diffNumberStock);
-				order.orderQty = (int) (this->cash/this->lastPriceStock);
+				order.orderQty = (int) (this->cash*cashShare4Stock/this->lastPriceStock);
 				order.price = this->lastPriceStock;
 				order.print();
 			}
+
 	}
     FIX::TransactTime now;
 

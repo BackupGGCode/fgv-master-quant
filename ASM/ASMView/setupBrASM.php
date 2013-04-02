@@ -73,7 +73,7 @@ if(isset($_POST['MarketMaker'])){
 		if($statusOrderMatch == "STARTED"){
 			echo "<img src='./img/om_on.png' alt='ORDERMATCH esta ATIVO'>";
 			echo "<br>";
-			echo "<form name ='orderMatchForm' method='POST' action='setup.php'>";
+			echo "<form name ='orderMatchForm' method='POST' action='setupBrASM.php'>";
 			echo "<input  type='hidden' name='OrderMatch' value='OrderMatchOFF'>";
 			echo "<input type='submit' value='Parar'>";
 			echo "</form>";
@@ -81,13 +81,13 @@ if(isset($_POST['MarketMaker'])){
 		} else 	if($statusOrderMatch == "STOPPED"){
 				echo "<img src='./img/om_off.png' alt='ORDERMATCH esta INATIVO'>";
 				echo "<br>";
-				echo "<form name ='orderMatchForm' method='POST' action='setup.php'>";
+				echo "<form name ='orderMatchForm' method='POST' action='setupBrASM.php'>";
 				echo "<input  type='hidden' name='OrderMatch' value='OrderMatchON'>";
 				echo "<input type='submit' value='Iniciar'>";
 				echo "</form>";
 				echo "<br>";		
 			}else{
-				echo "<form name ='orderMatchForm' method='POST' action='setup.php'>";
+				echo "<form name ='orderMatchForm' method='POST' action='setupBrASM.php'>";
 				echo "<input  type='hidden' name='OrderMatch' value='none'>";
 				echo "</form>";
 			}
@@ -98,7 +98,7 @@ if(isset($_POST['MarketMaker'])){
 			if($statusMarketMaker == "STARTED"){
 				echo "<img src='./img/mm_on.png' alt='MARKETMAKER esta ATIVO'>";
 				echo "<br>";
-				echo "<form name ='marketMakerForm' method='POST' action='setup.php'>";
+				echo "<form name ='marketMakerForm' method='POST' action='setupBrASM.php'>";
 				echo "<input  type='hidden' name='MarketMaker' value='MarketMakerOFF'>";
 				echo "<input type='submit' value='Parar'>";
 				echo "</form>";
@@ -106,13 +106,13 @@ if(isset($_POST['MarketMaker'])){
 			} else 	if($statusMarketMaker == "STOPPED"){
 				echo "<img src='./img/mm_off.png' alt='MARKETMAKER esta INATIVO'>";
 				echo "<br>";
-				echo "<form name ='marketMakerForm' method='POST' action='setup.php'>";
+				echo "<form name ='marketMakerForm' method='POST' action='setupBrASM.php'>";
 				echo "<input  type='hidden' name='MarketMaker' value='MarketMakerON'>";
 				echo "<input type='submit' value='Iniciar'>";
 				echo "</form>";
 				echo "<br>";
 			}else{
-				echo "<form name ='marketMakerForm' method='POST' action='setup.php'>";
+				echo "<form name ='marketMakerForm' method='POST' action='setupBrASM.php'>";
 				echo "<input  type='hidden' name='MarketMaker' value='none'>";
 				echo "</form>";
 			}
@@ -124,24 +124,8 @@ if(isset($_POST['MarketMaker'])){
 	<td>
 <?php
 
- if(isset($_POST['agents2die'])){
- 	$cbarray2 = $_POST['agents2die'];
- 	//echo "<div align='center' style='font-size:14pt;'>";
-	//echo shell_exec('kill `ps -A | grep lt-randomtrader`');
- 	//echo "</div>";
- 	foreach($cbarray2 as $agent2die ){
- 		$command2 = "pkill -f $agent2die";
- 		exec("$command2 > /dev/null &");
-
- 	}
- 	
- 	
-
-}
-
 if(isset($_POST['agent'])) {
-	$cbarray = $_POST['agent'];
-	
+	$cbarrayAgent = $_POST['agent'];
 	
 	$link = mysql_connect($host,$username,$password);
 	if (!$link) {
@@ -155,54 +139,29 @@ if(isset($_POST['agent'])) {
 	
 	mysql_set_charset('utf8');
 
-	
-	echo "<div align='left' style='font-size:10pt;'>";
-	echo "<form name ='agent2dieForm' method='POST' action='setup.php'>";
-	echo "<p>";
-	
-	foreach($cbarray as $agent2exec){
+	foreach($cbarrayAgent as $agent2exec){
 		$query="SELECT type FROM agents WHERE id_agent='$agent2exec'";
 		$resultt=mysql_query($query);
 		$agenttype=mysql_result($resultt,0,"type");
 		$command ="";
-		if($agenttype == "random")
-			$command = "cd ./scripts/;./start_randomtraders.sh ".$agent2exec;
-		if($agenttype == "mv")
-			$command = "cd ./scripts/;./start_mvtraders.sh ".$agent2exec;
-		if($agenttype == "bband")
-			$command = "cd ./scripts/;./start_bbandtraders.sh ".$agent2exec;	
-			
+		if($agenttype == "random"){
+			$command = "cd ./scripts/;./randomtraders.sh change ".$agent2exec;
+		}
+		if($agenttype == "mv"){
+			$command = "cd ./scripts/;./mvtraders.sh change ".$agent2exec;
+		}
+		if($agenttype == "bband"){
+			$command = "cd ./scripts/;./bbandtraders.sh change ".$agent2exec;	
+		}
 		exec("$command > /dev/null &");
-		echo " <input type='checkbox' name='agents2die[]' value='$agent2exec'>$agent2exec<br>";
+
 	}
 	
 	mysql_close();
-	
-	echo "<br>";
-	echo "<input type='button' onclick=\"SetAllCheckBoxes('agent2dieForm','agents2die[]',true)\" value='Selecionar Tudo'>";
-	echo "<input type='button' onclick=\"SetAllCheckBoxes('agent2dieForm','agents2die[]',false)\" value='Limpar Seleção'>";
-	echo "<br>";
-	echo "<br>";
-	echo "<input type='submit' value='Parar Simulação'>";
-	echo "</p>";
-	echo "</form>";
-	echo "</div>";
-	
-	
-	//echo "<form action='setup.php' method='post'>";
-	//echo "<input type='submit' name='stop' value='Parar Simulação' />";
-	//echo "</form>";
-	
 
 }
 
-else{
 
-// 	$username="quickfix";
-// 	$password="quickfix";
-// 	$database="quickfix";
-// 	$host="localhost";
-	
 	$link = mysql_connect($host,$username,$password);
 	if (!$link) {
 		die('Not connected : ' . mysql_error());
@@ -221,25 +180,32 @@ else{
 	
 	mysql_close();
 	echo "<div align='left' style='font-size:10pt;'>";
-	echo "<form name ='agentForm' method='POST' action='setup.php'>";
+	echo "<form name ='agentForm' method='POST' action='setupBrASM.php'>";
 	echo "<p>";
 	while ($i < $num) {
 		$agent=mysql_result($result,$i,"id_agent");
-		echo " <input type='checkbox' name='agent[]' value='$agent'>$agent<br>";
+		$commandStatusTraders = "./scripts/statusTrader.sh $agent";
+		$statusTraders = exec($commandStatusTraders);
+		if($statusTraders == "STARTED"){
+			echo "<font color='green'> <input type='checkbox' name='agent[]' value='$agent'>$agent<br></font>";
+		}
+		if($statusTraders == "STOPPED"){
+				echo "<font color='red'> <input type='checkbox' name='agent[]' value='$agent'>$agent<br></font>";
+		}
+
 		$i++;
-		
 	}
 	echo "<br>";
 	echo "<input type='button' onclick=\"SetAllCheckBoxes('agentForm','agent[]',true)\" value='Selecionar Tudo'>";
 	echo "<input type='button' onclick=\"SetAllCheckBoxes('agentForm','agent[]',false)\" value='Limpar Seleção'>";
 	echo "<br>";
 	echo "<br>";
-	echo "<input type='submit' value='Simular'> ";
+	echo "<input type='submit' value='Ligar / Desligar'> ";
 	
 	echo "</p>";
 	echo "</form>";
 	echo "</div>";
-}
+
 ?>
 		</div>
 	</td>

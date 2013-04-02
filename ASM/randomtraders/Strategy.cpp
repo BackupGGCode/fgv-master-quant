@@ -25,6 +25,7 @@ Strategy::Strategy(const std::string strats) {
 	   && cfg.lookupValue("PERCENTUAL_MAX_NEG", percentual_max_negs)
 	   && cfg.lookupValue("INITIAL_TIME", initialTime)
 	   && cfg.lookupValue("VOLATILITY", volatility)
+	   && cfg.lookupValue("RANDOM_TYPE", random_type)
 	   && cfg.lookupValue("CYCLE_TIME", cycleTime)){
 
 		 if(true){
@@ -37,6 +38,7 @@ Strategy::Strategy(const std::string strats) {
 			 std::cout << "initialTime:" << initialTime << std::endl;
 			 std::cout << "cycleTime:" << cycleTime << std::endl;
 			 std::cout << "volatility:" << volatility << std::endl;
+			 std::cout << "random_type:" << random_type << std::endl;
 		 }
 	  }else{
 		  std::cout <<"[" << this->agentControl.agentID <<"] strategy configs vars not found" << std::endl;
@@ -81,10 +83,7 @@ SimpleOrder Strategy::trade(){
 	order.symbol = symbol;
 	order.clOrdID = m_generator.genOrderID();
 
-	//float volatility = 1.0+(rand()%20 - 10)/100.0;
-	float vol = 1.0+this->volatility*(2*(this->myRand%101)/100.0 - 1);
 
-	// Implementacao do Fluxo de decisao do agente aleatorio ...
 
 	if(offerPx > 0.0 && bidPx > 0.0){
 		this->referenceStockPrice = 0.5*(offerPx+bidPx);
@@ -92,8 +91,19 @@ SimpleOrder Strategy::trade(){
 		this->referenceStockPrice = this->agentControl.getLastPrice();
 	}
 
+
+	float vol = 0;
+	if(this->random_type > 0){ // bear
+		vol = 1.0+this->volatility*((this->myRand%101)/100.0);
+	}else if(this->random_type < 0){ // bull
+		vol = 1.0-this->volatility*((this->myRand%101)/100.0);
+	}else { // none
+		vol = 1.0+this->volatility*(2*(this->myRand%101)/100.0 - 1);
+	}
+
 	this->referenceStockPrice *= vol;
 	this->referenceStockPrice = roundASM(this->referenceStockPrice );
+	// Implementacao do Fluxo de decisao do agente aleatorio ...
 
 	srand(this->myRand );
 	this->myRand = rand();
