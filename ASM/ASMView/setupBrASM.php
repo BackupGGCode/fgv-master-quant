@@ -66,7 +66,7 @@ if(isset($_POST['MarketMaker'])){
 <table>
   <tr>
 	<td>
-		<div align='center' style='width:250px;font-size:14pt;'>
+		<div align='center' style='width:250px;font-size:16pt;'>
 		<?php 
 		$commandStatusOrderMatch = "cd ./scripts/;./ordermatch.sh status";
 		$statusOrderMatch = exec($commandStatusOrderMatch);
@@ -179,7 +179,7 @@ if(isset($_POST['agent'])) {
 	$num=mysql_num_rows($result);
 	
 	mysql_close();
-	echo "<div align='left' style='font-size:10pt;'>";
+	echo "<div align='left' style='font-size:14pt;'>";
 	echo "<form name ='agentForm' method='POST' action='setupBrASM.php'>";
 	echo "<p>";
 	while ($i < $num) {

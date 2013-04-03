@@ -18,6 +18,9 @@ INSERT INTO quickfix.prices (time, volume, price) VALUES ('000-00-00 00:00:00',0
 SELECT reference_stock_price FROM quickfix.strategy s inner join quickfix.agents a on s.id_strategy = a.id_strategy where id_agent='ORDERMATCH';
 
 
+SELECT id_agent FROM agents WHERE status='active' AND type NOT IN('mm', 'ordermatch');
+
+
 DELETE FROM prices WHERE time <> '000-00-00 00:00:00';
 
 
