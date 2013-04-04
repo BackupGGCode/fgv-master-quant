@@ -33,6 +33,31 @@ function SetAllCheckBoxes(FormName, FieldName, CheckValue){
 
 
 <?php 
+
+if(isset($_POST['testnumber'])){
+	// Connect to the database
+	$link = mysql_connect($host, $username, $password);
+	mysql_select_db($database);
+	require 'exportcsv.inc.php';
+	
+	if($_POST['pricesType']){
+		$query_prices="SELECT * FROM quickfix.prices";
+		$filename_prices="test".$_POST['testnumber']."_prices.csv";
+		exportMysqlToCsv($query_prices, $filename_prices);
+	}
+
+	if($_POST['portfoliosType']){
+		$query_portfolio="SELECT * FROM quickfix.portfolio";
+		$filename_portfolio="test".$_POST['testnumber']."_portfolios.csv";
+		exportMysqlToCsv($query_portfolio, $filename_portfolio);
+	}
+
+	if($_POST['agentsType']){
+		$query_agents="SELECT id_agent, ticker, reference_stock_price, cash, number_stock, percentual_max_neg, cycle_time, initial_time, reference_exogenous, reference_cov, volatility, spread, number_exogenous, random_type  FROM quickfix.strategy s inner join quickfix.agents a on s.id_strategy = a.id_strategy where status='active'";
+		$filename_agents="test".$_POST['testnumber']."_agents.csv";
+		exportMysqlToCsv($query_agents, $filename_agents);
+	}
+}
 if(isset($_POST['OrderMatch'])){
 	if( $_POST['OrderMatch'] == "OrderMatchOFF"){
 		$command2KillOrderMatch = "cd ./scripts/;./ordermatch.sh stop";
@@ -66,7 +91,7 @@ if(isset($_POST['MarketMaker'])){
 <table>
   <tr>
 	<td>
-		<div align='center' style='width:250px;font-size:16pt;'>
+		<div align='center' style='width:280px;font-size:14pt;'>
 		<?php 
 		$commandStatusOrderMatch = "cd ./scripts/;./ordermatch.sh status";
 		$statusOrderMatch = exec($commandStatusOrderMatch);
@@ -117,8 +142,19 @@ if(isset($_POST['MarketMaker'])){
 				echo "</form>";
 			}
 		?>
+
+<div style="width:120px;height:60px;border:3px dotted blue;vertical-align:middle">
+<form name='formPrices'  action="download.php" method="post" style="vertical-align:middle" >
+<b>Test #:</b> <input type="text" name="testnumber" size="3" style="vertical-align:middle"><br>
+<input name ="pricesType" type="image" src='./img/prices.png' value="Prices"  style="vertical-align:middle">
+<input name="portfoliosType" type="image" src='./img/portfolios.png' value="Portfolios" style="vertical-align:middle">
+<input name="agentsType" type="image" src='./img/agents.png' value="Agents" style="vertical-align:middle">
+</form>
+<div>
+		
 		
 		</div>
+
 	</td>
 
 	<td>
