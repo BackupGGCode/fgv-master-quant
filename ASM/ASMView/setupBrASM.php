@@ -33,9 +33,8 @@ function SetAllCheckBoxes(FormName, FieldName, CheckValue){
 
 
 <?php 
-
+/*
 if(isset($_POST['testnumber'])){
-	// Connect to the database
 	$link = mysql_connect($host, $username, $password);
 	mysql_select_db($database);
 	require 'exportcsv.inc.php';
@@ -58,6 +57,7 @@ if(isset($_POST['testnumber'])){
 		exportMysqlToCsv($query_agents, $filename_agents);
 	}
 }
+*/
 if(isset($_POST['OrderMatch'])){
 	if( $_POST['OrderMatch'] == "OrderMatchOFF"){
 		$command2KillOrderMatch = "cd ./scripts/;./ordermatch.sh stop";
@@ -143,6 +143,7 @@ if(isset($_POST['MarketMaker'])){
 			}
 		?>
 
+<!-- 		
 <div style="width:120px;height:60px;border:3px dotted blue;vertical-align:middle">
 <form name='formPrices'  action="download.php" method="post" style="vertical-align:middle" >
 <b>Test #:</b> <input type="text" name="testnumber" size="3" style="vertical-align:middle"><br>
@@ -151,7 +152,7 @@ if(isset($_POST['MarketMaker'])){
 <input name="agentsType" type="image" src='./img/agents.png' value="Agents" style="vertical-align:middle">
 </form>
 <div>
-		
+-->
 		
 		</div>
 

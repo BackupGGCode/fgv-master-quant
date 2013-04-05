@@ -1,6 +1,6 @@
 <?php
 
-header('Refresh: 3');
+header('Refresh: 5');
 
 $username="quickfix";
 $password="quickfix";

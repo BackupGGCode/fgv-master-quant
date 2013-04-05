@@ -8,4 +8,6 @@ rm -rf $DESTINATION/scripts
 cp -r scripts $DESTINATION
 rm -rf $DESTINATION/img
 cp -r img $DESTINATION
+rm -rf $DESTINATION/trials
+mkdir $DESTINATION/trials
 
