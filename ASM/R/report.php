@@ -1,4 +1,8 @@
-
+<head>
+<b><center>BrASM Test Report</center></b>
+<br>
+</head>
+<body>
 <?php
 $previewGraph="";
 $previewStats="";
@@ -46,18 +50,12 @@ if(isset($_POST['testnumber'])){
 		$previewGraph .= "</td>";
 		$previewGraph .= "</tr>";
 		$previewGraph .= "</table>";
-		$previewGraph .= "<br>";
-		$previewGraph .= "<img src='./trials/test".$testNumber."_acf.png'/>";
 	}
 
 }
 
 ?>
-<head>
-<b><center>BrASM Test Report</center></b>
-<br>
-</head>
-<body>
+
 <div align='center' style='width:400px;height:70px;vertical-align:middle'  >
 <form name='formPrices'  action="report.php" method="post" style="vertical-align:middle" >
 <b>Test number:</b> <input type="text" name="testnumber" size="3" style="vertical-align:middle" value="<?php echo $_POST['testnumber']; ?>">
