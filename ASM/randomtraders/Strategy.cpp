@@ -118,7 +118,7 @@ SimpleOrder Strategy::trade(){
 	if(this->numberStock > 0.0){
 		//std::cout<<  "[DECISAO-01] Possui acao no inventario" << std::endl;
 		// [DECISAO-01] SIM
-		int qty = (int)(this->cash/this->referenceStockPrice );
+		int qty = (int)(this->percentual_max_negs*this->cash/this->referenceStockPrice );
 		order.price = this->referenceStockPrice;
 
 		// [DECISAO-02] Possui saldo em dinheiro superior ao preco de pelo menos uma acao (ASK)?
@@ -154,7 +154,7 @@ SimpleOrder Strategy::trade(){
 		// [DECISAO-01] NAO
 		//std::cout<<  "[DECISAO-01] NAO possui acao no inventario" << std::endl;
 
-		int qty = (this->cash/this->referenceStockPrice );
+		int qty = (this->percentual_max_negs*this->cash/this->referenceStockPrice );
 		order.price = this->referenceStockPrice;
 
 		if(qty >= 1 ){
@@ -241,7 +241,7 @@ SimpleOrder Strategy::trade2(){
 		//std::cout<<  "[DECISAO-01] Possui acao no inventario" << std::endl;
 
 		// [DECISAO-01] SIM
-		int qty = (int)(this->cash/this->referenceStockPrice );
+		int qty = (int)(this->percentual_max_negs*this->cash/this->referenceStockPrice );
 		order.price = this->referenceStockPrice;
 
 		// [DECISAO-02] Possui saldo em dinheiro superior ao preco de pelo menos uma acao (ASK)?
@@ -294,7 +294,7 @@ SimpleOrder Strategy::trade2(){
 		// [DECISAO-01] NAO
 		//std::cout<<  "[DECISAO-01] NAO possui acao no inventario" << std::endl;
 
-		int qty = (this->cash/this->referenceStockPrice );
+		int qty = (this->percentual_max_negs*this->cash/this->referenceStockPrice );
 		order.price = this->referenceStockPrice;
 
 		if(qty >= 1 ){

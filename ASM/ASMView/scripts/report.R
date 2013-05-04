@@ -77,6 +77,11 @@ sd_return <- sd(FGV.ccret);
 skewness_return <- skewness(FGV.ccret);
 kurtosis_return <- kurtosis(FGV.ccret);
 
+library(urca)
+ur <- ur.df(y = FGV.PRICESVOLUMES[,1], type = "none",lags = 10,  selectlags = "BIC")
+ur@testreg
+summary(ur)
+
 output <- paste("<table width='500'>",
                  "<tr><td>",
                   "<b> Preços </b><br>",
