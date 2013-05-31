@@ -1,0 +1,15 @@
+[msaito@musashi batch]$ php exp52_randTraders.php 
+TRIAL:1 
+TRIAL:2 
+TRIAL:4 
+TRIAL:8 
+TRIAL:16 
+TRIAL:32 
+TRIAL:64 
+TRIAL:128 
+TRIAL:256 
+TRIAL:512 
+TRIAL:1024 
+TRIAL:2048 
+TRIAL:4096 
+TRIAL:8192 
