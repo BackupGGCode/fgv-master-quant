@@ -57,6 +57,7 @@ function exportMysqlToCsv($sql_query,$filename)
     //exit;
 
 }
+
 // ************ CONSULTA BASE DE DADOS ************
 $host="localhost"; $username="quickfix";$password="quickfix";$database="quickfix";
 
@@ -105,78 +106,56 @@ function startAll($_numAgent, $_agentList){
 }
 
 
-function setBudget($_numAgent,$_agentList, $cash, $stock){
+function setRandType($_numAgent,$_agentList, $bull){
 	$i=0;
+	$type = 1;
 	while ($i < $_numAgent) {
+		if($i < $bull)$type = 1; else $type = -1;
+		
 		$agent=mysql_result($_agentList,$i,"id_strategy");
-		mysql_query("UPDATE strategy SET number_stock=$stock,cash=$cash WHERE id_strategy=$agent ");
+		mysql_query("UPDATE strategy SET random_type=$type WHERE id_strategy=$agent ");
 		$i++;
 	}
 }
 
-function setLimitOper($_numAgent,$_agentList, $limit){
-	$i=0;
-	while ($i < $_numAgent) {
-		$agent=mysql_result($_agentList,$i,"id_strategy");
-		mysql_query("UPDATE strategy SET percentual_max_neg=$limit WHERE id_strategy=$agent ");
-		$i++;
+$bull=0;
+while ($bull <= $numAgent) {
+	$trial=1;
+	while ($trial <= 5){
+		echo "BULL POP:$bull/$numAgent TRIAL:$trial \n";
+		
+		stopAll($numAgent, $agentList);
+		
+		sleep(1*60);
+		
+		setRandType($numAgent, $agentList,$bull);
+		
+		startAll($numAgent, $agentList);
+		
+		sleep(10*60);
+
+		
+		$query_prices="SELECT * FROM quickfix.prices";
+		$filename_prices="./results/test_randType_b".$bull."_t".$trial."_prices.csv";
+		exportMysqlToCsv($query_prices, $filename_prices);
+			
+		$trial++;
 	}
-}
-
-function setVol($_numAgent,$_agentList, $vol){
-	$i=0;
-	while ($i < $_numAgent) {
-		$agent=mysql_result($_agentList,$i,"id_strategy");
-		mysql_query("UPDATE strategy SET volatility=$vol WHERE id_strategy=$agent ");
-		$i++;
-	}
-}
-
-
-function setSpread($spread){
-	mysql_query("UPDATE strategy SET spread=$spread WHERE id_strategy=25 ");
-}
-
-function setMMLimitOper($lim){
-	mysql_query("UPDATE strategy SET percentual_max_neg=$lim WHERE id_strategy=25 ");
-}
-//setup inicial
-setBudget($numAgent, $agentList,100000,1000);
-setLimitOper($numAgent, $agentList,0.5);
-setVol($numAgent, $agentList,0.10);
-setSpread(10);
-
-$lim=1;
-while ($lim <= 100) {
-
-	echo "TRIAL MM LIM OPER:$lim \n";
-	stopAll($numAgent, $agentList);
-	
-	sleep(1*30);//sleep for 1 min 
-	
-	setMMLimitOper($lim/100);
-	
-	startAll($numAgent, $agentList);
-	
-	sleep(30*60); //sleep for 30 mins
-	
-	$query_prices="SELECT * FROM quickfix.prices";
-	$filename_prices="./results/test_mmLim_".$lim."_prices.csv";
-	exportMysqlToCsv($query_prices, $filename_prices);
 	
 	$query_portfolio="SELECT * FROM quickfix.portfolio";
-	$filename_portfolio="./results/test_mmLim_".$lim."_portfolios.csv";
+	$filename_portfolio="./results/test_randType_b".$bull."_portfolios.csv";
 	exportMysqlToCsv($query_portfolio, $filename_portfolio);
 	
 	$query_agents="SELECT id_agent, ticker, reference_stock_price, cash, number_stock, percentual_max_neg, cycle_time, initial_time, reference_exogenous, reference_cov, volatility, spread, number_exogenous, random_type  FROM quickfix.strategy s inner join quickfix.agents a on s.id_strategy = a.id_strategy where status='active'";
-	$filename_agents="./results/test_mmLim_".$lim."_agents.csv";
+	$filename_agents="./results/test_randType_b".$bull."_agents.csv";
 	exportMysqlToCsv($query_agents, $filename_agents);
 	
-	$lim++;
-	$lim++;
+	$bull=$bull+2;
 }
 
 
+
+stopAll($numAgent, $agentList);
 mysql_free_result($agentList);
 mysql_close($link);
 
