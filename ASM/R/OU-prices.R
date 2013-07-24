@@ -44,7 +44,8 @@ reta <- function(n,const,coef){
 #x<- ornstein_uhlenbeck(TEMPO_TOTAL,NUM_PONTOS,MEDIA_GLOBAL,LAMBDA,SIGMA,MEDIA_INICIAL);
 #plot(x,type="l", xlab="tempo", ylab="preço",col="red");
 
-x<- reta(NUM_PONTOS,MEDIA_INICIAL,+0.0);
+#x<- reta(NUM_PONTOS,MEDIA_INICIAL,+0.25);
+x<- reta(NUM_PONTOS,MEDIA_INICIAL,+0.25);
 #x<- reta(NUM_PONTOS,MEDIA_INICIAL,+0.5);
 #x<- reta(NUM_PONTOS,MEDIA_INICIAL,0.0);
 plot(x,type="l", xlab="tempo", ylab="preço");

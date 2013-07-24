@@ -46,5 +46,5 @@ while (TESTE <= 100){
 }
 
 write.csv(AGENTS, file = "./data/bb/test_BB_summary.csv", sep = " ",
-            eol = "\n", na = "NA", dec = ".", row.names = TRUE,
+            eol = "\n", na = "NA", dec = ",", row.names = TRUE,
             col.names = TRUE, qmethod = c("escape", "double"),fileEncoding = "")
